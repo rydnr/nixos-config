@@ -1,6 +1,6 @@
 # flake.nix
 {
-  description = "flake-based NixOS configuration for Maricruz laptop";
+  description = "flake-based NixOS configuration";
   inputs = {
     nixpkgs = { url = "github:NixOS/nixpkgs/nixos-unstable"; };
     home-manager = {
@@ -18,18 +18,12 @@
     nixosConfigurations = {
       maricruz = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
-        modules = [
-          ./old-config.nix
-          nix-ld.nixosModules.nix-ld
-          #          home-manager.nixosModules.home-manager
-          #          {
-          #            home-manager.useGlobalPkgs = true;
-          #            home-manager.useUserPackages = true;
-          # home-manager.users.jdoe = import ./home.nix;
-          # Optionally, use home-manager.extraSpecialArgs to pass
-          # arguments to home.nix
-          #          }
-        ];
+        modules = [ ./old-config.nix nix-ld.nixosModules.nix-ld ];
+      };
+      reno = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        modules = [ ./old-config.nix nix-ld.nixosModules.nix-ld ];
+        stateVersion = "23.11";
       };
     };
   };
