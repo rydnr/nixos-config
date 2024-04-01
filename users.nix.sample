@@ -1,0 +1,14 @@
+{ config, pkgs, ... }:
+
+{
+  users.extraUsers.myself = {
+    isNormalUser = true;
+    uid = 1000;
+    description = "John Doe";
+    shell = "/run/current-system/sw/bin/bash";
+    extraGroups = [ "wheel" "video" "networkmanager" "docker" ];
+    openssh.authorizedKeys.keys = [
+      "ssh-dss ... myself@example.com"
+    ];
+  };
+}

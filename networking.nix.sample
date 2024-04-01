@@ -1,0 +1,9 @@
+{ config, lib, pkgs, ... }:
+{
+  networking.hostName = "localhost";
+  # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
+
+  networking.extraHosts = "
+8.8.8.8 google-dns";
+
+}

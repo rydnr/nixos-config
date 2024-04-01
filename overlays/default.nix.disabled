@@ -1,0 +1,4 @@
+[
+#  (import /home/chous/github/rydnr-overlay/default.nix)
+  (import ./emacs-overlay.nix)
+]

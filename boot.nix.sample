@@ -1,0 +1,61 @@
+{ config, pkgs, ... }:
+
+{
+  boot = {
+    # Use the GRUB 2 boot loader.
+    loader.grub = {
+      enable = true;
+      version = 2;
+      # Define on which hard drive you want to install Grub.
+      device = "/dev/sdZ";
+      enableCryptodisk = true;
+      extraEntries = ''
+menuentry "Windows7" {
+  insmod ntfs
+  set root='(hdZ,1)'
+  chainloader +1
+}
+'';
+
+      extraConfig = ''
+if sleep --interruptible 5; then
+  set timeout=10
+fi
+'';
+    };
+
+    kernelModules = [ "kvm-intel" ];
+
+    extraModulePackages = [
+      pkgs.linuxPackages.virtualbox
+    ];
+ 
+    initrd = {
+      kernelModules = [
+        "fbcon"
+        "dm_snapshot"
+        "vboxdrv"
+        "vboxnetadp"
+        "vboxnetflt"
+        "dm_crypt"
+        "sha256"
+        "sha1"
+        "cbc"
+        "aes_x86_64"
+        "aes"
+        "xts"
+      ];
+
+      availableKernelModules = [
+        "ehci_pci" "ata_piix" "firewire_ohci" "usbhid" "usb_storage"
+      ];
+
+      luks.devices = [
+        { name = "eroot"; device = "/dev/sdZX"; preLVM = true; }
+        { name = "swap"; device = "/dev/sdZY"; }
+      ];
+
+      postMountCommands = "cryptsetup luksOpen /dev/sdZY swap";
+    };
+  };
+}
