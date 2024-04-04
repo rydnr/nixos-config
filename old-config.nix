@@ -67,7 +67,6 @@
     ./private/nix.nix
     ./private/packages.nix
     ./private/packages/games.nix
-    ./private/packages/machinelearning.nix
     #      ./private/services/alsa.nix
     ./private/services/autofs.nix
     ./private/services/apache.nix
