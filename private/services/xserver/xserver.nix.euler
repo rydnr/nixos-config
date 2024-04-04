@@ -11,12 +11,12 @@
 
     displayManager = {
       defaultSession = "none+xmonad";
+      autoLogin = {
+        enable = true;
+        user = "chous";
+      };
       lightdm = {
         enable = true;
-        autoLogin = {
-          enable = true;
-          user = "chous";
-        };
       };
 
       #    slim = {
