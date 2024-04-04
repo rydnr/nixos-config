@@ -1,1 +1,1 @@
-./kubernetes.nix.reno
+./kubernetes.nix.euler
