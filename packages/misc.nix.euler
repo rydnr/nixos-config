@@ -1,0 +1,59 @@
+{ config, lib, pkgs, ... }: {
+  # List packages installed in system profile. To search by name, run:
+  # $ nix-env -qaP | grep wget
+  environment.systemPackages = with pkgs; [
+    afuse
+    alsaPlugins
+    alsaPluginWrapper
+    #    autofs5
+    autossh
+    bc
+    bluez
+    bluez-tools
+    busybox
+    cachix
+    cifs-utils
+    conky
+    cowsay
+    dash
+    davfs2
+    dmidecode
+    dpkg
+    # extraterm
+    exfat
+    fasd
+    file
+    fortune
+    fzf
+    gettext
+    glibc
+    #    go-mtpfs
+    google-drive-ocamlfuse
+    home-manager
+    inxi
+    jack2Full
+    imagemagick
+    lame
+    ledger
+    lsdvd
+    maildrop
+    megasync
+    mu
+    newt
+    nixfmt
+    noisetorch
+    nzbget
+    p7zip
+    paprefs
+    par2cmdline
+    patchelfUnstable
+    psmisc
+    sabnzbd
+    sharutils
+    transcode
+    unrar
+    vsftpd
+    wpa_supplicant
+    zlib
+  ];
+}

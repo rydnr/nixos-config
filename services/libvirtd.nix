@@ -1,7 +1,1 @@
-{ config, pkgs, ... }:
-
-{
-  config.virtualisation.libvirtd = {
-    enable = true;
-  };
-}
+libvirtd.nix.euler

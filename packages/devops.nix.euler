@@ -9,39 +9,23 @@
     arping
     arpoison
     awscli
-    #    aws_shell
-    #    aws-sam-cli
     bc
-    bind
     binutils-unwrapped
     # 404    burpsuite
-    brev-cli
     bustle
-    cloud-sql-proxy
     cntlm
     colordiff
     cron
-    dbeaver
     direnv
     dnsmasq
     dnsperf
-    docker
-    docker-compose
-    docker-machine
-    dockfmt
-    ec2_api_tools
-    ec2_ami_tools
     efibootmgr
-    eksctl
     elvish
     #    eternal-terminal
     ettercap
     fish
     ghostunnel
     gnupg
-    google-cloud-sdk
-    google-cloud-sdk-gce
-    google-compute-engine
     grpcurl
     hdparm
     hwdata
@@ -52,17 +36,11 @@
     junkie
     keychain
     kind
-    kubernetes
-    kubernetes-helm
-    linuxPackages.virtualbox
-    libguestfs
-    libvirt
     lshw
     lsof
     ltrace
     mailutils
     mcron
-    minikube
     mutt
     ngrok
     nix-index
@@ -70,44 +48,26 @@
     nox
     openconnect
     opendkim
-    openfortivpn
-    openshift
     openvpn
     packer
     parted
     pciutils
     pinentry
     pkg-config
-    #    postfix
-    postgresql
-    # postman
-    qemu
-    redis
-    robo3t
     rsnapshot
-    s3fs
     screen
     socat
     sshfs
-    starship
     sysstat
     tcpdump
     terminator
-    terraform
-    thc-hydra
-    #    tilix
     tmux
     tmuxinator
     tree
-    #    unarj
     unetbootin
     unzip
     usbimager
     usbutils
-    vagrant
-    vault
-    virtualbox
-    virt-manager
     wget
     which
     wireshark

@@ -1,0 +1,16 @@
+{ config, lib, pkgs, ... }: {
+  environment.systemPackages = with pkgs; [
+    ((emacsPackagesFor emacs).emacsWithPackages (epkgs:
+      with epkgs; [
+        melpaStablePackages.pdf-tools
+        proof-general
+        vterm
+        exwm
+        emacsql
+        emacsql-sqlite
+        pkgs.libvterm
+        pkgs.clang-tools
+      ]))
+    vim
+  ];
+}
