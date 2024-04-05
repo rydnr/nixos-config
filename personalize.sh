@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 target="$(hostname)";
-target="${1}";
+#target="${1}";
 
 for d in $(find . -type d | grep -v '.git'); do
   pushd ${d}

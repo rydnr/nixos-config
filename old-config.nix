@@ -31,7 +31,6 @@
     ./packages/jupyter.nix
     ./packages/languages.nix
     ./packages/latex.nix
-    ./packages/machine-learning.nix
     ./packages/messaging.nix
     ./packages/misc.nix
     ./packages/music.nix
