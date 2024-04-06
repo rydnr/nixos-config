@@ -1,6 +1,7 @@
 { config, pkgs, lib, inputs, ... }: {
 
   programs = {
+    adb.enable = lib.mkDefault true;
     nix-ld.enable = true;
     zsh = {
       autosuggestions.enable = true;
@@ -31,6 +32,7 @@
         "INC_APPEND_HISTORY"
         "SHARE_HISTORY"
       ];
+
     };
   };
 }

@@ -14,6 +14,8 @@
       #    shellInit = ''
       #      source ${pkgs.zsh-forgit}/share/zsh-forgit/forgit.plugin.zsh
       #    '';
+      promptInit =
+        "source ${pkgs.zsh-powerlevel9k}/share/zsh-powerlevel9k/powerlevel9k.zsh-theme";
 
       setOptions = [
         "noautomenu"
