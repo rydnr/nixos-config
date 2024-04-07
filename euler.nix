@@ -1,0 +1,32 @@
+{ config, pkgs, options, ... }: {
+  imports = [
+    ./euler/packages/bash.nix
+    ./euler/packages/devops.nix
+    ./euler/packages/editors.nix
+    ./euler/packages/nix.nix
+    ./euler/packages/version-control.nix
+    ./euler/private/boot-common.nix
+    ./euler/private/console.nix
+    ./euler/private/filesystems.nix
+    ./euler/private/hardware.nix
+    ./euler/private/power.nix
+    ./euler/private/networking.nix
+    ./euler/private/nix.nix
+    ./euler/private/services/docker.nix
+    ./euler/private/services/kubernetes.nix
+    ./euler/programs.nix
+    ./nix.nix
+    ./private/filesystems-remote.nix
+    ./private/i18n.nix
+    ./private/time.nix
+    ./private/users.nix
+    ./security.nix
+    ./services/acpid.nix
+    ./services/atd.nix
+    ./services/logind.nix
+    ./services/nix-gc.nix
+    ./services/nix-serve.nix
+    ./services/ssh.nix
+    ./system.nix
+  ];
+}

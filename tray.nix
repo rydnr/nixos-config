@@ -2,7 +2,6 @@
   imports = [
     ./cachix/nix-community.nix
     ./nix.nix
-    ./nixpkgs.nix
     ./private/filesystems-remote.nix
     ./private/i18n.nix
     ./private/time.nix
@@ -28,7 +27,6 @@
     ./tray/private/power.nix
     ./tray/private/networking.nix
     ./tray/private/nix.nix
-    ./tray/private/packages.nix
     ./tray/private/services/docker.nix
     ./tray/private/services/kubernetes.nix
     ./tray/programs.nix

@@ -1,4 +1,0 @@
-{ config, lib, pkgs, ... }: {
-  nixpkgs.config.permittedInsecurePackages = [
-  ];
-}
