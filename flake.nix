@@ -30,7 +30,7 @@
       };
       tray = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
-        modules = [ ./old-config.nix nix-ld.nixosModules.nix-ld ];
+        modules = [ ./tray.nix nix-ld.nixosModules.nix-ld ];
       };
     };
   };

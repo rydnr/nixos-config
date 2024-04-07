@@ -5,7 +5,6 @@
     ./nixpkgs.nix
     ./private/filesystems-remote.nix
     ./private/i18n.nix
-    ./private/services/docker.nix
     ./private/time.nix
     ./private/users.nix
     ./security.nix
@@ -30,6 +29,7 @@
     ./tray/private/networking.nix
     ./tray/private/nix.nix
     ./tray/private/packages.nix
+    ./tray/private/services/docker.nix
     ./tray/private/services/kubernetes.nix
     ./tray/programs.nix
     ./tray/services/libvirtd.nix
