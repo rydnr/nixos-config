@@ -14,8 +14,6 @@
         text = ''
           if [ -e /dev/cdrom ]; then
             usermod -a -G cdrom chous
-          else
-            gpasswd -d chous cdrom
           fi
         '';
         deps = [ "users" ];
