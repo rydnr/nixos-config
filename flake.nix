@@ -22,7 +22,7 @@
       };
       reno = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
-        modules = [ ./old-config.nix nix-ld.nixosModules.nix-ld ];
+        modules = [ ./reno.nix nix-ld.nixosModules.nix-ld ];
       };
       euler = nixpkgs.lib.nixosSystem {
         system = "i686-linux";
