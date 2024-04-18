@@ -2,6 +2,6 @@
 
 {
   config.virtualisation.libvirtd = {
-    enable = true;
+    enable = config.myCustomFlags.libvirtdEnabled;
   };
 }

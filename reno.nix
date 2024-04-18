@@ -6,6 +6,7 @@
     ./private/i18n.nix
     ./private/time.nix
     ./private/users.nix
+    ./reno/custom-flags.nix
     ./reno/packages/bash.nix
     ./reno/packages/devops.nix
     ./reno/packages/editors.nix

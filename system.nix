@@ -2,9 +2,24 @@
 
 {
   # The NixOS release to be compatible with for stateful data such as databases.
-  system.stateVersion = "23.11";
+  system = {
+    stateVersion = "23.11";
+    autoUpgrade = {
+      enable = true;
+      channel = "https://channels.nixos.org/nixos-23.11";
+    };
 
-  system.autoUpgrade.enable = true;
-
-  system.autoUpgrade.channel = "https://channels.nixos.org/nixos-23.11";
+    activationScripts = {
+      checkCdrom = {
+        text = ''
+          if [ -e /dev/cdrom ]; then
+            usermod -a -G cdrom chous
+          else
+            gpasswd -d chous cdrom
+          fi
+        '';
+        deps = [ "users" ];
+      };
+    };
+  };
 }
