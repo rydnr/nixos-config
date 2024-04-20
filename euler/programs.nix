@@ -1,7 +1,6 @@
 { config, pkgs, lib, inputs, ... }: {
 
   programs = {
-    nix-ld.enable = true;
     zsh = {
       autosuggestions.enable = true;
       enable = lib.mkDefault true;
