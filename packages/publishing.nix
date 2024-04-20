@@ -1,1 +1,0 @@
-publishing.nix.euler

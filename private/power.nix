@@ -1,1 +1,0 @@
-./power.nix.euler

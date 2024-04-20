@@ -1,1 +1,0 @@
-desktopapps.nix.euler
