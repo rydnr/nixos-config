@@ -2,6 +2,7 @@
 
 {
   services.xserver = {
+    enable = true;
     layout = "us";
     xkbVariant = "dvp";
     xkbOptions = "eurosign:e,ctrl:swapcaps,terminate:ctrl_alt_bksp";

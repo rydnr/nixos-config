@@ -3,14 +3,14 @@
   imports = [ ../custom-flags.nix ];
 
   config.myCustomFlags = {
-    androidToolsEnabled = false;
-    audioEnabled = false;
-    davfs2Enabled = false;
+    androidToolsEnabled = true;
+    audioEnabled = true;
+    davfs2Enabled = true;
     dockerEnabled = true;
     kubernetesEnabled = true;
-    libvirtdEnabled = false;
+    libvirtdEnabled = true;
     networkManagerEnabled = false;
-    printingEnabled = false;
+    printingEnabled = true;
     virtualBoxEnabled = false;
   };
 }
