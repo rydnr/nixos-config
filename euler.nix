@@ -1,5 +1,6 @@
 { config, pkgs, options, ... }: {
   imports = [
+    ./euler/custom-flags.nix
     ./euler/packages/bash.nix
     ./euler/packages/devops.nix
     ./euler/packages/editors.nix
