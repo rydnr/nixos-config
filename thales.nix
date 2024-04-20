@@ -1,0 +1,35 @@
+{ config, pkgs, options, ... }: {
+  imports = [
+    ./cachix/nix-community.nix
+    ./nix.nix
+    ./private/filesystems-remote.nix
+    ./private/i18n.nix
+    ./private/time.nix
+    ./private/users.nix
+    ./security.nix
+    ./services/acpid.nix
+    ./services/atd.nix
+    ./services/logind.nix
+    ./services/nix-gc.nix
+    ./services/nix-serve.nix
+    ./services/ssh.nix
+    ./system.nix
+    ./thales/packages/bash.nix
+    ./thales/packages/devops.nix
+    ./thales/packages/editors.nix
+    ./thales/packages/nix.nix
+    ./thales/packages/version-control.nix
+    ./thales/private/boot-common.nix
+    ./thales/private/boot.nix
+    ./thales/private/console.nix
+    ./thales/private/filesystems.nix
+    ./thales/private/hardware.nix
+    ./thales/private/power.nix
+    ./thales/private/networking.nix
+    ./thales/private/nix.nix
+    ./thales/private/services/docker.nix
+    ./thales/private/services/kubernetes.nix
+    ./thales/programs.nix
+    ./thales/services/libvirtd.nix
+  ];
+}

@@ -32,6 +32,10 @@
         system = "x86_64-linux";
         modules = [ ./tray.nix nix-ld.nixosModules.nix-ld ];
       };
+      thales = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        modules = [ ./thales.nix nix-ld.nixosModules.nix-ld ];
+      };
     };
   };
 }
