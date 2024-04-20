@@ -1,1 +1,0 @@
-jupyter.nix.euler

@@ -1,1 +1,0 @@
-swayidle.nix.euler

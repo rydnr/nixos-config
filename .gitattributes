@@ -7,11 +7,15 @@ desa/private/* filter=git-crypt diff=git-crypt
 desa/private/packages/* filter=git-crypt diff=git-crypt
 desa/private/services/* filter=git-crypt diff=git-crypt
 euler/private/* filter=git-crypt diff=git-crypt
+euler/private/configs/* filter=git-crypt diff=git-crypt
 euler/private/packages/* filter=git-crypt diff=git-crypt
 euler/private/services/* filter=git-crypt diff=git-crypt
+euler/private/xserver/* filter=git-crypt diff=git-crypt
 maricruz/private/* filter=git-crypt diff=git-crypt
+maricruz/private/configs/* filter=git-crypt diff=git-crypt
 maricruz/private/packages/* filter=git-crypt diff=git-crypt
 maricruz/private/services/* filter=git-crypt diff=git-crypt
+maricruz/private/xserver/* filter=git-crypt diff=git-crypt
 reno/private/* filter=git-crypt diff=git-crypt
 reno/private/packages/* filter=git-crypt diff=git-crypt
 reno/private/services/* filter=git-crypt diff=git-crypt
