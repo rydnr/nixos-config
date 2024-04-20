@@ -14,6 +14,7 @@
     ./services/nix-serve.nix
     ./services/ssh.nix
     ./system.nix
+    ./tray/custom-flags.nix
     ./tray/packages/bash.nix
     ./tray/packages/devops.nix
     ./tray/packages/editors.nix
