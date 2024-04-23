@@ -14,22 +14,22 @@
     ./services/nix-serve.nix
     ./services/ssh.nix
     ./system.nix
-    ./tray/packages/bash.nix
-    ./tray/packages/devops.nix
-    ./tray/packages/editors.nix
-    ./tray/packages/nix.nix
-    ./tray/packages/version-control.nix
-    ./tray/private/boot-common.nix
-    ./tray/private/boot.nix
-    ./tray/private/console.nix
-    ./tray/private/filesystems.nix
-    ./tray/private/hardware.nix
-    ./tray/private/power.nix
-    ./tray/private/networking.nix
-    ./tray/private/nix.nix
-    ./tray/private/services/docker.nix
-    ./tray/private/services/kubernetes.nix
-    ./tray/programs.nix
-    ./tray/services/libvirtd.nix
+    ./desa/packages/bash.nix
+    ./desa/packages/devops.nix
+    ./desa/packages/editors.nix
+    ./desa/packages/nix.nix
+    ./desa/packages/version-control.nix
+    ./desa/private/boot-common.nix
+    ./desa/private/boot.nix
+    ./desa/private/console.nix
+    ./desa/private/filesystems.nix
+    ./desa/private/hardware.nix
+    ./desa/private/power.nix
+    ./desa/private/networking.nix
+    ./desa/private/nix.nix
+    ./desa/private/services/docker.nix
+    ./desa/private/services/kubernetes.nix
+    ./desa/programs.nix
+    ./desa/services/libvirtd.nix
   ];
 }
