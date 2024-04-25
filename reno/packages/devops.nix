@@ -37,8 +37,12 @@
       zip
       zlib
     ] ++ lib.optionals config.myCustomFlags.kubernetesEnabled [
+      conntrack-tools
+      cri-tools
+      ethtool
       kompose
       kubectl
       kubernetes
+      socat
     ];
 }
