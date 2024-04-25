@@ -32,5 +32,6 @@
     ./tray/private/services/kubernetes.nix
     ./tray/programs.nix
     ./tray/services/libvirtd.nix
+    ./unfree.nix
   ];
 }
