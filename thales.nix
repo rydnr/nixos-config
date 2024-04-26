@@ -14,6 +14,7 @@
     ./services/nix-serve.nix
     ./services/ssh.nix
     ./system.nix
+    ./thales/custom-flags.nix
     ./thales/packages/bash.nix
     ./thales/packages/devops.nix
     ./thales/packages/editors.nix
@@ -31,5 +32,6 @@
     ./thales/private/services/kubernetes.nix
     ./thales/programs.nix
     ./thales/services/libvirtd.nix
+    ./unfree.nix
   ];
 }
