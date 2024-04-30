@@ -13,7 +13,6 @@
     fontconfig
     gimp
     gpicview
-    gnome3.gnome-terminal
     gwenview
     inkscape
     libreoffice

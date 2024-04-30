@@ -20,7 +20,6 @@
       fontforge-gtk
       fontmatrix
       freefont_ttf
-      gnome3.gnome-font-viewer
       gohufont
       google-fonts
       gtk2fontsel

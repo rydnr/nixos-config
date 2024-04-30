@@ -30,8 +30,6 @@
     gettext
     gphoto2
     glibc
-    gnome3.cheese
-    gnome3.zenity
     #    go-mtpfs
     google-drive-ocamlfuse
     googler

@@ -110,11 +110,14 @@
       docker-machine
       dockfmt
     ] ++ lib.optionals config.myCustomFlags.kubernetesEnabled [
+      conntrack-tools
+      cri-tools
+      ethtool
       kompose
       kubectl
       kubernetes
       kubernetes-helm
-      minikube
+      socat
     ] ++ lib.optionals config.myCustomFlags.virtualBoxEnabled [
       virtualbox
       linuxPackages.virtualbox
