@@ -17,6 +17,7 @@ maricruz/private/packages/* filter=git-crypt diff=git-crypt
 maricruz/private/services/* filter=git-crypt diff=git-crypt
 maricruz/private/xserver/* filter=git-crypt diff=git-crypt
 reno/private/* filter=git-crypt diff=git-crypt
+reno/private/keys/* filter=git-crypt diff=git-crypt
 reno/private/packages/* filter=git-crypt diff=git-crypt
 reno/private/services/* filter=git-crypt diff=git-crypt
 reno/private/services/kubernetes/* filter=git-crypt diff=git-crypt
