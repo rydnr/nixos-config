@@ -8,7 +8,7 @@
     davfs2Enabled = false;
     dockerEnabled = true;
     kubernetesEnabled = true;
-    libvirtdEnabled = false;
+    libvirtdEnabled = true;
     networkManagerEnabled = false;
     printingEnabled = false;
     virtualBoxEnabled = false;
