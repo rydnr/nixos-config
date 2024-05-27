@@ -6,7 +6,7 @@
     stateVersion = "23.11";
     autoUpgrade = {
       enable = true;
-      channel = "https://channels.nixos.org/nixos-23.11";
+      channel = "https://channels.nixos.org/nixos-24.05";
     };
 
     activationScripts = {

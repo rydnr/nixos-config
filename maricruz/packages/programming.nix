@@ -14,7 +14,6 @@
     hlint
     gnuplot
     #    go_bootstrap
-    gocode
     gomodifytags
     gore
     gotests

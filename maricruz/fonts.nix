@@ -18,7 +18,7 @@
       fontconfig
       fontforge
       fontforge-gtk
-      fontmatrix
+      # fontmatrix
       freefont_ttf
       gohufont
       google-fonts

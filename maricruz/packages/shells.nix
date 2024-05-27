@@ -3,7 +3,7 @@
   # $ nix-env -qaP | grep wget
   environment.systemPackages = with pkgs; [
     #    arcanist
-    atlassian-cli
+    # atlassian-cli
     jq
     tmuxinator
     watchman

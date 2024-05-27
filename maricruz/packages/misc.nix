@@ -9,7 +9,7 @@
     #    autofs5
     autossh
     bc
-    bluez
+    # bluez
     bluez-tools
     busybox
     cachix
@@ -48,11 +48,11 @@
     libsepol
     lsdvd
     maildrop
-    megasync
+    # megasync
     mkvtoolnix
     mu
     newt
-    nixfmt
+    # nixfmt-rfc-style until 24.05
     noisetorch
     nzbget
     p7zip
@@ -62,7 +62,7 @@
     pavucontrol
     psmisc
     pulseaudioFull
-    python38Packages.youtube-dl
+    python3Packages.youtube-dl
     qjackctl
     ranger
     sabnzbd

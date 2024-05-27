@@ -17,8 +17,6 @@
   ];
 
   nixpkgs.config = {
-    jre = true;
-    jdk = true;
     #    oraclejdk.accept_license = true;
   };
   programs.java = {

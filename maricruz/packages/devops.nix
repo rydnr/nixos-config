@@ -18,11 +18,11 @@
       # 404    burpsuite
       brev-cli
       bustle
-      cloud-sql-proxy
+      # cloud-sql-proxy
       cntlm
       colordiff
       cron
-      dbeaver
+      # dbeaver-bin until 24.05
       direnv
       dnsmasq
       dnsperf
@@ -84,7 +84,7 @@
       starship
       sysstat
       tcpdump
-      terraform
+      # terraform
       thc-hydra
       #    tilix
       tmux
@@ -96,7 +96,7 @@
       usbimager
       usbutils
       vagrant
-      vault
+      # vault
       virt-manager
       watchman
       wget
@@ -107,7 +107,6 @@
     ] ++ lib.optionals config.myCustomFlags.dockerEnabled [
       docker
       docker-compose
-      docker-machine
       dockfmt
     ] ++ lib.optionals config.myCustomFlags.kubernetesEnabled [
       conntrack-tools

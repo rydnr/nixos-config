@@ -11,6 +11,8 @@
       i3
       inotify-tools
       lxappearance
+      linuxPackages.nvidiaPackages.latest
+      linuxPackages.nvidia_x11
       remmina
       screen
       shared-mime-info
@@ -35,7 +37,7 @@
       xorg.xbacklight
       xorg.xev
       xorg.xeyes
-      #     xorg.xf86videonvidia
+      # xorg.xf86videonvidia
       xorg.xhost
       xorg.xinit
       xorg.xkill

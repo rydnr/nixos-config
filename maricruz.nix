@@ -41,7 +41,9 @@
     ./maricruz/private/services/openvpn.nix
     ./maricruz/private/services/xserver/common.nix
     ./maricruz/private/services/xserver/xmonad.nix
-    ./maricruz/private/services/xserver/xserver-multimonitor.nix
+    # PRIVATE_SERVICES_XSERVER
+    # ./maricruz/private/services/xserver/xserver-justlaptop.nix
+    # ./maricruz/private/services/xserver/xserver-multimonitor.nix
     ./maricruz/services/dunst.nix
     ./maricruz/services/libvirtd.nix
     ./maricruz/services/redshift.nix
