@@ -42,8 +42,8 @@
     ./maricruz/private/services/xserver/common.nix
     ./maricruz/private/services/xserver/xmonad.nix
     # PRIVATE_SERVICES_XSERVER
-    # ./maricruz/private/services/xserver/xserver-justlaptop.nix
-    # ./maricruz/private/services/xserver/xserver-multimonitor.nix
+    # ./maricruz/singlescreen.nix
+    # ./maricruz/multiscreens.nix
     ./maricruz/services/dunst.nix
     ./maricruz/services/libvirtd.nix
     ./maricruz/services/redshift.nix
