@@ -3,6 +3,45 @@
 {
   boot.blacklistedKernelModules = [ "pcspkr" "padlock_aes" "vboxsf" "vboxnetflt" "vboxnetadp" "vboxdrv" "nouveau" ];
 #  boot.blacklistedKernelModules = [ "pcspkr" "padlock_aes" "vboxsf" ];
+  boot.extraModulePackages = [
+    pkgs.linuxPackages.amdgpu-pro
+    pkgs.linuxPackages.virtualbox
+    pkgs.linuxPackages.v4l2loopback
+  ];
+  boot.kernelParams = [ "modeset=0" "v4l2loopback.exclusive_caps=1"];
+
+  boot.initrd.kernelModules = [
+#        "kvm-amd"
+#        "fbcon"
+        "dm_snapshot"
+#        "vboxdrv"
+#        "vboxnetadp"
+#        "vboxnetflt"
+        "dm_crypt"
+        "sha256"
+        "sha1"
+        "cbc"
+#        "aes_x86_64"
+        "aes"
+        "xts"
+        "amdgpu"
+      ];
+
+  boot.initrd.availableKernelModules = [
+        "xhci_pci"
+        "ahci"
+        "nvme"
+        "usb_storage"
+        "sd_mod"
+        "sdhci_pci"
+#        "vboxdrv"
+#        "vboxnetadp"
+#        "vboxnetflt"
+#        "fbcon"
+        "amdgpu"
+        "v4l2loopback"
+      ];
+
   services.xserver = {
     videoDrivers = [ "amdgpu" ];
     exportConfiguration = true;

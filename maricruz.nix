@@ -27,7 +27,7 @@
     ./maricruz/packages/wayland.nix
     ./maricruz/packages/x11.nix
     ./maricruz/private/audio.nix
-    ./maricruz/private/boot-common.nix
+    ./maricruz/private/boot.nix
     ./maricruz/private/filesystems.nix
     ./maricruz/private/hardware.nix
     ./maricruz/private/networking.nix
@@ -40,8 +40,8 @@
     ./maricruz/private/services/xserver/common.nix
     ./maricruz/private/services/xserver/xmonad.nix
     # PRIVATE_SERVICES_XSERVER
-    # ./maricruz/singlescreen.nix
-    # ./maricruz/multiscreens.nix
+    # ./maricruz/single-screen.nix
+    # ./maricruz/multi-screens.nix
     ./maricruz/services/dunst.nix
     ./maricruz/services/libvirtd.nix
     ./maricruz/services/redshift.nix

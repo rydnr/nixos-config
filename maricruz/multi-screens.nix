@@ -1,7 +1,81 @@
 { config, pkgs, ... }:
 
 {
+  environment.systemPackages = with pkgs;
+  [
+    linuxPackages.nvidiaPackages.latest
+    linuxPackages.nvidia_x11
+  ];
+
   boot.blacklistedKernelModules = [ "amdgpu" "pcspkr" "padlock_aes" "vboxsf" "vboxnetflt" "vboxnetadp" "vboxdrv" "nouveau" ];
+
+  boot.extraModulePackages = [
+    config.boot.kernelPackages.nvidia_x11
+#     config.boot.kernelPackages.nvidiaPackages.beta
+#     pkgs.linuxPackages.nvidiaPackages.latest
+#     config.boot.kernelPackages.nvidiaPackages.latest
+    pkgs.linuxPackages.virtualbox
+    pkgs.linuxPackages.v4l2loopback
+  ];
+  boot.kernelParams = [ "modeset=0" "v4l2loopback.exclusive_caps=1"];
+  boot.initrd.kernelModules = [
+#        "kvm-amd"
+#        "fbcon"
+        "dm_snapshot"
+#        "vboxdrv"
+#        "vboxnetadp"
+#        "vboxnetflt"
+        "dm_crypt"
+        "sha256"
+        "sha1"
+        "cbc"
+#        "aes_x86_64"
+        "aes"
+        "xts"
+        "nvidia"
+        "nvidiafb"
+        "nvidia-uvm"
+        "nvidia-drm"
+      ];
+
+  boot.initrd.availableKernelModules = [
+        "xhci_pci"
+        "ahci"
+        "nvme"
+        "usb_storage"
+        "sd_mod"
+        "sdhci_pci"
+#        "vboxdrv"
+#        "vboxnetadp"
+#        "vboxnetflt"
+#        "fbcon"
+        "nvidia"
+        "nvidiafb"
+        "nvidia-uvm"
+        "nvidia-drm"
+        "v4l2loopback"
+      ];
+
+  hardware.nvidia = {
+#    package = config.boot.kernelPackages.nvidiaPackages.beta;
+#    package = config.boot.kernelPackages.nvidiaPackages.stable;
+#    package = pkgs.linuxPackages.nvidiaPackages.latest;
+#    package = config.boot.kernelPackages.nvidiaPackages.latest;
+
+    package = config.boot.kernelPackages.nvidia_x11;
+#    package = config.boot.kernelPackages.nvidiaPackages.latest;
+    prime = {
+      offload.enable = false;
+      sync.enable = true;
+      nvidiaBusId = "PCI:1:0:0";
+      amdgpuBusId = "PCI:6:0:0";
+    };
+    modesetting.enable = true;
+    powerManagement.enable = false;
+    nvidiaPersistenced = true;
+    nvidiaSettings = true;
+  };
+
   # Enable the X11 windowing system.
   services.xserver = {
     videoDrivers = [ "nvidia" ];
