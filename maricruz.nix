@@ -49,9 +49,6 @@
     ./maricruz/services/redshift.nix
     ./maricruz/services/swayidle.nix
     ./maricruz/services/udiskie.nix
-    ./maricruz/unsafe.nix
-    ./nix.nix
-    ./nixpkgs.nix
     ./packages/android.nix
     ./packages/audio.nix
     ./packages/bash.nix
