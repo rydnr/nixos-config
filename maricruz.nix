@@ -28,8 +28,6 @@
     ./maricruz/packages/x11.nix
     ./maricruz/private/audio.nix
     ./maricruz/private/boot-common.nix
-    ./maricruz/private/boot-multimonitor.nix
-    ./maricruz/private/configs/xmonad-multimonitor.nix
     ./maricruz/private/filesystems.nix
     ./maricruz/private/hardware.nix
     ./maricruz/private/networking.nix
