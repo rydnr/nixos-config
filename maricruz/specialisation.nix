@@ -1,16 +1,24 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 {
-  boot.blacklistedKernelModules = [ "pcspkr" "padlock_aes" "vboxsf" "vboxnetflt" "vboxnetadp" "vboxdrv" "nouveau" ];
-#  boot.blacklistedKernelModules = [ "pcspkr" "padlock_aes" "vboxsf" ];
-  boot.extraModulePackages = [
-    pkgs.linuxPackages.amdgpu-pro
-    pkgs.linuxPackages.virtualbox
-    pkgs.linuxPackages.v4l2loopback
-  ];
-  boot.kernelParams = [ "modeset=0" "v4l2loopback.exclusive_caps=1"];
+  specialisation = {
+    on-the-go.configuration = {
+      system.nixos.tags = [ "on-the-go" ];
+      hardware.nvidia = {
+        prime.offload.enable = lib.mkForce true;
+        prime.offload.enableOffloadCmd = lib.mkForce true;
+        prime.sync.enable = lib.mkForce false;
+      };
+      boot.blacklistedKernelModules = lib.mkForce [ "pcspkr" "padlock_aes" "vboxsf" "vboxnetflt" "vboxnetadp" "vboxdrv" "nouveau" ];
+#    boot.blacklistedKernelModules = [ "pcspkr" "padlock_aes" "vboxsf" ];
+      boot.extraModulePackages = lib.mkForce [
+        pkgs.linuxPackages.amdgpu-pro
+        pkgs.linuxPackages.virtualbox
+        pkgs.linuxPackages.v4l2loopback
+      ];
+      boot.kernelParams = lib.mkForce [ "modeset=0" "v4l2loopback.exclusive_caps=1"];
 
-  boot.initrd.kernelModules = [
+      boot.initrd.kernelModules = lib.mkForce [
 #        "kvm-amd"
 #        "fbcon"
         "dm_snapshot"
@@ -27,7 +35,7 @@
         "amdgpu"
       ];
 
-  boot.initrd.availableKernelModules = [
+      boot.initrd.availableKernelModules = lib.mkForce [
         "xhci_pci"
         "ahci"
         "nvme"
@@ -42,23 +50,23 @@
         "v4l2loopback"
       ];
 
-  services.xserver = {
-    enable = true;
-    videoDrivers = [ "amdgpu" ];
-    exportConfiguration = true;
-#    xrandrHeads = [
-#      { output = "eDP"; primary = true; } # laptop
-#    ];
+      services.xserver = lib.mkForce {
+        enable = true;
+        videoDrivers = [ "amdgpu" ];
+        exportConfiguration = true;
+#        xrandrHeads = [
+#          { output = "eDP"; primary = true; } # laptop
+#        ];
 
-    displayManager = {
-      sessionCommands = pkgs.lib.mkAfter ''
-          xmodmap -e 'add mod3 = Super_L'
-      '';
-    };
-  };
-  environment = {
-    etc = {
-      "xmonad/xmonad.hs".text = ''
+        displayManager = {
+          sessionCommands = pkgs.lib.mkAfter ''
+            xmodmap -e 'add mod3 = Super_L'
+          '';
+        };
+      };
+      environment = {
+        etc = {
+          "xmonad/xmonad.hs".text = lib.mkForce ''
 -- xmonad config used by Vic Fryzel
 -- Author: Vic Fryzel
 -- https://github.com/vicfryzel/xmonad-config
@@ -509,9 +517,9 @@ defaults = defaultConfig {
     manageHook         = myManageHook,
     startupHook        = myStartupHook
 }
-    '';
+        '';
 
-    "xmobar/config".text = ''
+        "xmobar/config".text = lib.mkForce ''
 Config { font = "-misc-fixed-*-*-*-*-10-*-*-*-*-*-*-*"
        , borderColor = "black"
        , border = TopB
@@ -546,7 +554,9 @@ Config { font = "-misc-fixed-*-*-*-*-10-*-*-*-*-*-*-*"
        , alignSep = "}{"
        , template = "%battery% | %cpu% | %memory% | %enp110s0% - %wlp113s0% }{ <fc=#ee9a00>%date%</fc>"
        }
-      '';
+          '';
+        };
+      };
     };
   };
 }

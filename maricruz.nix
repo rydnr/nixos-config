@@ -39,6 +39,8 @@
     ./maricruz/private/services/openvpn.nix
     ./maricruz/private/services/xserver/common.nix
     ./maricruz/private/services/xserver/xmonad.nix
+    ./maricruz/multi-screens.nix
+    ./maricruz/specialisation.nix
     # PRIVATE_SERVICES_XSERVER
     # ./maricruz/single-screen.nix
     # ./maricruz/multi-screens.nix
