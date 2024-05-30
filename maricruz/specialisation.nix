@@ -6,60 +6,132 @@
       system.nixos.tags = [ "on-the-go" ];
       hardware.nvidia = {
         prime.offload.enable = lib.mkForce true;
-        prime.offload.enableOffloadCmd = lib.mkForce true;
+        prime.offload.enableOffloadCmd = lib.mkForce false;
         prime.sync.enable = lib.mkForce false;
       };
-      boot.blacklistedKernelModules = lib.mkForce [ "pcspkr" "padlock_aes" "vboxsf" "vboxnetflt" "vboxnetadp" "vboxdrv" "nouveau" ];
-#    boot.blacklistedKernelModules = [ "pcspkr" "padlock_aes" "vboxsf" ];
-      boot.extraModulePackages = lib.mkForce [
-        pkgs.linuxPackages.amdgpu-pro
-        pkgs.linuxPackages.virtualbox
-        pkgs.linuxPackages.v4l2loopback
-      ];
-      boot.kernelParams = lib.mkForce [ "modeset=0" "v4l2loopback.exclusive_caps=1"];
+#      boot.blacklistedKernelModules = lib.mkForce [ "pcspkr" "padlock_aes" "vboxsf" "vboxnetflt" "vboxnetadp" "vboxdrv" "nouveau" ];
+#      boot.extraModulePackages = lib.mkForce [
+#        pkgs.linuxPackages.amdgpu-pro
+#        pkgs.linuxPackages.virtualbox
+#        pkgs.linuxPackages.v4l2loopback
+#      ];
+#      boot.kernelParams = lib.mkForce [ "modeset=0" "v4l2loopback.exclusive_caps=1"];
 
-      boot.initrd.kernelModules = lib.mkForce [
-#        "kvm-amd"
-#        "fbcon"
-        "dm_snapshot"
-#        "vboxdrv"
-#        "vboxnetadp"
-#        "vboxnetflt"
-        "dm_crypt"
-        "sha256"
-        "sha1"
-        "cbc"
-#        "aes_x86_64"
-        "aes"
-        "xts"
-        "amdgpu"
-      ];
+#      boot.initrd.kernelModules = lib.mkForce [
+#        "dm_snapshot"
+#        "dm_crypt"
+#        "sha256"
+#        "sha1"
+#        "cbc"
+#        "aes"
+#        "xts"
+#        "amdgpu"
+#      ];
 
-      boot.initrd.availableKernelModules = lib.mkForce [
-        "xhci_pci"
-        "ahci"
-        "nvme"
-        "usb_storage"
-        "sd_mod"
-        "sdhci_pci"
-#        "vboxdrv"
-#        "vboxnetadp"
-#        "vboxnetflt"
-#        "fbcon"
-        "amdgpu"
-        "v4l2loopback"
-      ];
+#      boot.initrd.availableKernelModules = lib.mkForce [
+#        "xhci_pci"
+#        "ahci"
+#        "nvme"
+#        "usb_storage"
+#        "sd_mod"
+#        "sdhci_pci"
+#        "amdgpu"
+#        "v4l2loopback"
+#      ];
 
       services.xserver = lib.mkForce {
         enable = true;
         videoDrivers = [ "amdgpu" ];
         exportConfiguration = true;
-#        xrandrHeads = [
-#          { output = "eDP"; primary = true; } # laptop
-#        ];
+        xrandrHeads = [
+          { output = "eDP"; primary = true; } # laptop
+        ];
+
+        config = ''
+
+Section "ServerLayout"
+
+    Identifier     "Layout"
+    Screen      0  "Screen" 0 0
+    Inactive       "radeon"
+    InputDevice    "Keyboard0" "CoreKeyboard"
+    InputDevice    "Mouse0" "CorePointer"
+    Option         "Xinerama" "0"
+EndSection
+
+Section "ServerFlags"
+    Option         "AllowMouseOpenFail" "on"
+    Option         "DontZap" "on"
+EndSection
+
+Section "InputDevice"
+    Identifier     "Keyboard0"
+    Driver         "kbd"
+EndSection
+
+Section "InputDevice"
+    # generated from default
+    Identifier     "Mouse0"
+    Driver         "mouse"
+    Option         "Protocol" "auto"
+    Option         "Device" "/dev/input/mice"
+    Option         "Emulate3Buttons" "no"
+    Option         "ZAxisMapping" "4 5"
+EndSection
+
+Section "InputClass"
+    Identifier         "libinput mouse configuration"
+    MatchIsPointer     "on"
+    MatchDriver        "libinput"
+    Option         "AccelProfile" "adaptive"
+    Option         "LeftHanded" "off"
+    Option         "MiddleEmulation" "on"
+    Option         "NaturalScrolling" "off"
+    Option         "ScrollMethod" "twofinger"
+    Option         "HorizontalScrolling" "on"
+    Option         "SendEventsMode" "enabled"
+    Option         "Tapping" "on"
+    Option         "TappingDragLock" "on"
+    Option         "DisableWhileTyping" "off"
+EndSection
+
+Section "InputClass"
+    Identifier         "libinput touchpad configuration"
+    MatchIsTouchpad    "on"
+    MatchDriver        "libinput"
+    Option         "AccelProfile" "adaptive"
+    Option         "LeftHanded" "off"
+    Option         "MiddleEmulation" "on"
+    Option         "NaturalScrolling" "off"
+    Option         "ScrollMethod" "twofinger"
+    Option         "HorizontalScrolling" "on"
+    Option         "SendEventsMode" "enabled"
+    Option         "Tapping" "off"
+    Option         "TappingDragLock" "on"
+    Option         "DisableWhileTyping" "off"
+EndSection
+
+Section "Monitor"
+    Identifier     "eDP"
+EndSection
+
+Section "Device"
+    Identifier     "radeon"
+    Driver         "amdgpu"
+    BusID          "PCI:6:0:0"
+EndSection
+
+Section "Screen"
+    Identifier     "Screen"
+    Device         "radeon"
+    Monitor        "eDP"
+    Option         "AllowEmptyInitialConfiguration"
+EndSection
+
+'';
 
         displayManager = {
-          sessionCommands = pkgs.lib.mkAfter ''
+          sessionCommands = lib.mkAfter ''
             xmodmap -e 'add mod3 = Super_L'
           '';
         };
