@@ -12,8 +12,7 @@
     feh
     fontconfig
     gimp
-    gpicview
-    gwenview
+    # gwenview
     inkscape
     libreoffice
     lightdm
@@ -22,7 +21,7 @@
     pencil
     pidgin
     redshift
-    rxvt_unicode-with-plugins
+    rxvt-unicode-unwrapped
     screen
     scrot
     # marked as broken    synfigstudio

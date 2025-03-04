@@ -3,34 +3,37 @@
   description = "flake-based NixOS configuration";
   inputs = {
     nixpkgs = {
+      url = "github:NixOS/nixpkgs/3969161bed913e109cd4148a8d93d91a1fb932ca";
       #url = "github:NixOS/nixpkgs/nixos-unstable";
-      #url = "github:NixOS/nixpkgs/nixos-24.05";
-      url = "github:NixOS/nixpkgs/nixos-23.11";
+      #url = "github:NixOS/nixpkgs/release-24.11";
+      #url = "github:NixOS/nixpkgs/24.05";
+      #url = "github:NixOS/nixpkgs/nixos-23.11";
     };
     home-manager = {
-      url = "github:nix-community/home-manager";
+      url = "github:nix-community/home-manager/release-24.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    nix-ld = {
-      url = "github:Mic92/nix-ld";
+#    nix-ld = {
+#      url = "github:Mic92/nix-ld";
       # this line assume that you also have nixpkgs as an input
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+#      inputs.nixpkgs.follows = "nixpkgs";
+#    };
     nixos-kubernetes = {
-      url = "github:rydnr/nixos-kubernetes/test-22";
-      inputs.nixos.follows = "nixpkgs";
+      url = "github:rydnr/nixos-kubernetes/test-291";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
   outputs =
     {
       nixpkgs,
-      nix-ld,
+#      nix-ld,
       home-manager,
       nixos-kubernetes,
       ...
     }:
     let
+      system = "x86_64-linux";
       hostConfig = {
         maricruz = {
           #system = "x86_64-linux";
@@ -45,7 +48,7 @@
       };
       #hostname = builtins.getEnv "HOSTNAME";
       pkgs = import nixpkgs {
-        inherit nixpkgs;
+        inherit nixpkgs system;
 #        system = "x86_64-linux";
         config = {
 #          allowUnfree = (hostConfig.${hostname}).allowUnfree or #false;
@@ -62,8 +65,15 @@
           #system = hostConfig.system or "x86_64-linux";
           modules = [
             ./maricruz.nix
-            nix-ld.nixosModules.nix-ld
-            nixos-kubernetes.nixosModules.${system}.kubeApiserver
+#            nix-ld.nixosModules.nix-ld
+            nixos-kubernetes.nixosModules.${system}.raw-kubernetes-ca
+            nixos-kubernetes.nixosModules.${system}.raw-kube-apiserver
+            nixos-kubernetes.nixosModules.${system}.raw-kube-controller-manager
+            nixos-kubernetes.nixosModules.${system}.raw-kube-proxy-certificate
+            nixos-kubernetes.nixosModules.${system}.raw-kube-proxy
+            nixos-kubernetes.nixosModules.${system}.raw-kube-scheduler
+            nixos-kubernetes.nixosModules.${system}.raw-kubelet-certificate
+            nixos-kubernetes.nixosModules.${system}.raw-kubelet
           ];
         };
 
@@ -72,7 +82,7 @@
           #system = hostConfig.system or "x86_64-linux";
           modules = [
             ./reno.nix
-            nix-ld.nixosModules.nix-ld
+#            nix-ld.nixosModules.nix-ld
           ];
         };
         euler = nixpkgs.lib.nixosSystem {
@@ -85,16 +95,22 @@
           #system = hostConfig.system or "x86_64-linux";
           modules = [
             ./tray.nix
-            nix-ld.nixosModules.nix-ld
+#            nix-ld.nixosModules.nix-ld
           ];
         };
-        thales = pkgs.lib.nixosSystem {
-          system = "x86_64-linux";
-          #system = hostConfig.system or "x86_64-linux";
-          modules = [
-            ./thales.nix
-            nix-ld.nixosModules.nix-ld
-          ];
+        # thales = pkgs.lib.nixosSystem {
+        #   system = "x86_64-linux";
+        #   #system = hostConfig.system or "x86_64-linux";
+        #   modules = [
+        #     ./thales.nix
+#            nix-ld.nixosModules.nix-ld
+        #   ];
+        # };
+      };
+      homeConfigurations = {
+        maricruz = home-manager.lib.homeManagerConfiguration {
+          inherit pkgs;
+          modules = [ ./home-manager/chous.nix ];
         };
       };
     };

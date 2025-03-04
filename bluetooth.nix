@@ -7,10 +7,4 @@
     pavucontrol
     pulseaudioFull
   ];
-
-  nixpkgs.config = {
-    packageOverrides = pkgs: {
-      bluez = pkgs.bluez5;
-    };
-  };
 }

@@ -16,7 +16,7 @@
       shared-mime-info
       simplescreenrecorder
       uvccapture
-      tilda
+      # tilda
       tmux
       tmuxinator
       xcompmgr

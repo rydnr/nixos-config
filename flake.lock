@@ -23,81 +23,61 @@
         ]
       },
       "locked": {
-        "lastModified": 1716736760,
-        "narHash": "sha256-h3RmnNknKYtVA+EvUSra6QAwfZjC2q1G8YA7W0gat8Y=",
+        "lastModified": 1739757849,
+        "narHash": "sha256-Gs076ot1YuAAsYVcyidLKUMIc4ooOaRGO0PqTY7sBzA=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "5d151429e1e79107acf6d06dcc5ace4e642ec239",
+        "rev": "9d3d080aec2a35e05a15cedd281c2384767c2cfe",
         "type": "github"
       },
       "original": {
         "owner": "nix-community",
+        "ref": "release-24.11",
         "repo": "home-manager",
-        "type": "github"
-      }
-    },
-    "nix-ld": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1701153607,
-        "narHash": "sha256-h+odOVyiGmEERMECoFOj5P7FPiMR8IPRzroFA4sKivg=",
-        "owner": "Mic92",
-        "repo": "nix-ld",
-        "rev": "bf5aa84a713c31d95b4307e442e966d6c7fd7ae7",
-        "type": "github"
-      },
-      "original": {
-        "owner": "Mic92",
-        "repo": "nix-ld",
         "type": "github"
       }
     },
     "nixos-kubernetes": {
       "inputs": {
         "flake-utils": "flake-utils",
-        "nixos": [
+        "nixpkgs": [
           "nixpkgs"
         ]
       },
       "locked": {
-        "lastModified": 1716715707,
-        "narHash": "sha256-FuAbd8OMzTndQfM+bsq6hEz8v+alpg3ILtyCjwDWPi4=",
+        "lastModified": 1721055640,
+        "narHash": "sha256-qBhCsXA5ED+k4y6IeMIqMW6yS9J0/k8Fo16tUIqXGKI=",
         "owner": "rydnr",
         "repo": "nixos-kubernetes",
-        "rev": "38749a47cd1bac59dc004d833f134e6c6cb14caa",
+        "rev": "89c5331743a2c12c13ef2615f2cb8064bb9c5d81",
         "type": "github"
       },
       "original": {
         "owner": "rydnr",
-        "ref": "test-22",
+        "ref": "test-291",
         "repo": "nixos-kubernetes",
         "type": "github"
       }
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1716633019,
-        "narHash": "sha256-xim1b5/HZYbWaZKyI7cn9TJCM6ewNVZnesRr00mXeS4=",
+        "lastModified": 1741080703,
+        "narHash": "sha256-5uT68Wo4Yy92rY6goalEAVEO5v6lqEvQ4zIUJSN2ajE=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "9d29cd266cebf80234c98dd0b87256b6be0af44e",
+        "rev": "3969161bed913e109cd4148a8d93d91a1fb932ca",
         "type": "github"
       },
       "original": {
         "owner": "NixOS",
-        "ref": "nixos-23.11",
         "repo": "nixpkgs",
+        "rev": "3969161bed913e109cd4148a8d93d91a1fb932ca",
         "type": "github"
       }
     },
     "root": {
       "inputs": {
         "home-manager": "home-manager",
-        "nix-ld": "nix-ld",
         "nixos-kubernetes": "nixos-kubernetes",
         "nixpkgs": "nixpkgs"
       }

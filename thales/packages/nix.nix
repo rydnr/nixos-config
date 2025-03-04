@@ -10,6 +10,6 @@
     nix-index
     nix-prefetch-git
     nix-serve # cache local builds
-    nixfmt
+    nixfmt-classic
   ];
 }

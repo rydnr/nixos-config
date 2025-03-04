@@ -12,6 +12,8 @@
       awscli
       #    aws_shell
       #    aws-sam-cli
+      azure-cli
+      azure-functions-core-tools
       bc
       bind
       binutils-unwrapped
@@ -26,8 +28,8 @@
       direnv
       dnsmasq
       dnsperf
-      ec2_api_tools
-      ec2_ami_tools
+      ec2-api-tools
+      ec2-ami-tools
       efibootmgr
       eksctl
       elvish
@@ -56,7 +58,7 @@
       mailutils
       mcron
       mutt
-      ngrok
+#      ngrok
       nix-index
       nmap
       nox
@@ -72,7 +74,12 @@
       pkg-config
       #    postfix
       postgresql
-      # postman
+      postman
+#      pulumi
+#      pulumi-bin
+#      pulumi-esc
+#      pulumictl
+      pulumiPackages.pulumi-language-python
       qemu
       redis
       robo3t

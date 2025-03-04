@@ -4,16 +4,18 @@
   environment.systemPackages = with pkgs; [
     ant
     eclipses.eclipse-sdk
-    # try me again!    ecj
+    jdt-language-server
+    # ecj
     jdk
+    jetbrains.idea-ultimate
     graalvm-ce
     gradle
     grails
     groovy
     maven
     #    oraclejdk
-    openjdk11
-    openjdk8
+    openjdk17
+    vscode
   ];
 
   nixpkgs.config = {
@@ -21,6 +23,6 @@
   };
   programs.java = {
     enable = true;
-    package = pkgs.openjdk11;
+    package = pkgs.openjdk17;
   };
 }

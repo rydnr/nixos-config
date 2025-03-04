@@ -3,9 +3,6 @@
 {
   # Enable the X11 windowing system.
   services.xserver = {
-    displayManager = {
-      defaultSession = "none+xmonad";
-    };
 
     windowManager = {
       xmonad = {

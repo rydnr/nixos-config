@@ -22,7 +22,7 @@
     python3Packages.pygments
     python3Packages.sphinx
 #    scribusUnstable
-    xournal
+#    xournalpp
 #    yacreader
 #    xpdf
     zotero

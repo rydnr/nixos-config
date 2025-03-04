@@ -2,12 +2,13 @@
 
 {
   specialisation = {
-    on-the-go.configuration = {
+    onTheGo.configuration = {
       system.nixos.tags = [ "on-the-go" ];
       hardware.nvidia = {
         prime.offload.enable = lib.mkForce true;
         prime.offload.enableOffloadCmd = lib.mkForce false;
         prime.sync.enable = lib.mkForce false;
+        # datacenter.enable = lib.mkForce true;
       };
 #      boot.blacklistedKernelModules = lib.mkForce [ "pcspkr" "padlock_aes" "vboxsf" "vboxnetflt" "vboxnetadp" "vboxdrv" "nouveau" ];
 #      boot.extraModulePackages = lib.mkForce [
@@ -41,7 +42,7 @@
 
       services.xserver = lib.mkForce {
         enable = true;
-        videoDrivers = [ "amdgpu" ];
+        videoDrivers = [ "amdgpu" "nvidia" ];
         exportConfiguration = true;
         xrandrHeads = [
           { output = "eDP"; primary = true; } # laptop

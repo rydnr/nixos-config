@@ -8,7 +8,6 @@
       corefonts
       dejavu_fonts
       dina-font
-      dina-font-pcf
       dosemu_fonts
       emacs-all-the-icons-fonts
       etBook
@@ -22,7 +21,6 @@
       freefont_ttf
       gohufont
       google-fonts
-      gtk2fontsel
       gyre-fonts
       hack-font
       inconsolata
@@ -54,6 +52,7 @@
       #            perlPackages.FontTTF
       powerline-fonts
       proggyfonts
+      rxvt-unicode-plugins.font-size
       soundfont-fluid
       source-code-pro
       source-sans-pro
@@ -67,7 +66,6 @@
       ucs-fonts
       unifont
       unifont_upper
-      urxvt_font_size
       # broken    vistafonts
       xfontsel
       xlsfonts
@@ -119,7 +117,7 @@
   console.font = "${pkgs.terminus_font}/share/consolefonts/ter-u28n.psf.gz";
   environment.variables = {
     GDK_SCALE = "2";
-    GDK_DPI_SCALE = "0.5";
+    GDK_DPI_SCALE = "1";
     #        _JAVA_OPTIONS = "-Dsun.java2d.uiScale=2";
   };
 }

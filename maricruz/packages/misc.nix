@@ -3,8 +3,8 @@
   # $ nix-env -qaP | grep wget
   environment.systemPackages = with pkgs; [
     afuse
-    alsaPlugins
-    alsaPluginWrapper
+    alsa-plugins
+    alsa-plugins-wrapper
     anki
     #    autofs5
     autossh
@@ -39,12 +39,11 @@
     i3minator
     i3status
     inxi
-    jack2Full
+    jack2
     imagemagick
     lame
     ledger
     libselinux
-    libsemanage
     libsepol
     lsdvd
     maildrop
@@ -62,7 +61,7 @@
     pavucontrol
     psmisc
     pulseaudioFull
-    python3Packages.youtube-dl
+    # python3Packages.youtube-dl #insecure
     qjackctl
     ranger
     sabnzbd
@@ -72,7 +71,7 @@
     stalonetray
     synergy
     #    taffybar
-    transcode
+    # transcode
     unrar
     v4l-utils
     vlc

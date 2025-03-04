@@ -13,8 +13,7 @@
     python3Packages.isort
     python3Packages.jsbeautifier
     python3Packages.jsondiff
-    python3Packages.Keras
-    python3Packages.nose
+    #python3Packages.Keras
     python3Packages.pip
     pipenv
     poetry

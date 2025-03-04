@@ -9,7 +9,7 @@
         vterm
         exwm
         emacsql
-        emacsql-sqlite
+#        emacsql-sqlite
         pkgs.libvterm
         pkgs.clang-tools
       ]))

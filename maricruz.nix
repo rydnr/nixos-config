@@ -5,6 +5,7 @@
     ./bluetooth.nix
     ./cachix/nix-community.nix
     ./maricruz/custom-flags.nix
+    ./maricruz/development.nix
     ./maricruz/fonts.nix
     ./maricruz/packages/3d-printing.nix
     ./maricruz/packages/blockchain.nix
@@ -14,7 +15,7 @@
     ./maricruz/packages/editors.nix
     ./maricruz/packages/gamedev.nix
     ./maricruz/packages/java.nix
-    ./maricruz/packages/jupyter.nix
+#    ./maricruz/packages/jupyter.nix
     ./maricruz/packages/languages.nix
     ./maricruz/packages/latex.nix
     ./maricruz/packages/messaging.nix
@@ -35,17 +36,28 @@
     ./maricruz/private/packages.nix
     ./maricruz/private/power.nix
     ./maricruz/private/services/docker.nix
-    ./maricruz/private/services/kubernetes.nix
+#    ./maricruz/private/services/kubernetes.nix
+#    ./maricruz/private/services/raw-kubernetes-ca.nix
+#    ./maricruz/private/services/raw-kube-apiserver.nix
+#    ./maricruz/private/services/raw-kube-controller-manager.nix
+#    ./maricruz/private/services/raw-kube-proxy-certificate.nix
+#    ./maricruz/private/services/raw-kube-proxy.nix
+#    ./maricruz/private/services/raw-kube-scheduler.nix
+#    ./maricruz/private/services/raw-kubelet-certificate.nix
+#    ./maricruz/private/services/raw-kubelet.nix
     ./maricruz/private/services/openvpn.nix
     ./maricruz/private/services/xserver/common.nix
-    ./maricruz/private/services/xserver/xmonad.nix
+#    ./maricruz/private/services/xserver/xmonad.nix
+    ./maricruz/private/services/xserver/i3.nix
     ./maricruz/multi-screens.nix
+    ./maricruz/security.nix
     ./maricruz/specialisation.nix
     # PRIVATE_SERVICES_XSERVER
     # ./maricruz/single-screen.nix
-    # ./maricruz/multi-screens.nix
+    ./maricruz/multi-screens.nix
     ./maricruz/services/dunst.nix
     ./maricruz/services/libvirtd.nix
+    ./maricruz/services/pipewire.nix
     ./maricruz/services/redshift.nix
     ./maricruz/services/swayidle.nix
     ./maricruz/services/udiskie.nix
@@ -92,7 +104,7 @@
     ./services/samba.nix
     ./services/ssh.nix
     ./services/trezord.nix
-    ./services/unclutter.nix
+#    ./services/unclutter.nix
     ./services/upower.nix
     ./services/urxvtd.nix
     ./services/vsftpd.nix
