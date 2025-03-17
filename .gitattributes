@@ -11,7 +11,12 @@ euler/private/configs/* filter=git-crypt diff=git-crypt
 euler/private/packages/* filter=git-crypt diff=git-crypt
 euler/private/services/* filter=git-crypt diff=git-crypt
 euler/private/xserver/* filter=git-crypt diff=git-crypt
-maricruz/private/* filter=git-crypt diff=git-crypt
+archvile/private/* filter=git-crypt diff=git-crypt
+archvile/private/configs/* filter=git-crypt diff=git-crypt
+archvile/private/packages/* filter=git-crypt diff=git-crypt
+archvile/private/services/* filter=git-crypt diff=git-crypt
+archvile/private/xserver/* filter=git-crypt diff=git-crypt
+archvile/private/* filter=git-crypt diff=git-crypt
 maricruz/private/configs/* filter=git-crypt diff=git-crypt
 maricruz/private/packages/* filter=git-crypt diff=git-crypt
 maricruz/private/services/* filter=git-crypt diff=git-crypt
