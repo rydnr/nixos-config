@@ -35,6 +35,13 @@
     let
       system = "x86_64-linux";
       hostConfig = {
+        archvile = {
+          #system = "x86_64-linux";
+          allowUnfree = true;
+          checkMeta = true;
+          cudaSupport = true;
+          warnUndeclaredOptions = true;
+        };
         maricruz = {
           #system = "x86_64-linux";
           allowUnfree = true;
@@ -59,6 +66,16 @@
     in
     {
       nixosConfigurations = {
+        archvile = nixpkgs.lib.nixosSystem rec {
+          # inherit pkgs;
+          system = "x86_64-linux";
+          #system = hostConfig.system or "x86_64-linux";
+          modules = [
+            ./archvile.nix
+#            nix-ld.nixosModules.nix-ld
+          ];
+        };
+
         maricruz = nixpkgs.lib.nixosSystem rec {
           # inherit pkgs;
           system = "x86_64-linux";
@@ -108,6 +125,10 @@
         # };
       };
       homeConfigurations = {
+        archvile = home-manager.lib.homeManagerConfiguration {
+          inherit pkgs;
+          modules = [ ./home-manager/chous.nix ];
+        };
         maricruz = home-manager.lib.homeManagerConfiguration {
           inherit pkgs;
           modules = [ ./home-manager/chous.nix ];
