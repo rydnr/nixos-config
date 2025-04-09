@@ -3,7 +3,8 @@
   # $ nix-env -qaP | grep wget
   environment = {
     systemPackages = with pkgs; [
-      dunst
+      capitaine-cursors #  bibata-cursors, nordzy-cursor-theme, etc.
+    # dunst
       fontconfig
       glxinfo
       guvcview

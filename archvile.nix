@@ -14,6 +14,7 @@
     ./archvile/packages/devops.nix
     ./archvile/packages/editors.nix
     ./archvile/packages/gamedev.nix
+    ./archvile/packages/java.nix
 #    ./archvile/packages/jupyter.nix
     ./archvile/packages/languages.nix
     ./archvile/packages/latex.nix
@@ -56,6 +57,7 @@
     ./archvile/multi-screens.nix
     ./archvile/services/dunst.nix
     ./archvile/services/libvirtd.nix
+    ./archvile/services/libinput.nix
     ./archvile/services/pipewire.nix
     ./archvile/services/redshift.nix
     ./archvile/services/swayidle.nix
