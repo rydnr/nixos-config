@@ -1062,7 +1062,7 @@ alias kubectl-delete-all-evicted="kubectl get pods -o json | jq  '.items[] | sel
 alias myip="curl -s tp.ht | grep 'h1' | sed 's h1  g' | tr -d '</>'"
 alias gitlg='git log --pretty="format:%h %G? %aN  %s"'
 alias nix-default="nix-shell -E 'with import <nixpkgs> { }; callPackage ./default.nix { }'"
-alias nixos-rebuild="sudo nixos-rebuild --install-bootloader --upgrade switch"
+alias nixos-rebuild="pushd ~/github/nixos-config; nixos-rebuild --flake .#$(hostname) switch; popd"
 alias cargo2nix="echo 'Now run rm -f Cargo.lock && cargo generate-lockfile && cargo2nix' && nix develop github:cargo2nix/cargo2nix#bootstrap"
 
 alias dirty-pythoneda="dirty_repos ~/github/pythoneda | sed 's /home/chous/github/pythoneda/  g'"
@@ -1310,6 +1310,7 @@ export CONTESTIA_IFEMA_CLUSTER="ifema-contestia-33-eks-50-clusters-50-all-in-one
         file.".bashrc-privatealiases".text = ''
 alias lp='sudo cat ~/.lp/lastpass | tail -n 1 | xclip'
 alias bw='sudo cat ~/.lp/bitwarden | tail -n 1 | xclip'
+alias 1p='sudo cat ~/.lp/1password | tail -n 1 | xclip'
 alias gitosoco="git config --global user.name josesl; git config --global user.email jose.sanleandro@osoco.es"
 alias gitrydnr="git config --global user.name rydnr; git config --global user.email github@acm-sl.org"
 alias newpassword="head -c63 /dev/random | uuencode -m - | sed -n '2s/=*$//;2p'"
