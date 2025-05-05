@@ -18,20 +18,27 @@
 
         packages = with pkgs; [
           ant
+          devenv
           eclipses.eclipse-sdk
+          emacsPackages.prettier
           java-language-server
           jdk
+          jdt-language-server
           jetbrains.idea-ultimate
+          k9s
           # graalvm-ce
           gradle
           grails
           groovy
           maven
+          mongodb-compass
           openjdk21
+          pcmanfm
+          prettierd
           teams-for-linux
         ];
         
-        #  file.".xmonad/config.hs".source = "/home/chous/.xmonad/xmonad.hs.orig";
+        #  file.".xmonad/config.hs".source = "$HOME/.xmonad/xmonad.hs.orig";
 
         file.".profile".text = ''
 # Source .bashrc if it exists
@@ -48,7 +55,7 @@ alias pythoneda_shared_artifactchanges_dbus="dbus-monitor --system \"type='signa
 
 export TODAY="$(date '+%Y%m%d')"
 #if [[ ! -e ~/.profile.''${TODAY} ]]; then
-  #  rsync -avz /home/chous/.mozilla/firefox/4tv9d8tg.dev.orig/ /home/chous/.mozilla/firefox/4tv9d8tg.dev/
+  #  rsync -avz $HOME/.mozilla/firefox/4tv9d8tg.dev.orig/ $HOME/.mozilla/firefox/4tv9d8tg.dev/
 #  touch ~/.profile.''${TODAY}
 #fi
 #~/bin/xrandr.sh
@@ -74,6 +81,13 @@ export _JAVA_AWT_WM_NONREPARENTING=1
 '';
 
         file.".bashrc-exports".text = ''
+export XCURSOR_SIZE=16
+export GDK_SCALE=1
+export GDK_DPI_SCALE=1.0
+export XFT_DPI=98304
+export QT_AUTO_SCREEN_SCALE_FACTOR=0
+export QT_SCALE_FACTOR=1
+export QT_FONT_DPI=96
 #export JAVA_OPTS="''${JAVA_OPTS} -XX:+CMSClassUnloadingEnabled -XX:+UseConcMarkSweepGC"
 export PYTHONEDA_ROOT_FOLDER=~/github/pythoneda
 export PYTHONEDA_RYDNR_ROOT_FOLDER=~/github/rydnr
@@ -135,11 +149,11 @@ alias nicesvn="ps -ef | grep svn | grep -v grep | awk '{printf(\"sudo renice -19
 
 alias euler="ssh -p 21 euler"
 
-alias mvn="/run/current-system/sw/bin/mvn -T 1C -Dlog4j.configuration=file:///home/chous/github/queryj/queryj-core/src/test/resources/log4j.xml -Dqueryjroot=/home/chous/github/queryj"
+alias mvn="/run/current-system/sw/bin/mvn -T 1C -Dlog4j.configuration=file://$HOME/github/queryj/queryj-core/src/test/resources/log4j.xml -Dqueryjroot=$HOME/github/queryj"
 alias mvn-jde="mvn org.apache.maven.plugin:maven-emacs-plugin:1.2.2:jdee"
 alias mvn-jetty="mvn -Dorg.mortbay.jetty.webapp.parentLoaderPriority=true jetty:run-exploded"
 #alias mvn="mvn -Dlog4j.configuration=file://''${HOME}/.m2/log4j.xml"
-#alias mvn="color_maven -Dlog4j.configuration=file:///home/chous/.m2/log4j.xml"
+#alias mvn="color_maven -Dlog4j.configuration=file://$HOME/.m2/log4j.xml"
 
 alias mvn-jde="mvn org.apache.maven.plugin:maven-emacs-plugin:1.2.2:jdee"
 alias jetty7-debug='java -Xdebug -Xrunjdwp:transport=dt_socket,address=9998,server=y,suspend=y -DDEBUG -Dlog4j.configuration=file://$PWD/log4j-v24.xml -jar start.jar OPTIONS=All'
@@ -148,7 +162,7 @@ alias jdownloader="java -jar ~/.jd/JDownloader.jar"
 alias git-push-queryj="git push origin +refs/heads/ventura24-2_0-stable.local:ventura24-2_0-stable"
 alias kde='sudo cat ~/.lp/kde | tail -n 1 | xclip'
 alias prod='sudo cat ~/.lp/produccion | tail -n 1 | xclip'
-alias music="sshfs chous@euler:/home/chous/realhome/music /home/chous/music/euler"
+alias music="sshfs chous@euler:$HOME/realhome/music $HOME/music/euler"
 alias mvn-deploy="mvn deploy:deploy-file -Durl=http://maven/artifactory/ext-releases-local -DrepositoryId=internal"
 alias checkstyle=~/algs4/bin/checkstyle
 alias findbugs=~/algs4/bin/findbugs
@@ -164,11 +178,11 @@ alias mcollective-build="ACTIVEMQ_CLIENT_PASSWORD=\"ZD2rTwbbmVyUzxbXzZynSEAcsRb7
 alias du-large="du -h | grep -P '^[0-9\.]+G'";
 alias jenkins="cp ~/.ssh/id_rsa-github-jenkins* ~/github/acmsl-jenkins-configs; docker run -d -m=\"1024m\" -c=1 -p 8081:8080 -v ~/github/acmsl-jenkins-configs:/home/jenkins acmsl/jenkins:latest"
 #alias jenkins="cp ~/.ssh/id_rsa-github-jenkins* ~/github/acmsl-jenkins-configs; docker run -d -c=1 -p 8081:8080 -v ~/github/acmsl-jenkins-configs:/home/jenkins acmsl/jenkins:latest"
-alias rt-devdel="git --git-dir \"/home/chous/.RT.git.d/devdel\" --work-tree \"/home/chous/github/devdel\"";
-alias rt-gtd="git --git-dir \"/home/chous/.RT.git.d/gtd\" --work-tree \"/home/chous/github/gtd\"";
-alias rt-JavaCSS="git --git-dir \"/home/chous/.RT.git.d/JavaCSS\" --work-tree \"/home/chous/github/JavaCSS\"";
-alias rt-sails-platzi="git --git-dir \"/home/chous/.RT.git.d/sails-platzi\" --work-tree \"/home/chous/github/sails-platzi\"";
-alias rt-lc="git --git-dir \"/home/chous/.RT.git.d/lc\" --work-tree \"/home/chous/github/lc\"";
+alias rt-devdel="git --git-dir \"$HOME/.RT.git.d/devdel\" --work-tree \"$HOME/github/devdel\"";
+alias rt-gtd="git --git-dir \"$HOME/.RT.git.d/gtd\" --work-tree \"$HOME/github/gtd\"";
+alias rt-JavaCSS="git --git-dir \"$HOME/.RT.git.d/JavaCSS\" --work-tree \"$HOME/github/JavaCSS\"";
+alias rt-sails-platzi="git --git-dir \"$HOME/.RT.git.d/sails-platzi\" --work-tree \"$HOME/github/sails-platzi\"";
+alias rt-lc="git --git-dir \"$HOME/.RT.git.d/lc\" --work-tree \"$HOME/github/lc\"";
 alias startx="sudo /etc/init.d/udev restart; sudo chgrp video /proc/ati; /usr/bin/startx"
 alias ipodenc="~/dev/acmsl/svn/misc/trunk/bin/ipodenc.sh"
 alias sm="wine /mnt/windows/SM\ v7/SM\ v7/Simulator.exe"
@@ -181,7 +195,7 @@ alias mrproper='docker rm $(docker ps -q -f status=exited); docker volume rm $(d
 #alias pharo='docker run -it --rm -v ''${PWD}:/work -v ''${XSOCK}:''${XSOCK} -v ''${XAUTH}:''${XAUTH} -e XAUTHORITY:''${XAUTH} acmsl/pharo:5.0 ';
 #alias gradle='docker run -it --rm -v ''${PWD}:/work -v ''${XSOCK}:''${XSOCK} -v ''${XAUTH}:''${XAUTH} -e XAUTHORITY:''${XAUTH} acmsl/gradle:3.2.1 ';
 alias gradle-packer='export _prj="packer"; mkdir ''${HOME}/.gradle-''${_prj} 2> /dev/null; docker run -it --rm -e DOCKER_HOST="tcp://socat:2375" --link socat:socat -e HOST_PROJECTDIR="''${PWD}" -e HOST_USERHOME="''${HOME}" -e TERM="''${TERM}" -e TERMCAP="''${TERMCAP}" -v ''${PWD}:/work -v ~/.gradle-''${_prj}:/opt/.gradle nexus.osoco.es/osoco/gradle:''${GRADLE_TAG}';
-#alias pharo='docker run -it --rm -v /home/chous/osoco:/work --net=host -v ''${XSOCK}:''${XSOCK} -v ''${XAUTH}:''${XAUTH} -e XAUTHORITY:''${XAUTH} nexus.osoco.es/osoco/gradle-pharo'
+#alias pharo='docker run -it --rm -v $HOME/osoco:/work --net=host -v ''${XSOCK}:''${XSOCK} -v ''${XAUTH}:''${XAUTH} -e XAUTHORITY:''${XAUTH} nexus.osoco.es/osoco/gradle-pharo'
 #source ~/bin/color_maven.zsh
 #alias ssh='ssh-ident'
 #alias term="urxvt --background-expr \"scale keep { again 3600; return load \\\"''${HOME}/wallpapers/$(ls ''${HOME}/wallpapers | sort -R | head -n 1)\\\" }\"";
@@ -1065,11 +1079,11 @@ alias nix-default="nix-shell -E 'with import <nixpkgs> { }; callPackage ./defaul
 alias nixos-rebuild="pushd ~/github/nixos-config; nixos-rebuild --flake .#$(hostname) switch; popd"
 alias cargo2nix="echo 'Now run rm -f Cargo.lock && cargo generate-lockfile && cargo2nix' && nix develop github:cargo2nix/cargo2nix#bootstrap"
 
-alias dirty-pythoneda="dirty_repos ~/github/pythoneda | sed 's /home/chous/github/pythoneda/  g'"
-alias dirty-pythoneda-def="dirty_repos ~/github/pythoneda-def | sed 's /home/chous/github/pythoneda-def/  g'"
-alias dirty-acmsl="dirty_repos ~/github/acmsl/acmsl | sed 's /home/chous/github/acmsl/acmsl/  g'"
-alias dirty-acmsl-def="dirty_repos ~/github/acmsl-def/acmsl | sed 's /home/chous/github/acmsl-def/acmsl/  g'"
-alias dirty-rydnr="dirty_repos ~/github/rydnr | sed 's /home/chous/github/rydnr/  g'"
+alias dirty-pythoneda="dirty_repos ~/github/pythoneda | sed 's $HOME/github/pythoneda/  g'"
+alias dirty-pythoneda-def="dirty_repos ~/github/pythoneda-def | sed 's $HOME/github/pythoneda-def/  g'"
+alias dirty-acmsl="dirty_repos ~/github/acmsl/acmsl | sed 's $HOME/github/acmsl/acmsl/  g'"
+alias dirty-acmsl-def="dirty_repos ~/github/acmsl-def/acmsl | sed 's $HOME/github/acmsl-def/acmsl/  g'"
+alias dirty-rydnr="dirty_repos ~/github/rydnr | sed 's $HOME/github/rydnr/  g'"
 # vim: syntax=sh ts=2 sw=2 sts=4 sr noet
   '';
 
@@ -1319,7 +1333,7 @@ alias rename_spaces="ls | grep ' ' | while read -r f; do mv -v "$f" $(echo "$f}"
 #alias start="(~/toolbox/tor/start-tor-browser &); (/opt/google/chrome/google-chrome &); (emacs &); (pidgin &); (idea.sh &)"
 #alias start="(firefox-bin &); (emacs &); (pidgin &); (docker run -d -p 27017:27017 osoco-registry:5000/osoco/mongodb-openbadges && docker run -d -p 5672:5672 -p 15672:15672 -p 61613:61613 osoco-registry:5000/osoco/rabbitmq-openbadges && docker run -d -p 5432:5432 osoco-registry:5000/osoco/postgresql-openbadges &); (cd ~/osoco/open-badges/game-denormalizer && gradle run &); (cd ~/osoco/open-badges/game-rule-engine && gradle run &); (cd ~/osoco/open-badges/game-rest-api && gradle run &); (cd ~/osoco/open-badges/game-notification && gradle run &); (cd ~/osoco/open-badges/game-webapp && gradle run &)"
 alias start="(firefox &); (emacs &); (pidgin &)"
-alias jrebel="JAVA_TOOL_OPTIONS=\"''${JAVA_TOOL_OPTIONS} -javaagent:/home/chous/toolbox/jrebel/jrebel.jar\""
+alias jrebel="JAVA_TOOL_OPTIONS=\"''${JAVA_TOOL_OPTIONS} -javaagent:$HOME/toolbox/jrebel/jrebel.jar\""
 alias jjk='pushd ~/.jjk/; I=0; while [ $I -lt 6 ]; do I=$((I+1)); ls | sort -R | head -n 5 | xargs mplayer -nosound & done; popd'
 alias bt-phone="sudo hciconfig hci0 name \"(hostname)\"; echo 'connect 50:01:BB:19:61:74' | bluetoothctl"
 alias bt-ipad="sudo hciconfig hci0 name \"(hostname)\"; echo 'connect B8:F6:B1:EA:11:74' | bluetoothctl"
@@ -1328,14 +1342,14 @@ alias bt-i7="sudo hciconfig hci0 name \"(hostname)\"; echo 'connect 20:18:04:07:
 alias bt-soaiy="sudo hciconfig hci0 name \"(hostname)\"; echo 'connect 23:2D:4F:C1:55:92' | bluetoothctl"
 alias bt-aftershokz="sudo hciconfig hci0 name \"(hostname)\"; echo 'connect 20:74:CF:00:21:55' | bluetoothctl"
 alias vb='for m in vbox{drv,netadp,netflt}; do sudo modprobe $m; done; VirtualBox'
-alias mvn-debugn='MAVEN_OPTS="-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,address=4001,server=y,suspend=n -Dqueryjroot=/home/chous/github/queryj" mvn -Dmaven.surefire.debug -Dqueryjroot=/home/chous/github/queryj'
-alias mvn-debug='MAVEN_OPTS="-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,address=4001,server=y,suspend=y -Dqueryjroot=/home/chous/github/queryj" mvn -Dmaven.surefire.debug  -Dqueryjroot=/home/chous/github/queryj'
+alias mvn-debugn='MAVEN_OPTS="-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,address=4001,server=y,suspend=n -Dqueryjroot=$HOME/github/queryj" mvn -Dmaven.surefire.debug -Dqueryjroot=$HOME/github/queryj'
+alias mvn-debug='MAVEN_OPTS="-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,address=4001,server=y,suspend=y -Dqueryjroot=$HOME/github/queryj" mvn -Dmaven.surefire.debug  -Dqueryjroot=$HOME/github/queryj'
 # [ -f ~/.lp/produccion ] && for f in ~/.lp/*; do alias $(basename $f)="dollar='$' echo \"tail -n 1 $f | awk '{printf(\\\"%s\\\", \"\\\$\"0);}'\" | sh | xclip"; done
 
 alias kbd='setxkbmap -v us -variant dvp -option "ctrl:swapcaps,compose:ralt"; xmodmap -e "remove Mod1 = Multi_key"; xmodmap -e "add Mod4 = Multi_key"';# This assumes i3 is using mod4
 alias git_resolve="git st | grep 'both\|added' | awk -F':' '{print \$2}' | xargs vim"
 alias git_resolve_add="git st | grep 'both\|added' | awk -F':' '{print \$2}' | xargs git add"
-alias bloomrpc="docker run -it --rm -v /home/chous/osoco/inditex:/home/bloomrpc -v $XSOCK:$XSOCK -v $XAUTH:$XAUTH -e XAUTHORITY=$XAUTH --ipc=host --net=host osoco-phusion/bloomrpc:1.4.1"
+alias bloomrpc="docker run -it --rm -v $HOME/osoco/inditex:/home/bloomrpc -v $XSOCK:$XSOCK -v $XAUTH:$XAUTH -e XAUTHORITY=$XAUTH --ipc=host --net=host osoco-phusion/bloomrpc:1.4.1"
 alias pharo8='docker run -it --rm --net=host -v ''${PWD}:/home/pharo/work -v $XSOCK:$XSOCK -v $XAUTH:$XAUTH -e XAUTHORITY=$XAUTH --ipc=host --entrypoint=/bin/bash acmsl-phusion/gradle-gtoolkit-texlive:7.1.1-9.0-0.8.805'
 alias gtoolkit='docker run -it --rm --net=host -v ''${PWD}:/home/pharo/work -v $XSOCK:$XSOCK -v $XAUTH:$XAUTH -e XAUTHORITY=$XAUTH --ipc=host --user=pharo acmsl-phusion/gtoolkit:v0.8.270 bash'
 
@@ -1699,6 +1713,7 @@ function licdata-update-client () {
 # i3 configuration
 floating_modifier $mod
 set $mod Mod4
+set $dpi 96
 
 # Workspaces
 set $ws1 1:term
@@ -2422,7 +2437,27 @@ y = 0
 live_config_reload = true
 working_directory = "None"
 '';
+
+    file.".Xresources".text = ''
+Xft.dpi: 96
+'';
+
+    file.".config/gtk-3.0/settings.ini".text = ''
+[Settings]
+gtk-font-name = Sans 10
+gtk-icon-theme-name = Adwaita
+gtk-cursor-theme-size = 16
+gtk-xft-dpi = 98304  # 98304 = 96 * 1024, represents 96 DPI
+'';
+  };
+
+  gtk = {
+    cursorTheme = {
+      package = pkgs.CapitaineCursors;
+      name = "Capitaine-Cursors";
+      size = 24;
     };
+  };
 
   programs = {
     # Let Home Manager install and manage itself.
