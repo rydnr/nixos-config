@@ -1332,7 +1332,7 @@ alias mvn-debugn='MAVEN_OPTS="-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:t
 alias mvn-debug='MAVEN_OPTS="-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,address=4001,server=y,suspend=y -Dqueryjroot=/home/chous/github/queryj" mvn -Dmaven.surefire.debug  -Dqueryjroot=/home/chous/github/queryj'
 # [ -f ~/.lp/produccion ] && for f in ~/.lp/*; do alias $(basename $f)="dollar='$' echo \"tail -n 1 $f | awk '{printf(\\\"%s\\\", \"\\\$\"0);}'\" | sh | xclip"; done
 
-alias kbd='setxkbmap -v us -variant dvp -option "ctrl:swapcaps,compose:ralt";# xmodmap ~/.Xmodmap'
+alias kbd='setxkbmap -v us -variant dvp -option "ctrl:swapcaps,compose:ralt"; xmodmap -e "remove Mod1 = Multi_key"; xmodmap -e "add Mod4 = Multi_key"';# This assumes i3 is using mod4
 alias git_resolve="git st | grep 'both\|added' | awk -F':' '{print \$2}' | xargs vim"
 alias git_resolve_add="git st | grep 'both\|added' | awk -F':' '{print \$2}' | xargs git add"
 alias bloomrpc="docker run -it --rm -v /home/chous/osoco/inditex:/home/bloomrpc -v $XSOCK:$XSOCK -v $XAUTH:$XAUTH -e XAUTHORITY=$XAUTH --ipc=host --net=host osoco-phusion/bloomrpc:1.4.1"
