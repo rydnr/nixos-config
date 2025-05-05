@@ -1356,6 +1356,10 @@ alias gtoolkit='docker run -it --rm --net=host -v ''${PWD}:/home/pharo/work -v $
 # licdata aliases
 alias licdata-new-client='curl -v -X POST -d "{ \"email\": \"$(date '+%Y%m%d%H%M%s')@example.com\" }" -H "Content-Type: application/json" http://localhost:8800/api/clients'
 alias licdata-list-clients="curl -v -H 'Content-Type: application/json' http://localhost:8800/api/clients"
+
+# dmix aliases
+alias dmix-auth-run="pushd ~/gitlab/dmixcloud/auth && MONGO_URI=mongodb://localhost:27017/dmixcloud_db MONGO_PASSWORD=\"whatever\" mvn spring-boot:run"
+alias dmix-auth-debug="pushd ~/gitlab/dmixcloud/auth && MONGO_URI=mongodb://localhost:27017/dmixcloud_db MONGO_PASSWORD=\"whatever\" mvn-debug spring-boot:run"
 # vim: syntax=sh ts=2 sw=2 sts=4 sr noet
 '';
 
