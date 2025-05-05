@@ -20,6 +20,7 @@
     python3Packages.powerline
     # python3Packages.pyenv
     python3Packages.pyflakes
+    python3Packages.pygments
     python3Packages.pytest
     #    python38Packages.python-language-server
     python3Packages.python-lsp-server

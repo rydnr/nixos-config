@@ -6,7 +6,6 @@
       (texlive.combine {
         inherit (texlive)
           algorithms collection-basic
-          # infinite recursion        collection-context
           collection-fontsrecommended collection-fontutils collection-humanities
           collection-langenglish collection-langspanish collection-latex
           collection-latexextra collection-latexrecommended collection-luatex
