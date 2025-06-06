@@ -18,7 +18,6 @@
     #    jetbrains.idea-ultimate-2020_3
     # jetbrains.idea-ultimate
     # jetbrains.pycharm-professional
-    jetbrains.mps
     leo-editor
     vim
     #    vscode

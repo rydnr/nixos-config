@@ -4,7 +4,7 @@
   services.xserver = {
     xkb = {
       layout = "us";
-      options = "eurosign:e,ctrl:swapcaps,terminate:ctrl_alt_bksp";
+      options = "eurosign:e,ctrl:swapcaps,terminate:ctrl_alt_bksp,altwin:meta_alt";
       variant = "dvp";
     };
     dpi = 96;

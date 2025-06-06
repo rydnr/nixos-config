@@ -3,6 +3,7 @@ private/* filter=git-crypt diff=git-crypt
 private/packages/* filter=git-crypt diff=git-crypt
 private/services/* filter=git-crypt diff=git-crypt
 private/configs/* filter=git-crypt diff=git-crypt
+home-manager/* filter=git-crypt diff=git-crypt
 desa/private/* filter=git-crypt diff=git-crypt
 desa/private/packages/* filter=git-crypt diff=git-crypt
 desa/private/services/* filter=git-crypt diff=git-crypt

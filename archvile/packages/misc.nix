@@ -32,7 +32,6 @@
     glibc
     #    go-mtpfs
     google-drive-ocamlfuse
-    googler
     home-manager
     i3
     i3lock
@@ -45,7 +44,6 @@
     ledger
     libselinux
     libsepol
-    lsdvd
     maildrop
     # megasync
     mkvtoolnix
@@ -53,7 +51,6 @@
     newt
     # nixfmt-rfc-style until 24.05
     noisetorch
-    nzbget
     p7zip
     paprefs
     par2cmdline

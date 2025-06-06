@@ -3,9 +3,9 @@
   description = "flake-based NixOS configuration";
   inputs = {
     nixpkgs = {
-      url = "github:NixOS/nixpkgs/3969161bed913e109cd4148a8d93d91a1fb932ca";
+      url = "github:NixOS/nixpkgs/release-25.05";
+      #url = "github:NixOS/nixpkgs/3969161bed913e109cd4148a8d93d91a1fb932ca";
       #url = "github:NixOS/nixpkgs/nixos-unstable";
-      #url = "github:NixOS/nixpkgs/release-24.11";
       #url = "github:NixOS/nixpkgs/24.05";
       #url = "github:NixOS/nixpkgs/nixos-23.11";
     };

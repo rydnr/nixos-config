@@ -79,7 +79,7 @@
 #      pulumi-bin
 #      pulumi-esc
 #      pulumictl
-      pulumiPackages.pulumi-language-python
+      pulumiPackages.pulumi-python
       qemu
       redis
       robo3t

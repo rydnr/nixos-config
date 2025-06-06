@@ -29,6 +29,7 @@
     ./archvile/packages/x11.nix
     ./archvile/private/audio.nix
     ./archvile/private/boot.nix
+    ./archvile/private/configs/kvm.nix
     ./archvile/private/filesystems.nix
     ./archvile/private/hardware.nix
     ./archvile/private/networking.nix
@@ -56,6 +57,7 @@
     # ./archvile/single-screen.nix
     ./archvile/multi-screens.nix
     ./archvile/services/dunst.nix
+    ./archvile/services/k3s.nix
     ./archvile/services/libvirtd.nix
     ./archvile/services/libinput.nix
     ./archvile/services/pipewire.nix
