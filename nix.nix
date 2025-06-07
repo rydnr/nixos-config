@@ -6,7 +6,7 @@
 
   nixpkgs.overlays = [
     (final: prev: {
-      linuxPackages = prev.linuxPackages_6_1;
+      linuxPackages = prev.linuxPackages_latest;
     })
   ];
 }
