@@ -24,7 +24,6 @@
     gitAndTools.git-radar
 #    gitAndTools.git-recent
 #    git-remote-gcrypt
-    gitAndTools.git-stree
     gitAndTools.git2cl
     gitAndTools.gitflow
     gitAndTools.gitFull

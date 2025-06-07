@@ -32,7 +32,6 @@
     glibc
     #    go-mtpfs
     google-drive-ocamlfuse
-    googler
     home-manager
     i3
     i3lock
