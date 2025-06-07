@@ -22,7 +22,6 @@
     ./reno/private/nix.nix
     ./reno/private/services/docker.nix
     ./reno/private/services/kubernetes.nix
-    ./reno/programs.nix
     ./reno/services/libvirtd.nix
     ./security.nix
     ./services/acpid.nix
