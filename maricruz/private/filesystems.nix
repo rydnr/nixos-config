@@ -243,6 +243,12 @@
     options = [ "noauto" "defaults" "rw" ];
   };
 
+  fileSystems."/mnt/crucial" = {
+    device = "/dev/disk/by-uuid/96a93d19-6478-466a-8b7e-6a80da8aa74f";
+    fsType = "ext4";
+    options = [ "noauto" "defaults" "rw" ];
+  };
+
   #  fileSystems."/home/chous/sdg1" = {
   #    device = "/dev/disk/by-uuid/CE4CAF864CAF67C3";
   #    fsType = "auto";
