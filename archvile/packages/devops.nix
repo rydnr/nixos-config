@@ -75,10 +75,6 @@
       #    postfix
       postgresql
       postman
-#      pulumi
-#      pulumi-bin
-#      pulumi-esc
-#      pulumictl
       pulumiPackages.pulumi-python
       qemu
       redis

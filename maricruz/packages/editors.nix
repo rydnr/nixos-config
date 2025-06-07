@@ -1,13 +1,11 @@
 { config, lib, pkgs, ... }: {
-  # List packages installed in system profile. To search by name, run:
-  # $ nix-env -qaP | grep wget
   environment.systemPackages = with pkgs; [
     ((emacsPackagesFor emacs).emacsWithPackages (epkgs:
       with epkgs; [
         melpaStablePackages.pdf-tools
         proof-general
         vterm
-        exwm
+#        exwm
         emacsql
 #        emacsql-sqlite
         pkgs.libvterm
