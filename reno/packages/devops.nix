@@ -9,6 +9,7 @@
       busybox
       cron
       direnv
+      envsubst
       file
       glibc
       hdparm
