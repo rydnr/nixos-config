@@ -74,7 +74,7 @@
       pkg-config
       #    postfix
       postgresql
-      postman
+      # postman
       pulumiPackages.pulumi-python
       qemu
       redis
