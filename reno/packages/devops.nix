@@ -21,6 +21,7 @@
       lshw
       lsof
       ltrace
+      ngrok
       p7zip
       parted
       pciutils
@@ -36,6 +37,10 @@
       which
       zip
       zlib
+    ] ++ lib.optionals config.myCustomFlags.dockerEnabled [
+      docker
+      docker-compose
+      dockfmt
     ] ++ lib.optionals config.myCustomFlags.kubernetesEnabled [
       conntrack-tools
       cri-tools
@@ -43,6 +48,10 @@
       kompose
       kubectl
       kubernetes
+      kubernetes-helm
       socat
-    ];
+    ] ++ lib.optionals config.myCustomFlags.virtualBoxEnabled [
+      virtualbox
+      linuxPackages.virtualbox
+    ] ++ lib.optionals config.myCustomFlags.libvirtdEnabled [ libvirt ];
 }

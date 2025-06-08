@@ -58,7 +58,7 @@
       mailutils
       mcron
       mutt
-#      ngrok
+      ngrok
       nix-index
       nmap
       nox
