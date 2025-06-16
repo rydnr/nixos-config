@@ -4,7 +4,6 @@
   # $ nix-env -qaP | grep wget
   environment.systemPackages = with pkgs; [
     bfg-repo-cleaner
-    gitAndTools.gitFull
     git
     cgit
     gitAndTools.diff-so-fancy
