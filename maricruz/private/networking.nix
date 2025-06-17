@@ -56,6 +56,7 @@
 
       192.168.1.21 maricruz
       fd06:f14a:8df8::15 maricruz
+      fe80::82fa:5bff:fe99:819f maricruz
 
       192.168.1.22 archvile
       fd06:f14a:8df8::17 archvile
@@ -77,6 +78,9 @@
 
       192.168.1.30 printer
       fd06:f14a:8df8::1e printer
+
+      192.168.1.41 maricruzwf
+      fd06:f14a:8df8::29 maricruzwf
     '';
 
     firewall = {
@@ -133,7 +137,7 @@
     useDHCP = false;
 
     interfaces = {
-      enp5s00 = {
+      enp5s0 = {
         useDHCP = false;
         ipv4 = {
           addresses = [{
@@ -158,7 +162,31 @@
           }];
         };
       };
-      wlp2s0 = { useDHCP = true; };
+      wlp2s0 = {
+        useDHCP = false;
+        ipv4 = {
+          addresses = [{
+            address = "192.168.1.41";
+            prefixLength = 24;
+          }];
+          routes = [{
+            address = "0.0.0.0";
+            prefixLength = 0;
+            via = "192.168.1.1";
+          }];
+        };
+        ipv6 = {
+          addresses = [{
+            address = "fd06:f14a:8df8::29";
+            prefixLength = 64;
+          }];
+          routes = [{
+            address = "::";
+            prefixLength = 0;
+            via = "fd06:f14a:8df8::01";
+          }];
+        };
+      };
     };
     nameservers = [
       "8.8.8.8"
