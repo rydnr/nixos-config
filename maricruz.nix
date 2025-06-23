@@ -30,6 +30,7 @@
     ./maricruz/private/audio.nix
     ./maricruz/private/boot.nix
     ./maricruz/private/filesystems.nix
+    ./maricruz/private/gnupg.nix
     ./maricruz/private/hardware.nix
     ./maricruz/private/networking.nix
     ./maricruz/private/packages/machine-learning.nix
