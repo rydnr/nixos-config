@@ -36,7 +36,9 @@
       #    eternal-terminal
       ettercap
       fish
+      gh
       ghostunnel
+      github-runner
       gnupg
       google-cloud-sdk
       google-cloud-sdk-gce

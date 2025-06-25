@@ -10,14 +10,14 @@
       #url = "github:NixOS/nixpkgs/nixos-23.11";
     };
     home-manager = {
-      url = "github:nix-community/home-manager/release-24.11";
+      url = "github:nix-community/home-manager/release-25.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-#    nix-ld = {
-#      url = "github:Mic92/nix-ld";
-      # this line assume that you also have nixpkgs as an input
-#      inputs.nixpkgs.follows = "nixpkgs";
-#    };
+    #    nix-ld = {
+    #      url = "github:Mic92/nix-ld";
+    # this line assume that you also have nixpkgs as an input
+    #      inputs.nixpkgs.follows = "nixpkgs";
+    #    };
     nixos-kubernetes = {
       url = "github:rydnr/nixos-kubernetes/test-291";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -27,112 +27,178 @@
   outputs =
     {
       nixpkgs,
-#      nix-ld,
+      #      nix-ld,
       home-manager,
       nixos-kubernetes,
       ...
     }:
     let
-      system = "x86_64-linux";
-      hostConfig = {
+      hostSettings = {
         archvile = {
-          #system = "x86_64-linux";
+          system = "x86_64-linux";
+          hostName = "archvile";
           allowUnfree = true;
           checkMeta = true;
           cudaSupport = true;
           warnUndeclaredOptions = true;
+          gtk = {
+            fontName = "Fira Sans";
+            iconTheme = "Papirus";
+            iconThemePackageName = "gnome.papirus-icon-theme";
+            cursorTheme = "Bibata-Modern-Ice";
+            cursorThemePackageName = "bibata-cursors-translucent";
+            dpi = 144;
+            tmuxPrefix = "C-v";
+          };
         };
         maricruz = {
-          #system = "x86_64-linux";
+          system = "x86_64-linux";
+          hostName = "maricruz";
           allowUnfree = true;
           checkMeta = true;
           cudaSupport = true;
           warnUndeclaredOptions = true;
+          gtk = {
+            fontName = "Noto Sans";
+            iconTheme = "Adwaita";
+            iconThemePackageName = "adwaita-icon-theme";
+            cursorTheme = "Vanilla-DMZ";
+            cursorThemePackageName = "vanilla-dmz";
+            dpi = 96;
+            tmuxPrefix = "C-m";
+          };
         };
         euler = {
-          #system = "i686-linux";
+          system = "i686-linux";
+          hostName = "euler";
+          gtk = {
+            fontName = "Noto Sans";
+            iconTheme = "Adwaita";
+            iconThemePackageName = "adwaita-icon-theme";
+            cursorTheme = "Vanilla-DMZ";
+            cursorThemePackageName = "vanilla-dmz";
+            dpi = 96;
+            tmuxPrefix = "C-e";
+          };
         };
-      };
-      #hostname = builtins.getEnv "HOSTNAME";
-      pkgs = import nixpkgs {
-        inherit nixpkgs system;
-#        system = "x86_64-linux";
-        config = {
-#          allowUnfree = (hostConfig.${hostname}).allowUnfree or #false;
-          allowUnfree = true;
-          warnUndeclaredOptions = true;
+        reno = {
+          system = "x86_64-linux";
+          hostName = "reno";
+          gtk = {
+            fontName = "Cantarell";
+            iconTheme = "Numix";
+            iconThemePackageName = "gnome.numix-icon-theme";
+            cursorTheme = "Bibata-Modern-Amber";
+            cursorThemePackageName = "bibata-cursors-translucent";
+            dpi = 120;
+            tmuxPrefix = "C-r";
+          };
         };
       };
     in
-    {
-      nixosConfigurations = {
-        archvile = nixpkgs.lib.nixosSystem rec {
-          # inherit pkgs;
-          system = "x86_64-linux";
-          #system = hostConfig.system or "x86_64-linux";
-          modules = [
-            ./archvile.nix
-#            nix-ld.nixosModules.nix-ld
-          ];
-        };
+      {
+        nixosConfigurations = {
+          archvile = nixpkgs.lib.nixosSystem rec {
+            system = hostSettings.archvile.system or "x86_64-linux";
+            modules = [
+              ./archvile.nix
+              #            nix-ld.nixosModules.nix-ld
+              {
+                nixpkgs.config = {
+                  allowUnfree = hostSettings.archvile.allowUnfree or false;
+                  warnUndeclaredOptions = true;
+                };
+              }
+            ];
+          };
 
-        maricruz = nixpkgs.lib.nixosSystem rec {
-          # inherit pkgs;
-          system = "x86_64-linux";
-          #system = hostConfig.system or "x86_64-linux";
-          modules = [
-            ./maricruz.nix
-#            nix-ld.nixosModules.nix-ld
-            nixos-kubernetes.nixosModules.${system}.raw-kubernetes-ca
-            nixos-kubernetes.nixosModules.${system}.raw-kube-apiserver
-            nixos-kubernetes.nixosModules.${system}.raw-kube-controller-manager
-            nixos-kubernetes.nixosModules.${system}.raw-kube-proxy-certificate
-            nixos-kubernetes.nixosModules.${system}.raw-kube-proxy
-            nixos-kubernetes.nixosModules.${system}.raw-kube-scheduler
-            nixos-kubernetes.nixosModules.${system}.raw-kubelet-certificate
-            nixos-kubernetes.nixosModules.${system}.raw-kubelet
-          ];
-        };
+          maricruz = nixpkgs.lib.nixosSystem rec {
+            system = hostSettings.maricruz.system or "x86_64-linux";
+            modules = [
+              ./maricruz.nix
+              #            nix-ld.nixosModules.nix-ld
+              nixos-kubernetes.nixosModules.${system}.raw-kubernetes-ca
+              nixos-kubernetes.nixosModules.${system}.raw-kube-apiserver
+              nixos-kubernetes.nixosModules.${system}.raw-kube-controller-manager
+              nixos-kubernetes.nixosModules.${system}.raw-kube-proxy-certificate
+              nixos-kubernetes.nixosModules.${system}.raw-kube-proxy
+              nixos-kubernetes.nixosModules.${system}.raw-kube-scheduler
+              nixos-kubernetes.nixosModules.${system}.raw-kubelet-certificate
+              nixos-kubernetes.nixosModules.${system}.raw-kubelet
+              {
+                nixpkgs.config = {
+                  allowUnfree = hostSettings.maricruz.allowUnfree or false;
+                  warnUndeclaredOptions = true;
+                };
+              }
+            ];
+          };
 
-        reno = nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";
-          #system = hostConfig.system or "x86_64-linux";
-          modules = [
-            ./reno.nix
-#            nix-ld.nixosModules.nix-ld
-          ];
+          reno = nixpkgs.lib.nixosSystem {
+            system = hostSettings.reno.system or "x86_64-linux";
+            modules = [
+              ./reno.nix
+              #            nix-ld.nixosModules.nix-ld
+              {
+                nixpkgs.config = {
+                  allowUnfree = hostSettings.reno.allowUnfree or false;
+                  warnUndeclaredOptions = true;
+                };
+              }
+            ];
+          };
+          euler = nixpkgs.lib.nixosSystem {
+            system = hostSettings.euler.system or "i686-linux";
+            modules = [
+              ./euler.nix
+              {
+                nixpkgs.config = {
+                  allowUnfree = hostSettings.euler.allowUnfree or false;
+                  warnUndeclaredOptions = true;
+                };
+              }
+            ];
+          };
+          tray = nixpkgs.lib.nixosSystem {
+            system = hostSettings.tray.system or "x86_64-linux";
+            modules = [
+              ./tray.nix
+              #            nix-ld.nixosModules.nix-ld
+              {
+                nixpkgs.config = {
+                  allowUnfree = hostSettings.tray.allowUnfree or false;
+                  warnUndeclaredOptions = true;
+                };
+              }
+            ];
+          };
+          # thales = pkgs.lib.nixosSystem {
+          #   system = hostSettings.thales.system or "x86_64-linux";
+          #   modules = [
+          #     ./thales.nix
+          #            nix-ld.nixosModules.nix-ld
+          #      {
+          #        nixpkgs.config = {
+          #          allowUnfree = hostSettings.thales.allowUnfree or false;
+          #          warnUndeclaredOptions = true;
+          #        };
+          #      }
+          #   ];
+          # };
         };
-        euler = nixpkgs.lib.nixosSystem {
-          system = "i686-linux";
-          #system = hostConfig.system or "x86_64-linux";
-          modules = [ ./euler.nix ];
-        };
-        tray = nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";
-          #system = hostConfig.system or "x86_64-linux";
-          modules = [
-            ./tray.nix
-#            nix-ld.nixosModules.nix-ld
-          ];
-        };
-        # thales = pkgs.lib.nixosSystem {
-        #   system = "x86_64-linux";
-        #   #system = hostConfig.system or "x86_64-linux";
-        #   modules = [
-        #     ./thales.nix
-#            nix-ld.nixosModules.nix-ld
-        #   ];
-        # };
+        homeConfigurations = builtins.mapAttrs
+          (hostName: settings:
+           home-manager.lib.homeManagerConfiguration {
+              pkgs = import nixpkgs {
+                system = settings.system;
+              };
+              extraSpecialArgs = {
+                inherit (settings) hostName gtk;
+              };
+              modules = [ ./home-manager/chous.nix ];
+            }
+          )
+          hostSettings;
       };
-      homeConfigurations = {
-        archvile = home-manager.lib.homeManagerConfiguration {
-          inherit pkgs;
-          modules = [ ./home-manager/chous.nix ];
-        };
-        maricruz = home-manager.lib.homeManagerConfiguration {
-          inherit pkgs;
-          modules = [ ./home-manager/chous.nix ];
-        };
-      };
-    };
+
 }
