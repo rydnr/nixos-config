@@ -3,7 +3,7 @@
 {
   services.nix-serve = {
     enable = true;
-    port = 9999;
+    port = 19999;
   };
 
   # Ensure the service starts after the network is up

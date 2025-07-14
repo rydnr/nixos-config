@@ -1,13 +1,14 @@
 { config, lib, pkgs, ... }: {
-   environment.systemPackages = with pkgs; [
+  environment.systemPackages = with pkgs; [
+    code-cursor
     ((emacsPackagesFor emacs).emacsWithPackages (epkgs:
       with epkgs; [
         melpaStablePackages.pdf-tools
         proof-general
         vterm
-#        exwm
+        #        exwm
         emacsql
-#        emacsql-sqlite
+        #        emacsql-sqlite
         pkgs.libvterm
         pkgs.clang-tools
       ]))
@@ -18,8 +19,7 @@
     # jetbrains.pycharm-professional
     leo-editor
     vim
-    #    vscode
-    #    vscode-utils
+    vscode
   ];
 
   # nixpkgs.overlays = [

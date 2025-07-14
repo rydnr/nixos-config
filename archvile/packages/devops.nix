@@ -3,6 +3,7 @@
   # $ nix-env -qaP | grep wget
   environment.systemPackages = with pkgs;
     [
+      act
       alacritty
       atop
       aircrack-ng
@@ -36,6 +37,7 @@
       #    eternal-terminal
       ettercap
       fish
+      gh
       ghostunnel
       gnupg
       google-cloud-sdk
@@ -74,7 +76,7 @@
       pkg-config
       #    postfix
       postgresql
-      postman
+      # postman
       pulumiPackages.pulumi-python
       qemu
       redis
