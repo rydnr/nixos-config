@@ -18,6 +18,7 @@
     lightdm
     mcomix3
     mplayer
+    papirus-icon-theme
     pencil
     pidgin
     redshift

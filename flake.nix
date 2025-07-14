@@ -44,9 +44,9 @@
           gtk = {
             fontName = "Fira Sans";
             iconTheme = "Papirus";
-            iconThemePackageName = "gnome.papirus-icon-theme";
-            cursorTheme = "Bibata-Modern-Ice";
-            cursorThemePackageName = "bibata-cursors-translucent";
+            iconThemePackageName = "papirus-icon-theme";
+            cursorTheme = "quintom-cursor-theme";
+            cursorThemePackageName = "quintom-cursor-theme";
             dpi = 144;
             tmuxPrefix = "C-v";
           };
