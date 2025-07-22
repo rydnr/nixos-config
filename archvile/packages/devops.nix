@@ -49,6 +49,7 @@
       inetutils
       inotify-tools
       iotop
+      iperf
       isync
       junkie
       keychain

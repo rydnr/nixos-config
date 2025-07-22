@@ -29,6 +29,7 @@
     #    python3Packages.scrapy
     #    python3Packages.svg2tikz
     python3Packages.virtualenv
+    python3Packages.uv
   ];
 }
 
