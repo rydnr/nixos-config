@@ -136,6 +136,9 @@
 
     useDHCP = false;
 
+    defaultGateway  = "192.168.1.1";
+    defaultGateway6 = "fd06:f14a:8df8::01";
+
     interfaces = {
       enp5s0 = {
         useDHCP = false;
@@ -144,21 +147,11 @@
             address = "192.168.1.21";
             prefixLength = 24;
           }];
-          routes = [{
-            address = "0.0.0.0";
-            prefixLength = 0;
-            via = "192.168.1.1";
-          }];
         };
         ipv6 = {
           addresses = [{
             address = "fd06:f14a:8df8::15";
             prefixLength = 64;
-          }];
-          routes = [{
-            address = "::";
-            prefixLength = 0;
-            via = "fd06:f14a:8df8::01";
           }];
         };
       };
@@ -169,28 +162,18 @@
             address = "192.168.1.41";
             prefixLength = 24;
           }];
-          routes = [{
-            address = "0.0.0.0";
-            prefixLength = 0;
-            via = "192.168.1.1";
-          }];
         };
         ipv6 = {
           addresses = [{
             address = "fd06:f14a:8df8::29";
             prefixLength = 64;
           }];
-          routes = [{
-            address = "::";
-            prefixLength = 0;
-            via = "fd06:f14a:8df8::01";
-          }];
         };
       };
     };
     nameservers = [
-      "8.8.8.8"
       "192.168.1.9"
+      "8.8.8.8"
       "fd06:f14a:8df8::09"
       "2001:4860:4860::8888" # Google Public DNS IPv6
       "2001:4860:4860::8844" # Google Public DNS IPv6

@@ -10,6 +10,7 @@
     python3Packages.black
     #    python3Packages.conda
     python3Packages.editorconfig
+    python3Packages.git-filter-repo
     python3Packages.isort
     python3Packages.jsbeautifier
     python3Packages.jsondiff
@@ -27,6 +28,7 @@
     #    python3Packages.scikitlearn
     #    python3Packages.scrapy
     #    python3Packages.svg2tikz
+    python3Packages.uv
     python3Packages.virtualenv
   ];
 }

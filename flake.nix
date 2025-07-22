@@ -188,7 +188,7 @@
         };
         homeConfigurations = builtins.mapAttrs
           (hostName: settings:
-           home-manager.lib.homeManagerConfiguration {
+           home-manager.lib.homeManagerConfiguration rec {
               pkgs = import nixpkgs {
                 system = settings.system;
               };

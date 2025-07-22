@@ -2,6 +2,7 @@
 
   programs = {
     adb.enable = lib.mkDefault true;
+    dconf.enable = lib.mkDefault true;
     nix-ld.enable = true;
     zsh = {
       autosuggestions.enable = true;
