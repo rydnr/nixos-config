@@ -4,6 +4,7 @@
   environment.systemPackages = with pkgs;
     [
       act
+      age
       alacritty
       atop
       aircrack-ng
@@ -86,6 +87,8 @@
       s3fs
       screen
       socat
+      sops
+      ssh-to-age
       sshfs
       starship
       sysstat

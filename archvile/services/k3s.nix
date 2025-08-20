@@ -3,8 +3,8 @@
     enable = true;
     role = "server";
     extraFlags = toString [
-      "--disable traefik"  # Disable default Traefik if you plan to use another ingress
-      "--disable servicelb"  # Disable built-in service load balancer
+ #     "--disable traefik"  # Disable default Traefik if you plan to use another ingress
+ #     "--disable servicelb"  # Disable built-in service load balancer
     ];
   };
 
