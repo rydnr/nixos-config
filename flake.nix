@@ -64,7 +64,7 @@
             cursorTheme = "Vanilla-DMZ";
             cursorThemePackageName = "vanilla-dmz";
             dpi = 96;
-            tmuxPrefix = "C-m";
+            tmuxPrefix = "C-a";
           };
         };
         euler = {

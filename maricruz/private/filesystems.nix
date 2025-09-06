@@ -1,9 +1,9 @@
 { config, lib, pkgs, ... }: {
   fileSystems."/boot" = {
     #      device = "/dev/disk/by-uuid/b7ad3ee3-425d-4fee-ac65-45674015d64f";
-    device = "/dev/nvme0n1p6";
+    device = "/dev/nvme1n1p6";
     fsType = "vfat";
-    options = [ "auto" ];
+    options = [ "noauto" ];
   };
   fileSystems."/" = {
     device = "/dev/gigabyte/root";
