@@ -52,7 +52,7 @@
       iotop
       iperf
       isync
-      junkie
+      # junkie
       keychain
       kind
       libguestfs
@@ -74,7 +74,7 @@
       packer
       parted
       pciutils
-      pinentry
+      pinentry-curses
       pkg-config
       #    postfix
       postgresql
@@ -91,6 +91,7 @@
       ssh-to-age
       sshfs
       starship
+      stern
       sysstat
       tcpdump
       # terraform

@@ -8,7 +8,7 @@
     # ecj
     jdk
     jetbrains.idea-ultimate
-    graalvm-ce
+    graalvmPackages.graalvm-ce
     gradle
     grails
     groovy

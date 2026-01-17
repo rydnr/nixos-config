@@ -20,11 +20,10 @@
       haskellPackages.yeganesh
       libnotify # Notification client
       lxqt.lxqt-notificationd
-      mpc_cli
+      mpc
       scrot # CLI screen capture utility
       stack
       trayer # A system tray for use with xmonad
-      xbrightness
       xcompmgr # X compositing manager
       xorg.xrandr # CLI to X11 RandR extension
       xsettingsd

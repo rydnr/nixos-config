@@ -4,10 +4,10 @@
   environment.systemPackages = with pkgs;
     [
       #    libmoz2d
-      #    pharo
+      pharo
       #    pharo-cog32
       #   pharo-spur32
-      pharo-spur64
+      # pharo-spur64
       # pharo-launcher
     ];
 }

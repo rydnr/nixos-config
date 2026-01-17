@@ -1,1 +1,3 @@
-{ config, pkgs, ... }: { services.logind.lidSwitch = "ignore"; }
+{ config, pkgs, ... }: {
+  services.logind.settings.Login.HandleLidSwitch = "ignore";
+}

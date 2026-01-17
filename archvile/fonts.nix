@@ -62,7 +62,7 @@
       # 404
       #           textfonts
       ttmkfdir
-      ubuntu_font_family
+      ubuntu-classic
       ucs-fonts
       unifont
       unifont_upper

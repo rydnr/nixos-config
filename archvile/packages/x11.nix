@@ -3,15 +3,15 @@
   # $ nix-env -qaP | grep wget
   environment = {
     systemPackages = with pkgs; [
-      capitaine-cursors #  bibata-cursors, nordzy-cursor-theme, etc.
-    # dunst
+      capitaine-cursors # bibata-cursors, nordzy-cursor-theme, etc.
+      # dunst
       fontconfig
-      glxinfo
       guvcview
       hicolor-icon-theme # icons for thunar
       i3
       inotify-tools
       lxappearance
+      mesa-demos
       plymouth
       remmina
       screen

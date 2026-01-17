@@ -50,7 +50,7 @@
       inotify-tools
       iotop
       isync
-      junkie
+      # junkie
       keychain
       kind
       libguestfs
@@ -72,7 +72,7 @@
       packer
       parted
       pciutils
-      pinentry
+      pinentry-curses
       pkg-config
       #    postfix
       postgresql
@@ -87,6 +87,7 @@
       socat
       sshfs
       starship
+      stern
       sysstat
       tcpdump
       # terraform

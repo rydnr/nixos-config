@@ -16,7 +16,7 @@
     inkscape
     libreoffice
     lightdm
-    mcomix3
+    mcomix
     mplayer
     papirus-icon-theme
     pencil

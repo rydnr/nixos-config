@@ -3,14 +3,15 @@
   # $ nix-env -qaP | grep wget
   environment = {
     systemPackages = with pkgs; [
-      dunst
+      # dunst
       fontconfig
-      glxinfo
       guvcview
       hicolor-icon-theme # icons for thunar
       i3
       inotify-tools
       lxappearance
+      mesa-demos
+      plymouth
       remmina
       screen
       shared-mime-info

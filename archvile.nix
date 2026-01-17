@@ -122,6 +122,7 @@
     # ./packages/cute-vpn-for-smarties.nix
     # ./packages/firefox52esr.nix
     # ./packages/openssl-insecure.nix
+    ./packages/python-insecure.nix
     # ./private/clients.nix
     # ./private/configs/xmonad.nix
     # ./private/font-size.nix
