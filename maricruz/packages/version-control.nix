@@ -5,7 +5,7 @@
     bfg-repo-cleaner
     git
     cgit
-    diff-so-fance
+    diff-so-fancy
     git-annex-remote-rclone
     git-cola
     git-crypt
