@@ -7,6 +7,7 @@
     ./archvile/custom-flags.nix
     ./archvile/development.nix
     ./archvile/fonts.nix
+    ./archvile/packages/1password.nix
     ./archvile/packages/3d-printing.nix
     ./archvile/packages/blockchain.nix
     ./archvile/packages/browsers.nix

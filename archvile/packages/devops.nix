@@ -9,6 +9,7 @@
       atop
       aircrack-ng
       #    anydesk
+      argocd
       arping
       arpoison
       awscli
