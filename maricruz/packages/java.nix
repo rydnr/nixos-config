@@ -6,7 +6,7 @@
     eclipses.eclipse-sdk
     jdt-language-server
     # ecj
-    jdk
+    jdk25
     jetbrains.idea-ultimate
     graalvmPackages.graalvm-ce
     gradle
@@ -14,7 +14,7 @@
     groovy
     maven
     #    oraclejdk
-    openjdk17
+    openjdk25
     vscode
   ];
 
@@ -23,6 +23,6 @@
   };
   programs.java = {
     enable = true;
-    package = pkgs.openjdk17;
+    package = pkgs.openjdk25;
   };
 }
