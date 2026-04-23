@@ -27,6 +27,7 @@
     ./maricruz/packages/version-control.nix
     ./maricruz/packages/wayland.nix
     ./maricruz/packages/x11.nix
+    ./maricruz/private/agents.nix
     ./maricruz/private/audio.nix
     ./maricruz/private/boot.nix
     ./maricruz/private/filesystems.nix
@@ -61,7 +62,7 @@
     ./maricruz/services/pipewire.nix
     ./maricruz/services/redshift.nix
     ./maricruz/services/swayidle.nix
-#    ./maricruz/services/udiskie.nix
+    #    ./maricruz/services/udiskie.nix
     ./packages/android.nix
     ./packages/audio.nix
     ./packages/bash.nix

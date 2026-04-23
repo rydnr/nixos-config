@@ -20,8 +20,9 @@
       bc
       bind
       binutils-unwrapped
-      # 404    burpsuite
       brev-cli
+      bubblewrap
+      burpsuite
       bustle
       # cloud-sql-proxy
       cntlm

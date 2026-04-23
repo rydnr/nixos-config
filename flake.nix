@@ -27,6 +27,10 @@
       inputs.nixpkgs.follows = "nixpkgs";
       url = "github:Mic92/sops-nix";
     };
+    hermes-agent = {
+      inputs.nixpkgs.follows = "nixpkgs";
+      url = "github:NousResearch/hermes-agent";
+    };
   };
 
   outputs = { nixpkgs,

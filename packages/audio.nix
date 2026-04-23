@@ -12,10 +12,4 @@
     #    perlPackages.MusicBrainzDiscID
     #    perlPackages.MusicBrainz
   ];
-
-  nixpkgs.config = {
-    packageOverrides = super: {
-      mplayer = super.mplayer.override { pulseSupport = true; };
-    };
-  };
 }

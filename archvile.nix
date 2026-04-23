@@ -37,6 +37,8 @@
     ./archvile/private/packages/machine-learning.nix
     ./archvile/private/packages.nix
     ./archvile/private/power.nix
+    ./archvile/private/users.nix
+    ./archvile/private/agents.nix
     ./archvile/private/services/docker.nix
     #    ./archvile/private/services/kubernetes.nix
     #    ./archvile/private/services/raw-kubernetes-ca.nix
@@ -123,7 +125,7 @@
     # ./packages/cute-vpn-for-smarties.nix
     # ./packages/firefox52esr.nix
     # ./packages/openssl-insecure.nix
-    ./packages/python-insecure.nix
+    # ./packages/python-insecure.nix
     # ./private/clients.nix
     # ./private/configs/xmonad.nix
     # ./private/font-size.nix
