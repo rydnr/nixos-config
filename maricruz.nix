@@ -67,6 +67,7 @@
     ./packages/audio.nix
     ./packages/bash.nix
     ./packages/crypto.nix
+    ./packages/devops.nix
     ./packages/music.nix
     ./packages/nix.nix
     ./packages/nodejs.nix
