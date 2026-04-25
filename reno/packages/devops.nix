@@ -26,7 +26,7 @@
       p7zip
       parted
       pciutils
-      pinentry
+      pinentry-curses
       psmisc
       sysstat
       tmux
