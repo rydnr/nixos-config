@@ -31,7 +31,6 @@
     ./services/nix-serve.nix
     ./services/ssh.nix
     ./system.nix
-    ./unfree.nix
   ];
   nix.settings = {
     extra-substituters = [
@@ -41,8 +40,7 @@
 
     # Verify these are the same keys as published on
     # - https://app.cachix.org/cache/llama-cpp
-    extra-trusted-public-keys = [
-      "llama-cpp.cachix.org-1:H75X+w83wUKTIPSO1KWy9ADUrzThyGs8P5tmAbkWhQc="
-    ];
+    extra-trusted-public-keys =
+      [ "llama-cpp.cachix.org-1:H75X+w83wUKTIPSO1KWy9ADUrzThyGs8P5tmAbkWhQc=" ];
   };
 }

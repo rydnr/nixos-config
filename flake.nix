@@ -88,6 +88,7 @@
         reno = {
           system = "x86_64-linux";
           hostName = "reno";
+          allowUnfree = true;
           gtk = {
             fontName = "Cantarell";
             iconTheme = "Numix";
