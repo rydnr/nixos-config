@@ -87,6 +87,7 @@
     ./private/nix.nix
     ./private/services/apache.nix
     ./private/services/autofs.nix
+    ./private/services/free-claude-code.nix
     ./private/services/postfix.nix
     ./private/services/remove-rt-locks.nix
     ./private/services/ssmtp.nix
