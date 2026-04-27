@@ -31,6 +31,13 @@ in rec {
         description = "The description of the Claude user";
         default = "Claude Code agent";
       };
+      version = lib.mkOption {
+        type = lib.types.nullOr lib.types.str;
+        default = null;
+        description =
+          "Version/commit of Claude Code (e.g. '2.1.120' or '002de6e')";
+        example = "2.1.120";
+      };
       home = lib.mkOption {
         type = lib.types.path;
         description = "The home folder of the Claude user";
@@ -49,8 +56,10 @@ in rec {
       command = lib.mkOption {
         type = lib.types.str;
         description = "The command to run Claude Code";
-        default =
-          "${pkgs.nix}/bin/nix --extra-experimental-features 'nix-command flakes' run --refresh github:sadjow/claude-code-nix --";
+        default = let
+          ref = lib.optionalString (cfg.claude.version != null)
+            "/${cfg.claude.version}";
+        in "${pkgs.nix}/bin/nix --extra-experimental-features 'nix-command flakes' run --refresh github:sadjow/claude-code-nix${ref} --";
       };
       environmentFiles = lib.mkOption {
         type = lib.types.listOf lib.types.path;
@@ -139,6 +148,12 @@ in rec {
         description = "The description of the Codex agent";
         default = "Codex agent";
       };
+      version = lib.mkOption {
+        type = lib.types.nullOr lib.types.str;
+        default = null;
+        description = "Version/commit of Codex (e.g. '0.125.0' or 'fc382be')";
+        example = "0.125.0";
+      };
       home = lib.mkOption {
         type = lib.types.path;
         description = "The home folder of the Codex user";
@@ -157,8 +172,10 @@ in rec {
       command = lib.mkOption {
         type = lib.types.str;
         description = "The command to run Codex";
-        default =
-          "${pkgs.nix}/bin/nix --extra-experimental-features 'nix-command flakes' run --refresh github:sadjow/codex-cli-nix --";
+        default = let
+          ref = lib.optionalString (cfg.codex.version != null)
+            "/${cfg.codex.version}";
+        in "${pkgs.nix}/bin/nix --extra-experimental-features 'nix-command flakes' run --refresh github:sadjow/codex-cli-nix${ref} --";
       };
       environmentFiles = lib.mkOption {
         type = lib.types.listOf lib.types.path;
@@ -265,7 +282,7 @@ in rec {
       command = lib.mkOption {
         type = lib.types.str;
         description = "The command to run Gemini";
-        default = "${pkgs.gemini-cli}/bin/gemini-cli --";
+        default = "${pkgs.gemini-cli}/bin/gemini --";
       };
       environmentFiles = lib.mkOption {
         type = lib.types.listOf lib.types.path;
@@ -354,6 +371,12 @@ in rec {
         description = "The description of the Pi agent";
         default = "Pi agent";
       };
+      version = lib.mkOption {
+        type = lib.types.nullOr lib.types.str;
+        default = null;
+        description = "Version/commit of PI (e.g. '0.70.2' or '422d139')";
+        example = "0.70.2";
+      };
       home = lib.mkOption {
         type = lib.types.path;
         description = "The home folder of the Pi user";
@@ -372,8 +395,10 @@ in rec {
       command = lib.mkOption {
         type = lib.types.str;
         description = "The command to run Pi";
-        default =
-          "${pkgs.nix}/bin/nix --extra-experimental-features 'nix-command flakes' run --refresh github:lukasl-dev/pi-mono.nix --";
+        default = let
+          ref =
+            lib.optionalString (cfg.pi.version != null) "/${cfg.pi.version}";
+        in "${pkgs.nix}/bin/nix --extra-experimental-features 'nix-command flakes' run --refresh github:lukasl-dev/pi-mono.nix${ref} --";
       };
       environmentFiles = lib.mkOption {
         type = lib.types.listOf lib.types.path;
@@ -462,6 +487,13 @@ in rec {
         description = "The description of the Hermes agent";
         default = "Hermes agent";
       };
+      version = lib.mkOption {
+        type = lib.types.nullOr lib.types.str;
+        default = null;
+        description =
+          "Version/commit of hermes-agent to use (e.g. 'hermes/hermes-46839e2f' or 'v2026.4.23')";
+        example = "v2026.4.23";
+      };
       home = lib.mkOption {
         type = lib.types.path;
         description = "The home folder of the Hermes user";
@@ -480,8 +512,10 @@ in rec {
       command = lib.mkOption {
         type = lib.types.str;
         description = "The command to run Hermes";
-        default =
-          "${pkgs.nix}/bin/nix --extra-experimental-features 'nix-command flakes' run --refresh github:NousResearch/hermes-agent --";
+        default = let
+          ref = lib.optionalString (cfg.hermes.version != null)
+            "/${cfg.hermes.version}";
+        in "${pkgs.nix}/bin/nix --extra-experimental-features 'nix-command flakes' run --refresh github:NousResearch/hermes-agent${ref} --";
       };
       environmentFiles = lib.mkOption {
         type = lib.types.listOf lib.types.path;
