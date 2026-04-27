@@ -2,6 +2,7 @@
 
 {
   imports = [
+    ./agents/agents.nix
     ./agents/options.nix
     ./bluetooth.nix
     ./cachix/nix-community.nix

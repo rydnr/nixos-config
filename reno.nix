@@ -1,5 +1,6 @@
 { config, pkgs, options, ... }: {
   imports = [
+    ./agents/agents.nix
     ./agents/options.nix
     ./cachix/nix-community.nix
     ./nix.nix
@@ -13,6 +14,7 @@
     ./reno/packages/editors.nix
     ./reno/packages/nix.nix
     ./reno/packages/version-control.nix
+    ./reno/private/agents.nix
     ./reno/private/boot-common.nix
     ./reno/private/console.nix
     ./reno/private/filesystems.nix

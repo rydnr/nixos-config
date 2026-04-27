@@ -50,7 +50,7 @@ in rec {
         type = lib.types.str;
         description = "The command to run Claude Code";
         default =
-          "${pkgs.nix}/bin/nix --extra-experimental-features 'nix-command flakes' run github:sadjow/claude-code-nix --";
+          "${pkgs.nix}/bin/nix --extra-experimental-features 'nix-command flakes' run --refresh github:sadjow/claude-code-nix --";
       };
       environmentFiles = lib.mkOption {
         type = lib.types.listOf lib.types.path;
@@ -158,7 +158,7 @@ in rec {
         type = lib.types.str;
         description = "The command to run Codex";
         default =
-          "${pkgs.nix}/bin/nix --extra-experimental-features 'nix-command flakes' run github:sadjow/codex-cli-nix --";
+          "${pkgs.nix}/bin/nix --extra-experimental-features 'nix-command flakes' run --refresh github:sadjow/codex-cli-nix --";
       };
       environmentFiles = lib.mkOption {
         type = lib.types.listOf lib.types.path;
@@ -373,7 +373,7 @@ in rec {
         type = lib.types.str;
         description = "The command to run Pi";
         default =
-          "${pkgs.nix}/bin/nix --extra-experimental-features 'nix-command flakes' run github:lukasl-dev/pi-mono.nix --";
+          "${pkgs.nix}/bin/nix --extra-experimental-features 'nix-command flakes' run --refresh github:lukasl-dev/pi-mono.nix --";
       };
       environmentFiles = lib.mkOption {
         type = lib.types.listOf lib.types.path;
@@ -481,7 +481,7 @@ in rec {
         type = lib.types.str;
         description = "The command to run Hermes";
         default =
-          "${pkgs.nix}/bin/nix --extra-experimental-features 'nix-command flakes' run github:NousResearch/hermes-agent --";
+          "${pkgs.nix}/bin/nix --extra-experimental-features 'nix-command flakes' run --refresh github:NousResearch/hermes-agent --";
       };
       environmentFiles = lib.mkOption {
         type = lib.types.listOf lib.types.path;

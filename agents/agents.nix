@@ -96,11 +96,11 @@ let
     ++ lib.optional codex.enable codex ++ lib.optional gemini.enable gemini
     ++ lib.optional pi.enable pi ++ lib.optional hermes.enable hermes;
 
-  allAgentsCmd = lib.optional claude.enable (mkAgentCommand claude)
-    ++ lib.optional codex.enable (mkAgentCommand codex)
-    ++ lib.optional gemini.enable (mkAgentCommand gemini)
-    ++ lib.optional pi.enable (mkAgentCommand pi)
-    ++ lib.optional hermes.enable (mkAgentCommand hermes);
+  allAgentsCmd = lib.optional claude.enable (mkAgentCommand { agent = claude; })
+    ++ lib.optional codex.enable (mkAgentCommand { agent = codex; })
+    ++ lib.optional gemini.enable (mkAgentCommand { agent = gemini; })
+    ++ lib.optional pi.enable (mkAgentCommand { agent = pi; })
+    ++ lib.optional hermes.enable (mkAgentCommand { agent = hermes; });
 
   # ──────────────────────────────────────────────
   # The proxy script that agents use instead of xdg-open
@@ -398,7 +398,7 @@ let
 
   agentSystemdFiles = { agent }: [
     # Per-agent bin directory with our override
-    "d ${agent.home}/.local/bin 0700 ${claude.name} ${agentGroup} - -"
+    "d ${agent.home}/.local/bin 0700 ${agent.name} ${agentGroup} - -"
     "L+ ${agent.home}/.local/bin/xdg-open - - - - ${agentBrowserProxy}/bin/agent-browser"
     "L+ ${agent.home}/.local/bin/open      - - - - ${agentBrowserProxy}/bin/agent-browser"
     "L+ ${agent.home}/.local/bin/sensible-browser - - - - ${agentBrowserProxy}/bin/agent-browser"
@@ -408,25 +408,25 @@ let
 in {
 
   users.groups = {
-    agents = { } // lib.optionalAttrs claude.enable { claude = { }; }
-      // lib.optionalAttrs codex.enable { codex = { }; }
-      // lib.optionalAttrs gemini.enable { gemini = { }; }
-      // lib.optionalAttrs pi.enable { pi = { }; }
-      // lib.optionalAttrs hermes.enable { hermes = { }; };
-  };
+    agents = { };
+  } // lib.optionalAttrs claude.enable { claude = { }; }
+    // lib.optionalAttrs codex.enable { codex = { }; }
+    // lib.optionalAttrs gemini.enable { gemini = { }; }
+    // lib.optionalAttrs pi.enable { pi = { }; }
+    // lib.optionalAttrs hermes.enable { hermes = { }; };
 
-  users.users.claude = lib.mkIf claude.enable (mkAgentUser claude);
+  users.users.claude = lib.mkIf claude.enable (mkAgentUser { agent = claude; });
 
   agents.claude.environmentFiles = lib.mkIf claude.enable
     ([ config.sops.secrets."free-claude-code-env".path ]);
 
-  users.users.codex = lib.mkIf codex.enable (mkAgentUser codex);
+  users.users.codex = lib.mkIf codex.enable (mkAgentUser { agent = codex; });
 
-  users.users.gemini = lib.mkIf gemini.enable (mkAgentUser gemini);
+  users.users.gemini = lib.mkIf gemini.enable (mkAgentUser { agent = gemini; });
 
-  users.users.pi = lib.mkIf pi.enable (mkAgentUser pi);
+  users.users.pi = lib.mkIf pi.enable (mkAgentUser { agent = pi; });
 
-  users.users.hermes = lib.mkIf hermes.enable (mkAgentUser hermes);
+  users.users.hermes = lib.mkIf hermes.enable (mkAgentUser { agent = hermes; });
 
   # ════════════════════════════════════════════════
   # INSTALL THE PROXY COMMANDS
@@ -452,11 +452,11 @@ in {
 
   systemd.tmpfiles.rules =
     [ "d /srv/agent-workspaces/shared  0750 root   ${agentGroup} - -" ]
-    ++ lib.optional claude.enable (agentSystemdFiles claude)
-    ++ lib.optional codex.enable (agentSystemdFiles codex)
-    ++ lib.optional gemini.enable (agentSystemdFiles gemini)
-    ++ lib.optional pi.enable (agentSystemdFiles pi)
-    ++ lib.optional hermes.enable (agentSystemdFiles codex);
+    ++ lib.optionals claude.enable (agentSystemdFiles { agent = claude; })
+    ++ lib.optionals codex.enable (agentSystemdFiles { agent = codex; })
+    ++ lib.optionals gemini.enable (agentSystemdFiles { agent = gemini; })
+    ++ lib.optionals pi.enable (agentSystemdFiles { agent = pi; })
+    ++ lib.optionals hermes.enable (agentSystemdFiles { agent = codex; });
 
   # ── Decrypt secrets into agent homes ──
   sops = rec {
@@ -465,52 +465,11 @@ in {
     secrets = {
       "free-claude-code-env" = lib.mkIf claude.enable {
         path = "${freeClaudeCode.path}/.env.new";
-        sopsFile = ./secrets/free-claude-code.env;
+        sopsFile = ../private/secrets/free-claude-code.env;
         format = "dotenv";
         mode = "0400";
-        owner = "claude";
-        group = "agents";
-      };
-      "claude-json" = lib.mkIf claude.enable {
-        path = "${claude.home}/.settings.json";
-        sopsFile = ./secrets/claude-settings.json;
-        key = "";
-        format = "json";
-        mode = "0400";
-        owner = "claude";
-        group = "agents";
-      };
-      "codex-config-toml" = lib.mkIf codex.enable {
-        path = "${codex.home}/.codex/config.toml";
-        sopsFile = ./secrets/codex.toml;
-        format = "binary";
-        mode = "0400";
-        owner = "codex";
-        group = "agents";
-      };
-      "gemini-json" = lib.mkIf gemini.enable {
-        path = "${gemini.home}/.gemini.json";
-        sopsFile = ./secrets/free-claude-code.env;
-        format = "dotenv";
-        mode = "0400";
-        owner = "gemini";
-        group = "agents";
-      };
-      "pi-json" = lib.mkIf pi.enable {
-        path = "${pi.home}/.pi.json";
-        sopsFile = ./secrets/free-claude-code.env;
-        format = "dotenv";
-        mode = "0400";
-        owner = "pi";
-        group = "agents";
-      };
-      "hermes-json" = lib.mkIf hermes.enable {
-        path = "${hermes.home}/.hermes.json";
-        sopsFile = ./secrets/free-claude-code.env;
-        format = "dotenv";
-        mode = "0400";
-        owner = "hermes";
-        group = "agents";
+        owner = claude.name;
+        group = agentGroup;
       };
     };
   };
