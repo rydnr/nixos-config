@@ -2,6 +2,7 @@
 
 {
   imports = [
+    ./agents/options.nix
     ./bluetooth.nix
     ./cachix/nix-community.nix
     ./archvile/custom-flags.nix

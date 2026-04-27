@@ -1,5 +1,6 @@
 { config, pkgs, options, ... }: {
   imports = [
+    ./agents/options.nix
     ./cachix/nix-community.nix
     ./nix.nix
     ./private/filesystems-remote.nix
