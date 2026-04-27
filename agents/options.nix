@@ -16,6 +16,11 @@ in rec {
     };
 
     claude = {
+      enable = lib.mkOption {
+        type = lib.types.bool;
+        default = false;
+        description = "Enable the Claude agent";
+      };
       name = lib.mkOption {
         type = lib.types.str;
         description = "The name of the Claude user";
@@ -84,7 +89,7 @@ in rec {
       noNewPrivileges = lib.mkOption {
         type = lib.types.bool;
         description = "Prevent new privileges";
-        default = true;
+        default = false;
       };
       capabilityBoundingSet = lib.mkOption {
         type = lib.types.str;
@@ -111,9 +116,19 @@ in rec {
         description = "The address families to restrict";
         default = [ "AF_INET" "AF_INET6" "AF_UNIX" ];
       };
+      packages = lib.mkOption {
+        type = lib.types.listOf lib.types.package;
+        description = "Additional packages";
+        default = with pkgs; [ nix ];
+      };
     };
 
     codex = {
+      enable = lib.mkOption {
+        type = lib.types.bool;
+        default = false;
+        description = "Enable the Codex agent";
+      };
       name = lib.mkOption {
         type = lib.types.str;
         description = "The name of the Codex user";
@@ -182,7 +197,7 @@ in rec {
       noNewPrivileges = lib.mkOption {
         type = lib.types.bool;
         description = "Prevent new privileges";
-        default = true;
+        default = false;
       };
       capabilityBoundingSet = lib.mkOption {
         type = lib.types.str;
@@ -209,9 +224,19 @@ in rec {
         description = "The address families to restrict";
         default = [ "AF_INET" "AF_INET6" "AF_UNIX" ];
       };
+      packages = lib.mkOption {
+        type = lib.types.listOf lib.types.package;
+        description = "Additional packages";
+        default = with pkgs; [ nix ];
+      };
     };
 
     gemini = {
+      enable = lib.mkOption {
+        type = lib.types.bool;
+        default = false;
+        description = "Enable the Gemini agent";
+      };
       name = lib.mkOption {
         type = lib.types.str;
         description = "The name of the Gemini user";
@@ -279,7 +304,7 @@ in rec {
       noNewPrivileges = lib.mkOption {
         type = lib.types.bool;
         description = "Prevent new privileges";
-        default = true;
+        default = false;
       };
       capabilityBoundingSet = lib.mkOption {
         type = lib.types.str;
@@ -306,9 +331,19 @@ in rec {
         description = "The address families to restrict";
         default = [ "AF_INET" "AF_INET6" "AF_UNIX" ];
       };
+      packages = lib.mkOption {
+        type = lib.types.listOf lib.types.package;
+        description = "Additional packages";
+        default = with pkgs; [ gemini-cli nix ];
+      };
     };
 
     pi = {
+      enable = lib.mkOption {
+        type = lib.types.bool;
+        default = false;
+        description = "Enable the Pi agent";
+      };
       name = lib.mkOption {
         type = lib.types.str;
         description = "The name of the Pi user";
@@ -377,7 +412,7 @@ in rec {
       noNewPrivileges = lib.mkOption {
         type = lib.types.bool;
         description = "Prevent new privileges";
-        default = true;
+        default = false;
       };
       capabilityBoundingSet = lib.mkOption {
         type = lib.types.str;
@@ -404,9 +439,19 @@ in rec {
         description = "The address families to restrict";
         default = [ "AF_INET" "AF_INET6" "AF_UNIX" ];
       };
+      packages = lib.mkOption {
+        type = lib.types.listOf lib.types.package;
+        description = "Additional packages";
+        default = with pkgs; [ nix ];
+      };
     };
 
     hermes = {
+      enable = lib.mkOption {
+        type = lib.types.bool;
+        default = false;
+        description = "Enable the Hermes agent";
+      };
       name = lib.mkOption {
         type = lib.types.str;
         description = "The name of the Hermes user";
@@ -475,7 +520,7 @@ in rec {
       noNewPrivileges = lib.mkOption {
         type = lib.types.bool;
         description = "Prevent new privileges";
-        default = true;
+        default = false;
       };
       capabilityBoundingSet = lib.mkOption {
         type = lib.types.str;
@@ -502,12 +547,22 @@ in rec {
         description = "The address families to restrict";
         default = [ "AF_INET" "AF_INET6" "AF_UNIX" ];
       };
+      packages = lib.mkOption {
+        type = lib.types.listOf lib.types.package;
+        description = "Additional packages";
+        default = with pkgs; [ himalaya nix ];
+      };
     };
 
     freeClaudeCode = {
+      enable = lib.mkOption {
+        type = lib.types.bool;
+        default = false;
+        description = "Enable the Free Claude Code";
+      };
       port = lib.mkOption {
         type = lib.types.port;
-        default = 8082;
+        default = 7070;
         description = "Port for free-claude-code proxy";
       };
 
@@ -595,6 +650,9 @@ in rec {
           "nixos.org" # nix run needs this
           "cache.nixos.org" # nix binary cache
           "channels.nixos.org"
+
+          # -- TTS --
+          "speech.platform.bing.com"
         ];
         description = "API backends (always allowed, needed for LLM calls)";
       };
