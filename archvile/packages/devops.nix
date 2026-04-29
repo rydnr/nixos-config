@@ -63,6 +63,7 @@
       ltrace
       mailutils
       mcron
+      mongodb-compass
       mutt
       ngrok
       nix-index

@@ -90,6 +90,8 @@
     ./private/services/apache.nix
     ./private/services/autofs.nix
     ./private/services/free-claude-code.nix
+    ./private/services/hermes-pc.nix
+    ./private/services/hermes-personal.nix
     ./private/services/postfix.nix
     ./private/services/remove-rt-locks.nix
     ./private/services/ssmtp.nix

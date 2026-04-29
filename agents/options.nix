@@ -1,8 +1,620 @@
 # agents/options.nix
 { pkgs, lib, config, ... }:
 let cfg = config.agents;
+    mkClaudeCodeOptions = {
+      instanceName,
+        defaultUserName ? instanceName,
+        defaultDescription ? "Claude Code agent (${instanceName})",
+        defaultHome ? "${cfg.workspaceBase}/${instanceName}",
+        defaultUid,
+        defaultEnvironmentFiles ? [  ],
+    }: {
+      enable = lib.mkOption {
+        type = lib.types.bool;
+        default = false;
+        description = "Enable the Claude Code ${instanceName} agent";
+      };
+      name = lib.mkOption {
+        type = lib.types.str;
+        description = "The name of the ${instanceName} user";
+        default = defaultUserName;
+      };
+      description = lib.mkOption {
+        type = lib.types.str;
+        description = "The description of the ${instanceName} user";
+        default = defaultDescription;
+      };
+      version = lib.mkOption {
+        type = lib.types.nullOr lib.types.str;
+        default = null;
+        description =
+          "Version/commit of Claude Code (e.g. '2.1.120' or '002de6e')";
+        example = "2.1.120";
+      };
+      home = lib.mkOption {
+        type = lib.types.path;
+        description = "The home folder of the ${instanceName} user";
+        default = defaultHome;
+      };
+      uid = lib.mkOption {
+        type = lib.types.int;
+        description = "The UID of the ${instanceName} user";
+        default = defaultUid;
+      };
+      shell = lib.mkOption {
+        type = lib.types.attrs;
+        description = "The shell of the ${instanceName} user";
+        default = pkgs.bash;
+      };
+      command = lib.mkOption {
+        type = lib.types.str;
+        description = "The command to run ${instanceName}";
+        default = let
+          instanceCfg = cfg.${instanceName};
+          ref = lib.optionalString (instanceCfg.version != null)
+            "/${instanceCfg.version}";
+        in "${pkgs.nix}/bin/nix --extra-experimental-features 'nix-command flakes' run --refresh github:sadjow/claude-code-nix${ref} --";
+      };
+      environmentFiles = lib.mkOption {
+        type = lib.types.listOf lib.types.path;
+        description = "Environment files for ${instanceName}";
+        default = defaultEnvironmentFiles;
+      };
+      protectHome = lib.mkOption {
+        type = lib.types.bool;
+        description = "Whether to protect the home folder of ${instanceName}";
+        default = true;
+      };
+      protectSystem = lib.mkOption {
+        type = lib.types.str;
+        description = "System protection strategy of ${instanceName}";
+        default = "strict";
+      };
+      readWritePaths = lib.mkOption {
+        type = lib.types.listOf lib.types.str;
+        description = "Paths with read and write permissions for ${instanceName}";
+        default = [
+          defaultHome
+          "/nix/var/nix"
+          "${cfg.workspaceBase}/shared"
+        ];
+      };
+      readOnlyPaths = lib.mkOption {
+        type = lib.types.listOf lib.types.str;
+        description = "Paths with read-only permissions for ${instanceName}";
+        default = [ "/nix/store" ];
+      };
+      privateTmp = lib.mkOption {
+        type = lib.types.bool;
+        description = "Whether TMP is private for ${instanceName}";
+        default = true;
+      };
+      noNewPrivileges = lib.mkOption {
+        type = lib.types.bool;
+        description = "Prevent new privileges for ${instanceName}";
+        default = false;
+      };
+      capabilityBoundingSet = lib.mkOption {
+        type = lib.types.str;
+        description = "The capability bounding set for ${instanceName}";
+        default = "";
+      };
+      memoryMax = lib.mkOption {
+        type = lib.types.str;
+        description = "The max memory for ${instanceName}";
+        default = "1G";
+      };
+      cpuQuota = lib.mkOption {
+        type = lib.types.str;
+        description = "The CPU quota for ${instanceName}";
+        default = "200%";
+      };
+      tasksMax = lib.mkOption {
+        type = lib.types.int;
+        description = "The maximum number of tasks for ${instanceName}";
+        default = 100;
+      };
+      restrictAddressFamilies = lib.mkOption {
+        type = lib.types.listOf lib.types.str;
+        description = "The address families to restrict for ${instanceName}";
+        default = [ "AF_INET" "AF_INET6" "AF_UNIX" ];
+      };
+      packages = lib.mkOption {
+        type = lib.types.listOf lib.types.package;
+        description = "Additional packages for ${instanceName}";
+        default = with pkgs; [ nix ];
+      };
+    };
+
+    mkCodexOptions = {
+      instanceName,
+        defaultUserName ? instanceName,
+        defaultDescription ? "Codex agent (${instanceName})",
+        defaultHome ? "${cfg.workspaceBase}/${instanceName}",
+        defaultUid,
+        defaultEnvironmentFiles ? [  ],
+    }: {
+      enable = lib.mkOption {
+        type = lib.types.bool;
+        default = false;
+        description = "Enable the Codex ${instanceName} agent";
+      };
+      name = lib.mkOption {
+        type = lib.types.str;
+        description = "The name of the Codex ${instanceName} user";
+        default = defaultUserName;
+      };
+      description = lib.mkOption {
+        type = lib.types.str;
+        description = "The description of the Codex ${instanceName} agent";
+        default = defaultDescription;
+      };
+      version = lib.mkOption {
+        type = lib.types.nullOr lib.types.str;
+        default = null;
+        description = "Version/commit of Codex (e.g. '0.125.0' or 'fc382be')";
+        example = "0.125.0";
+      };
+      home = lib.mkOption {
+        type = lib.types.path;
+        description = "The home folder of the Codex ${instanceName} user";
+        default = defaultHome;
+      };
+      uid = lib.mkOption {
+        type = lib.types.int;
+        description = "The UID of the Codex ${instanceName} user";
+        default = defaultUid;
+      };
+      shell = lib.mkOption {
+        type = lib.types.attrs;
+        description = "The shell of the Codex ${instanceName} user";
+        default = pkgs.bash;
+      };
+      command = lib.mkOption {
+        type = lib.types.str;
+        description = "The command to run Codex ${instanceName} ";
+        default = let
+          instanceCfg = cfg.${instanceName};
+          ref = lib.optionalString (instanceCfg.version != null)
+            "/${instanceCfg.version}";
+        in "${pkgs.nix}/bin/nix --extra-experimental-features 'nix-command flakes' run --refresh github:sadjow/codex-cli-nix${ref} --";
+      };
+      environmentFiles = lib.mkOption {
+        type = lib.types.listOf lib.types.path;
+        description = "Environment files for ${instanceName}";
+        default = defaultEnvironmentFiles;
+      };
+      protectHome = lib.mkOption {
+        type = lib.types.bool;
+        description = "Whether to protect the home folder of ${instanceName}";
+        default = true;
+      };
+      protectSystem = lib.mkOption {
+        type = lib.types.str;
+        description = "System protection strategy for ${instanceName}";
+        default = "strict";
+      };
+      readWritePaths = lib.mkOption {
+        type = lib.types.listOf lib.types.str;
+        description = "Paths with read and write permissions for ${instanceName}";
+        default = [
+          defaultHome
+          "/nix/var/nix"
+          "${cfg.workspaceBase}/shared"
+        ];
+      };
+      readOnlyPaths = lib.mkOption {
+        type = lib.types.listOf lib.types.str;
+        description = "Paths with read-only permissions for ${instanceName}";
+        default = [ "/nix/store" ];
+      };
+      privateTmp = lib.mkOption {
+        type = lib.types.bool;
+        description = "Whether TMP is private for ${instanceName}";
+        default = true;
+      };
+      noNewPrivileges = lib.mkOption {
+        type = lib.types.bool;
+        description = "Prevent new privileges for ${instanceName}";
+        default = false;
+      };
+      capabilityBoundingSet = lib.mkOption {
+        type = lib.types.str;
+        description = "The capability bounding set for ${instanceName}";
+        default = "";
+      };
+      memoryMax = lib.mkOption {
+        type = lib.types.str;
+        description = "The max memory for ${instanceName}";
+        default = "1G";
+      };
+      cpuQuota = lib.mkOption {
+        type = lib.types.str;
+        description = "The CPU quota for ${instanceName}";
+        default = "200%";
+      };
+      tasksMax = lib.mkOption {
+        type = lib.types.int;
+        description = "The maximum number of tasks for ${instanceName}";
+        default = 100;
+      };
+      restrictAddressFamilies = lib.mkOption {
+        type = lib.types.listOf lib.types.str;
+        description = "The address families to restrict for ${instanceName}";
+        default = [ "AF_INET" "AF_INET6" "AF_UNIX" ];
+      };
+      packages = lib.mkOption {
+        type = lib.types.listOf lib.types.package;
+        description = "Additional packages for ${instanceName}";
+        default = with pkgs; [ nix ];
+      };
+    };
+
+    mkGeminiOptions = {
+      instanceName,
+        defaultUserName ? instanceName,
+        defaultDescription ? "Gemini agent (${instanceName})",
+        defaultHome ? "${cfg.workspaceBase}/${instanceName}",
+        defaultUid,
+        defaultEnvironmentFiles ? [  ],
+    }: {
+      enable = lib.mkOption {
+        type = lib.types.bool;
+        default = false;
+        description = "Enable the Gemini ${instanceName} agent";
+      };
+      name = lib.mkOption {
+        type = lib.types.str;
+        description = "The name of the Gemini ${instanceName} user";
+        default = defaultUserName;
+      };
+      description = lib.mkOption {
+        type = lib.types.str;
+        description = "The description of the Gemini ${instanceName} agent";
+        default = defaultDescription;
+      };
+      home = lib.mkOption {
+        type = lib.types.path;
+        description = "The home folder of the Gemini ${instanceName} user";
+        default = defaultHome;
+      };
+      uid = lib.mkOption {
+        type = lib.types.int;
+        description = "The UID  of the Gemini ${instanceName} user";
+        default = defaultUid;
+      };
+      shell = lib.mkOption {
+        type = lib.types.attrs;
+        description = "The shell of the Gemini ${instanceName} user";
+        default = pkgs.bash;
+      };
+      command = lib.mkOption {
+        type = lib.types.str;
+        description = "The command to run Gemini ${instanceName}";
+        default = "${pkgs.gemini-cli}/bin/gemini --";
+      };
+      environmentFiles = lib.mkOption {
+        type = lib.types.listOf lib.types.path;
+        description = "Environment files for ${instanceName}";
+        default = defaultEnvironmentFiles;
+      };
+      protectHome = lib.mkOption {
+        type = lib.types.bool;
+        description = "Whether to protect the home folder of ${instanceName}";
+        default = true;
+      };
+      protectSystem = lib.mkOption {
+        type = lib.types.str;
+        description = "System protection strategy for ${instanceName}";
+        default = "strict";
+      };
+      readWritePaths = lib.mkOption {
+        type = lib.types.listOf lib.types.str;
+        description = "Paths with read and write permissions for ${instanceName} ";
+        default = [
+          defaultHome
+          "/nix/var/nix"
+          "${cfg.workspaceBase}/shared"
+        ];
+      };
+      readOnlyPaths = lib.mkOption {
+        type = lib.types.listOf lib.types.str;
+        description = "Paths with read-only permissions for ${instanceName}";
+        default = [ "/nix/store" ];
+      };
+      privateTmp = lib.mkOption {
+        type = lib.types.bool;
+        description = "Whether TMP is private for ${instanceName}";
+        default = true;
+      };
+      noNewPrivileges = lib.mkOption {
+        type = lib.types.bool;
+        description = "Prevent new privileges for ${instanceName}";
+        default = false;
+      };
+      capabilityBoundingSet = lib.mkOption {
+        type = lib.types.str;
+        description = "The capability bounding set for ${instanceName}";
+        default = "";
+      };
+      memoryMax = lib.mkOption {
+        type = lib.types.str;
+        description = "The max memory for ${instanceName}";
+        default = "1G";
+      };
+      cpuQuota = lib.mkOption {
+        type = lib.types.str;
+        description = "The CPU quota for ${instanceName}";
+        default = "200%";
+      };
+      tasksMax = lib.mkOption {
+        type = lib.types.int;
+        description = "The maximum number of tasks for ${instanceName}";
+        default = 100;
+      };
+      restrictAddressFamilies = lib.mkOption {
+        type = lib.types.listOf lib.types.str;
+        description = "The address families to restrict for ${instanceName}";
+        default = [ "AF_INET" "AF_INET6" "AF_UNIX" ];
+      };
+      packages = lib.mkOption {
+        type = lib.types.listOf lib.types.package;
+        description = "Additional packages for ${instanceName}";
+        default = with pkgs; [ gemini-cli nix ];
+      };
+    };
+
+    mkPiOptions = {
+      instanceName,
+        defaultUserName ? instanceName,
+        defaultDescription ? "Pi agent (${instanceName})",
+        defaultHome ? "${cfg.workspaceBase}/${instanceName}",
+        defaultUid,
+        defaultEnvironmentFiles ? [  ],
+    }: {
+      enable = lib.mkOption {
+        type = lib.types.bool;
+        default = false;
+        description = "Enable the Pi ${instanceName} agent";
+      };
+      name = lib.mkOption {
+        type = lib.types.str;
+        description = "The name of the Pi ${instanceName} user";
+        default = defaultUserName;
+      };
+      description = lib.mkOption {
+        type = lib.types.str;
+        description = "The description of the Pi ${instanceName} agent";
+        default = defaultDescription;
+      };
+      version = lib.mkOption {
+        type = lib.types.nullOr lib.types.str;
+        default = null;
+        description = "Version/commit of PI (e.g. '0.70.2' or '422d139')";
+        example = "0.70.2";
+      };
+      home = lib.mkOption {
+        type = lib.types.path;
+        description = "The home folder of the Pi ${instanceName} user";
+        default = defaultHome;
+      };
+      uid = lib.mkOption {
+        type = lib.types.int;
+        description = "The UID of the Pi ${instanceName} user";
+        default = defaultUid;
+      };
+      shell = lib.mkOption {
+        type = lib.types.attrs;
+        description = "The shell of the Pi ${instanceName} user";
+        default = pkgs.bash;
+      };
+      command = lib.mkOption {
+        type = lib.types.str;
+        description = "The command to run Pi ${instanceName} ";
+        default = let
+          instanceCfg = cfg.${instanceName};
+          ref = lib.optionalString (instanceCfg.version != null)
+            "/${instanceCfg.version}";
+        in "${pkgs.nix}/bin/nix --extra-experimental-features 'nix-command flakes' run --refresh github:lukasl-dev/pi-mono.nix${ref} --";
+      };
+      environmentFiles = lib.mkOption {
+        type = lib.types.listOf lib.types.path;
+        description = "Environment files for ${instanceName}";
+        default = defaultEnvironmentFiles;
+      };
+      protectHome = lib.mkOption {
+        type = lib.types.bool;
+        description = "Whether to protect the home folder of ${instanceName}";
+        default = true;
+      };
+      protectSystem = lib.mkOption {
+        type = lib.types.str;
+        description = "System protection strategy for ${instanceName}";
+        default = "strict";
+      };
+      readWritePaths = lib.mkOption {
+        type = lib.types.listOf lib.types.str;
+        description = "Paths with read and write permissions of ${instanceName}";
+        default = [
+          defaultHome
+          "/nix/var/nix"
+          "${cfg.workspaceBase}/shared"
+        ];
+      };
+      readOnlyPaths = lib.mkOption {
+        type = lib.types.listOf lib.types.str;
+        description = "Paths with read-only permissions for ${instanceName}";
+        default = [ "/nix/store" ];
+      };
+      privateTmp = lib.mkOption {
+        type = lib.types.bool;
+        description = "Whether TMP is private for ${instanceName}";
+        default = true;
+      };
+      noNewPrivileges = lib.mkOption {
+        type = lib.types.bool;
+        description = "Prevent new privileges for ${instanceName}";
+        default = false;
+      };
+      capabilityBoundingSet = lib.mkOption {
+        type = lib.types.str;
+        description = "The capability bounding set for ${instanceName}";
+        default = "";
+      };
+      memoryMax = lib.mkOption {
+        type = lib.types.str;
+        description = "The max memory for ${instanceName}";
+        default = "1G";
+      };
+      cpuQuota = lib.mkOption {
+        type = lib.types.str;
+        description = "The CPU quota for ${instanceName}";
+        default = "200%";
+      };
+      tasksMax = lib.mkOption {
+        type = lib.types.int;
+        description = "The maximum number of tasks for ${instanceName}";
+        default = 100;
+      };
+      restrictAddressFamilies = lib.mkOption {
+        type = lib.types.listOf lib.types.str;
+        description = "The address families to restrict for ${instanceName}";
+        default = [ "AF_INET" "AF_INET6" "AF_UNIX" ];
+      };
+      packages = lib.mkOption {
+        type = lib.types.listOf lib.types.package;
+        description = "Additional packages for ${instanceName}";
+        default = with pkgs; [ nix ];
+      };
+    };
+
+    mkHermesOptions = {
+      instanceName,       # e.g. "hermes-pc", "hermes-personal"
+        defaultUserName ? instanceName,
+        defaultDescription ? "Hermes agent (${instanceName})",
+        defaultHome ? "${cfg.workspaceBase}/${instanceName}",
+        defaultUid,
+        defaultEnvironmentFiles ? [  ],
+    }: {
+      enable = lib.mkOption {
+        type = lib.types.bool;
+        default = false;
+        description = "Enable the ${instanceName} agent";
+      };
+      name = lib.mkOption {
+        type = lib.types.str;
+        description = "The name of the ${instanceName} user";
+        default = defaultUserName;
+      };
+      description = lib.mkOption {
+        type = lib.types.str;
+        description = "The description of the ${instanceName} agent";
+        default = defaultDescription;
+      };
+      version = lib.mkOption {
+        type = lib.types.nullOr lib.types.str;
+        default = null;
+        description =
+          "Version/commit of hermes-agent to use for ${instanceName} (e.g. 'hermes/hermes-46839e2f' or 'v2026.4.23')";
+        example = "v2026.4.23";
+      };
+      home = lib.mkOption {
+        type = lib.types.path;
+        description = "The home folder of the ${instanceName} user";
+        default = defaultHome;
+      };
+      uid = lib.mkOption {
+        type = lib.types.int;
+        description = "The UID of the ${instanceName} user";
+        default = defaultUid;
+      };
+      shell = lib.mkOption {
+        type = lib.types.attrs;
+        description = "The shell of the ${instanceName} user";
+        default = pkgs.bash;
+      };
+      command = lib.mkOption {
+        type = lib.types.str;
+        description = "The command to run ${instanceName}";
+        default = let
+          instanceCfg = cfg.${instanceName};
+          ref = lib.optionalString (instanceCfg.version != null)
+            "/${instanceCfg.version}";
+        in "${pkgs.nix}/bin/nix --extra-experimental-features 'nix-command flakes' run --refresh github:NousResearch/hermes-agent${ref} --";
+      };
+      environmentFiles = lib.mkOption {
+        type = lib.types.listOf lib.types.path;
+        description = "Environment files for ${instanceName}";
+        default = defaultEnvironmentFiles;
+      };
+      protectHome = lib.mkOption {
+        type = lib.types.bool;
+        description = "Whether to protect the home folder for ${instanceName}";
+        default = true;
+      };
+      protectSystem = lib.mkOption {
+        type = lib.types.str;
+        description = "System protection strategy for ${instanceName}";
+        default = "strict";
+      };
+      readWritePaths = lib.mkOption {
+        type = lib.types.listOf lib.types.str;
+        description = "Paths with read and write permissions for ${instanceName}";
+        default = [
+          defaultHome
+          "/nix/var/nix"
+          "${cfg.workspaceBase}/shared"
+        ];
+      };
+      readOnlyPaths = lib.mkOption {
+        type = lib.types.listOf lib.types.str;
+        description = "Paths with read-only permissions for ${instanceName}";
+        default = [ "/nix/store" ];
+      };
+      privateTmp = lib.mkOption {
+        type = lib.types.bool;
+        description = "Whether TMP is private for ${instanceName}";
+        default = true;
+      };
+      noNewPrivileges = lib.mkOption {
+        type = lib.types.bool;
+        description = "Prevent new privileges for ${instanceName}";
+        default = false;
+      };
+      capabilityBoundingSet = lib.mkOption {
+        type = lib.types.str;
+        description = "The capability bounding set for ${instanceName}";
+        default = "";
+      };
+      memoryMax = lib.mkOption {
+        type = lib.types.str;
+        description = "The max memory for ${instanceName}";
+        default = "1G";
+      };
+      cpuQuota = lib.mkOption {
+        type = lib.types.str;
+        description = "The CPU quota for ${instanceName}";
+        default = "200%";
+      };
+      tasksMax = lib.mkOption {
+        type = lib.types.int;
+        description = "The maximum number of tasks for ${instanceName}";
+        default = 100;
+      };
+      restrictAddressFamilies = lib.mkOption {
+        type = lib.types.listOf lib.types.str;
+        description = "The address families to restrict for ${instanceName}";
+        default = [ "AF_INET" "AF_INET6" "AF_UNIX" ];
+      };
+      packages = lib.mkOption {
+        type = lib.types.listOf lib.types.package;
+        description = "Additional packages for ${instanceName}";
+        default = with pkgs; [ himalaya nix ];
+      };
+    };
 in rec {
   options.agents = {
+
     workspaceBase = lib.mkOption {
       type = lib.types.path;
       default = "/srv/agent-workspaces";
@@ -15,577 +627,60 @@ in rec {
       description = "Base group for agents";
     };
 
-    claude = {
-      enable = lib.mkOption {
-        type = lib.types.bool;
-        default = false;
-        description = "Enable the Claude agent";
-      };
-      name = lib.mkOption {
-        type = lib.types.str;
-        description = "The name of the Claude user";
-        default = "claude";
-      };
-      description = lib.mkOption {
-        type = lib.types.str;
-        description = "The description of the Claude user";
-        default = "Claude Code agent";
-      };
-      version = lib.mkOption {
-        type = lib.types.nullOr lib.types.str;
-        default = null;
-        description =
-          "Version/commit of Claude Code (e.g. '2.1.120' or '002de6e')";
-        example = "2.1.120";
-      };
-      home = lib.mkOption {
-        type = lib.types.path;
-        description = "The home folder of the Claude user";
-        default = "${cfg.workspaceBase}/claude";
-      };
-      uid = lib.mkOption {
-        type = lib.types.int;
-        description = "The UID of the Claude user";
-        default = 5001;
-      };
-      shell = lib.mkOption {
-        type = lib.types.attrs;
-        description = "The shell of the Claude user";
-        default = pkgs.bash;
-      };
-      command = lib.mkOption {
-        type = lib.types.str;
-        description = "The command to run Claude Code";
-        default = let
-          ref = lib.optionalString (cfg.claude.version != null)
-            "/${cfg.claude.version}";
-        in "${pkgs.nix}/bin/nix --extra-experimental-features 'nix-command flakes' run --refresh github:sadjow/claude-code-nix${ref} --";
-      };
-      environmentFiles = lib.mkOption {
-        type = lib.types.listOf lib.types.path;
-        description = "Environment files";
-        default = [ ];
-      };
-      protectHome = lib.mkOption {
-        type = lib.types.bool;
-        description = "Whether to protect the home folder";
-        default = true;
-      };
-      protectSystem = lib.mkOption {
-        type = lib.types.str;
-        description = "System protection strategy";
-        default = "strict";
-      };
-      readWritePaths = lib.mkOption {
-        type = lib.types.listOf lib.types.str;
-        description = "Paths with read and write permissions";
-        default = [
-          "${cfg.workspaceBase}/claude"
-          "/nix/var/nix"
-          "${cfg.workspaceBase}/shared"
-        ];
-      };
-      readOnlyPaths = lib.mkOption {
-        type = lib.types.listOf lib.types.str;
-        description = "Paths with read-only permissions";
-        default = [ "/nix/store" ];
-      };
-      privateTmp = lib.mkOption {
-        type = lib.types.bool;
-        description = "Whether TMP is private";
-        default = true;
-      };
-      noNewPrivileges = lib.mkOption {
-        type = lib.types.bool;
-        description = "Prevent new privileges";
-        default = false;
-      };
-      capabilityBoundingSet = lib.mkOption {
-        type = lib.types.str;
-        description = "The capability bounding set";
-        default = "";
-      };
-      memoryMax = lib.mkOption {
-        type = lib.types.str;
-        description = "The max memory";
-        default = "1G";
-      };
-      cpuQuota = lib.mkOption {
-        type = lib.types.str;
-        description = "The CPU quota";
-        default = "200%";
-      };
-      tasksMax = lib.mkOption {
-        type = lib.types.int;
-        description = "The maximum number of tasks";
-        default = 100;
-      };
-      restrictAddressFamilies = lib.mkOption {
-        type = lib.types.listOf lib.types.str;
-        description = "The address families to restrict";
-        default = [ "AF_INET" "AF_INET6" "AF_UNIX" ];
-      };
-      packages = lib.mkOption {
-        type = lib.types.listOf lib.types.package;
-        description = "Additional packages";
-        default = with pkgs; [ nix ];
-      };
+    claudeCode = mkClaudeCodeOptions {
+      instanceName = "claudeCode";
+      defaultUserName = "claudeCode";
+      defaultUid = 5001;
     };
 
-    codex = {
-      enable = lib.mkOption {
-        type = lib.types.bool;
-        default = false;
-        description = "Enable the Codex agent";
-      };
-      name = lib.mkOption {
-        type = lib.types.str;
-        description = "The name of the Codex user";
-        default = "codex";
-      };
-      description = lib.mkOption {
-        type = lib.types.str;
-        description = "The description of the Codex agent";
-        default = "Codex agent";
-      };
-      version = lib.mkOption {
-        type = lib.types.nullOr lib.types.str;
-        default = null;
-        description = "Version/commit of Codex (e.g. '0.125.0' or 'fc382be')";
-        example = "0.125.0";
-      };
-      home = lib.mkOption {
-        type = lib.types.path;
-        description = "The home folder of the Codex user";
-        default = "${cfg.workspaceBase}/codex";
-      };
-      uid = lib.mkOption {
-        type = lib.types.int;
-        description = "The UID of the Codex user";
-        default = 5002;
-      };
-      shell = lib.mkOption {
-        type = lib.types.attrs;
-        description = "The shell of the Codex user";
-        default = pkgs.bash;
-      };
-      command = lib.mkOption {
-        type = lib.types.str;
-        description = "The command to run Codex";
-        default = let
-          ref = lib.optionalString (cfg.codex.version != null)
-            "/${cfg.codex.version}";
-        in "${pkgs.nix}/bin/nix --extra-experimental-features 'nix-command flakes' run --refresh github:sadjow/codex-cli-nix${ref} --";
-      };
-      environmentFiles = lib.mkOption {
-        type = lib.types.listOf lib.types.path;
-        description = "Environment files";
-        default = [ ];
-      };
-      protectHome = lib.mkOption {
-        type = lib.types.bool;
-        description = "Whether to protect the home folder";
-        default = true;
-      };
-      protectSystem = lib.mkOption {
-        type = lib.types.str;
-        description = "System protection strategy";
-        default = "strict";
-      };
-      readWritePaths = lib.mkOption {
-        type = lib.types.listOf lib.types.str;
-        description = "Paths with read and write permissions";
-        default = [
-          "${cfg.workspaceBase}/codex"
-          "/nix/var/nix"
-          "${cfg.workspaceBase}/shared"
-        ];
-      };
-      readOnlyPaths = lib.mkOption {
-        type = lib.types.listOf lib.types.str;
-        description = "Paths with read-only permissions";
-        default = [ "/nix/store" ];
-      };
-      privateTmp = lib.mkOption {
-        type = lib.types.bool;
-        description = "Whether TMP is private";
-        default = true;
-      };
-      noNewPrivileges = lib.mkOption {
-        type = lib.types.bool;
-        description = "Prevent new privileges";
-        default = false;
-      };
-      capabilityBoundingSet = lib.mkOption {
-        type = lib.types.str;
-        description = "The capability bounding set";
-        default = "";
-      };
-      memoryMax = lib.mkOption {
-        type = lib.types.str;
-        description = "The max memory";
-        default = "1G";
-      };
-      cpuQuota = lib.mkOption {
-        type = lib.types.str;
-        description = "The CPU quota";
-        default = "200%";
-      };
-      tasksMax = lib.mkOption {
-        type = lib.types.int;
-        description = "The maximum number of tasks";
-        default = 100;
-      };
-      restrictAddressFamilies = lib.mkOption {
-        type = lib.types.listOf lib.types.str;
-        description = "The address families to restrict";
-        default = [ "AF_INET" "AF_INET6" "AF_UNIX" ];
-      };
-      packages = lib.mkOption {
-        type = lib.types.listOf lib.types.package;
-        description = "Additional packages";
-        default = with pkgs; [ nix ];
-      };
+    codex = mkCodexOptions {
+      instanceName = "codex";
+      defaultUserName = "codex";
+      defaultUid = 5002;
     };
 
-    gemini = {
-      enable = lib.mkOption {
-        type = lib.types.bool;
-        default = false;
-        description = "Enable the Gemini agent";
-      };
-      name = lib.mkOption {
-        type = lib.types.str;
-        description = "The name of the Gemini user";
-        default = "gemini";
-      };
-      description = lib.mkOption {
-        type = lib.types.str;
-        description = "The description of the Gemini agent";
-        default = "Gemini agent";
-      };
-      home = lib.mkOption {
-        type = lib.types.path;
-        description = "The home folder of the Gemini user";
-        default = "${cfg.workspaceBase}/gemini";
-      };
-      uid = lib.mkOption {
-        type = lib.types.int;
-        description = "The UID  of the Gemini user";
-        default = 5003;
-      };
-      shell = lib.mkOption {
-        type = lib.types.attrs;
-        description = "The shell of the Gemini user";
-        default = pkgs.bash;
-      };
-      command = lib.mkOption {
-        type = lib.types.str;
-        description = "The command to run Gemini";
-        default = "${pkgs.gemini-cli}/bin/gemini --";
-      };
-      environmentFiles = lib.mkOption {
-        type = lib.types.listOf lib.types.path;
-        description = "Environment files";
-        default = [ ];
-      };
-      protectHome = lib.mkOption {
-        type = lib.types.bool;
-        description = "Whether to protect the home folder";
-        default = true;
-      };
-      protectSystem = lib.mkOption {
-        type = lib.types.str;
-        description = "System protection strategy";
-        default = "strict";
-      };
-      readWritePaths = lib.mkOption {
-        type = lib.types.listOf lib.types.str;
-        description = "Paths with read and write permissions";
-        default = [
-          "${cfg.workspaceBase}/gemini"
-          "/nix/var/nix"
-          "${cfg.workspaceBase}/shared"
-        ];
-      };
-      readOnlyPaths = lib.mkOption {
-        type = lib.types.listOf lib.types.str;
-        description = "Paths with read-only permissions";
-        default = [ "/nix/store" ];
-      };
-      privateTmp = lib.mkOption {
-        type = lib.types.bool;
-        description = "Whether TMP is private";
-        default = true;
-      };
-      noNewPrivileges = lib.mkOption {
-        type = lib.types.bool;
-        description = "Prevent new privileges";
-        default = false;
-      };
-      capabilityBoundingSet = lib.mkOption {
-        type = lib.types.str;
-        description = "The capability bounding set";
-        default = "";
-      };
-      memoryMax = lib.mkOption {
-        type = lib.types.str;
-        description = "The max memory";
-        default = "1G";
-      };
-      cpuQuota = lib.mkOption {
-        type = lib.types.str;
-        description = "The CPU quota";
-        default = "200%";
-      };
-      tasksMax = lib.mkOption {
-        type = lib.types.int;
-        description = "The maximum number of tasks";
-        default = 100;
-      };
-      restrictAddressFamilies = lib.mkOption {
-        type = lib.types.listOf lib.types.str;
-        description = "The address families to restrict";
-        default = [ "AF_INET" "AF_INET6" "AF_UNIX" ];
-      };
-      packages = lib.mkOption {
-        type = lib.types.listOf lib.types.package;
-        description = "Additional packages";
-        default = with pkgs; [ gemini-cli nix ];
-      };
+    gemini = mkGeminiOptions {
+      instanceName = "gemini";
+      defaultUserName = "gemini";
+      defaultUid = 5003;
     };
 
-    pi = {
-      enable = lib.mkOption {
-        type = lib.types.bool;
-        default = false;
-        description = "Enable the Pi agent";
-      };
-      name = lib.mkOption {
-        type = lib.types.str;
-        description = "The name of the Pi user";
-        default = "pi";
-      };
-      description = lib.mkOption {
-        type = lib.types.str;
-        description = "The description of the Pi agent";
-        default = "Pi agent";
-      };
-      version = lib.mkOption {
-        type = lib.types.nullOr lib.types.str;
-        default = null;
-        description = "Version/commit of PI (e.g. '0.70.2' or '422d139')";
-        example = "0.70.2";
-      };
-      home = lib.mkOption {
-        type = lib.types.path;
-        description = "The home folder of the Pi user";
-        default = "${cfg.workspaceBase}/pi";
-      };
-      uid = lib.mkOption {
-        type = lib.types.int;
-        description = "The UID of the Pi user";
-        default = 5004;
-      };
-      shell = lib.mkOption {
-        type = lib.types.attrs;
-        description = "The shell of the Pi user";
-        default = pkgs.bash;
-      };
-      command = lib.mkOption {
-        type = lib.types.str;
-        description = "The command to run Pi";
-        default = let
-          ref =
-            lib.optionalString (cfg.pi.version != null) "/${cfg.pi.version}";
-        in "${pkgs.nix}/bin/nix --extra-experimental-features 'nix-command flakes' run --refresh github:lukasl-dev/pi-mono.nix${ref} --";
-      };
-      environmentFiles = lib.mkOption {
-        type = lib.types.listOf lib.types.path;
-        description = "Environment files";
-        default = [ ];
-      };
-      protectHome = lib.mkOption {
-        type = lib.types.bool;
-        description = "Whether to protect the home folder";
-        default = true;
-      };
-      protectSystem = lib.mkOption {
-        type = lib.types.str;
-        description = "System protection strategy";
-        default = "strict";
-      };
-      readWritePaths = lib.mkOption {
-        type = lib.types.listOf lib.types.str;
-        description = "Paths with read and write permissions";
-        default = [
-          "${cfg.workspaceBase}/pi"
-          "/nix/var/nix"
-          "${cfg.workspaceBase}/shared"
-        ];
-      };
-      readOnlyPaths = lib.mkOption {
-        type = lib.types.listOf lib.types.str;
-        description = "Paths with read-only permissions";
-        default = [ "/nix/store" ];
-      };
-      privateTmp = lib.mkOption {
-        type = lib.types.bool;
-        description = "Whether TMP is private";
-        default = true;
-      };
-      noNewPrivileges = lib.mkOption {
-        type = lib.types.bool;
-        description = "Prevent new privileges";
-        default = false;
-      };
-      capabilityBoundingSet = lib.mkOption {
-        type = lib.types.str;
-        description = "The capability bounding set";
-        default = "";
-      };
-      memoryMax = lib.mkOption {
-        type = lib.types.str;
-        description = "The max memory";
-        default = "1G";
-      };
-      cpuQuota = lib.mkOption {
-        type = lib.types.str;
-        description = "The CPU quota";
-        default = "200%";
-      };
-      tasksMax = lib.mkOption {
-        type = lib.types.int;
-        description = "The maximum number of tasks";
-        default = 100;
-      };
-      restrictAddressFamilies = lib.mkOption {
-        type = lib.types.listOf lib.types.str;
-        description = "The address families to restrict";
-        default = [ "AF_INET" "AF_INET6" "AF_UNIX" ];
-      };
-      packages = lib.mkOption {
-        type = lib.types.listOf lib.types.package;
-        description = "Additional packages";
-        default = with pkgs; [ nix ];
-      };
+    piWork = mkPiOptions {
+      instanceName = "piWork";
+      defaultUserName = "piWork";
+      defaultUid = 5004;
     };
 
-    hermes = {
-      enable = lib.mkOption {
-        type = lib.types.bool;
-        default = false;
-        description = "Enable the Hermes agent";
-      };
-      name = lib.mkOption {
-        type = lib.types.str;
-        description = "The name of the Hermes user";
-        default = "hermes";
-      };
-      description = lib.mkOption {
-        type = lib.types.str;
-        description = "The description of the Hermes agent";
-        default = "Hermes agent";
-      };
-      version = lib.mkOption {
-        type = lib.types.nullOr lib.types.str;
-        default = null;
-        description =
-          "Version/commit of hermes-agent to use (e.g. 'hermes/hermes-46839e2f' or 'v2026.4.23')";
-        example = "v2026.4.23";
-      };
-      home = lib.mkOption {
-        type = lib.types.path;
-        description = "The home folder of the Hermes user";
-        default = "${cfg.workspaceBase}/hermes";
-      };
-      uid = lib.mkOption {
-        type = lib.types.int;
-        description = "The UID of the Hermes user";
-        default = 5005;
-      };
-      shell = lib.mkOption {
-        type = lib.types.attrs;
-        description = "The shell of the Hermes user";
-        default = pkgs.bash;
-      };
-      command = lib.mkOption {
-        type = lib.types.str;
-        description = "The command to run Hermes";
-        default = let
-          ref = lib.optionalString (cfg.hermes.version != null)
-            "/${cfg.hermes.version}";
-        in "${pkgs.nix}/bin/nix --extra-experimental-features 'nix-command flakes' run --refresh github:NousResearch/hermes-agent${ref} --";
-      };
-      environmentFiles = lib.mkOption {
-        type = lib.types.listOf lib.types.path;
-        description = "Environment files";
-        default = [ ];
-      };
-      protectHome = lib.mkOption {
-        type = lib.types.bool;
-        description = "Whether to protect the home folder";
-        default = true;
-      };
-      protectSystem = lib.mkOption {
-        type = lib.types.str;
-        description = "System protection strategy";
-        default = "strict";
-      };
-      readWritePaths = lib.mkOption {
-        type = lib.types.listOf lib.types.str;
-        description = "Paths with read and write permissions";
-        default = [
-          "${cfg.workspaceBase}/hermes"
-          "/nix/var/nix"
-          "${cfg.workspaceBase}/shared"
-        ];
-      };
-      readOnlyPaths = lib.mkOption {
-        type = lib.types.listOf lib.types.str;
-        description = "Paths with read-only permissions";
-        default = [ "/nix/store" ];
-      };
-      privateTmp = lib.mkOption {
-        type = lib.types.bool;
-        description = "Whether TMP is private";
-        default = true;
-      };
-      noNewPrivileges = lib.mkOption {
-        type = lib.types.bool;
-        description = "Prevent new privileges";
-        default = false;
-      };
-      capabilityBoundingSet = lib.mkOption {
-        type = lib.types.str;
-        description = "The capability bounding set";
-        default = "";
-      };
-      memoryMax = lib.mkOption {
-        type = lib.types.str;
-        description = "The max memory";
-        default = "1G";
-      };
-      cpuQuota = lib.mkOption {
-        type = lib.types.str;
-        description = "The CPU quota";
-        default = "200%";
-      };
-      tasksMax = lib.mkOption {
-        type = lib.types.int;
-        description = "The maximum number of tasks";
-        default = 100;
-      };
-      restrictAddressFamilies = lib.mkOption {
-        type = lib.types.listOf lib.types.str;
-        description = "The address families to restrict";
-        default = [ "AF_INET" "AF_INET6" "AF_UNIX" ];
-      };
-      packages = lib.mkOption {
-        type = lib.types.listOf lib.types.package;
-        description = "Additional packages";
-        default = with pkgs; [ himalaya nix ];
-      };
+    piDryWit = mkPiOptions {
+      instanceName = "piDryWit";
+      defaultUserName = "piDryWit";
+      defaultUid = 5006;
+    };
+
+    piPythonEda = mkPiOptions {
+      instanceName = "piPythonEda";
+      defaultUserName = "piPythonEda";
+      defaultUid = 5009;
+    };
+
+    piJavaEda = mkPiOptions {
+      instanceName = "piJavaEda";
+      defaultUserName = "piJavaEda";
+      defaultUid = 5007;
+    };
+
+    hermesPc = mkHermesOptions {
+      instanceName = "hermesPc";
+      defaultUserName = "hermes-pc";
+      defaultHome = "${cfg.workspaceBase}/hermes-pc";
+      defaultUid = 5005;
+    };
+
+    hermesPersonal = mkHermesOptions {
+      instanceName = "hermesPersonal";
+      defaultUserName = "hermes-personal";
+      defaultHome = "${cfg.workspaceBase}/hermes-personal";
+      defaultUid = 5008;
     };
 
     freeClaudeCode = {
@@ -695,6 +790,10 @@ in rec {
         type = lib.types.listOf lib.types.str;
         default = [
           "localhost"
+          "maven.colordigital.cloud"
+          "artifacts.colordigital.cloud"
+          "nexus-docker.colordigital.cloud"
+          "gitlab.colordigital.cloud"
           "dev.dmix.cloud"
           "auth-dev.dmix.cloud"
           "dev2.dmix.cloud"

@@ -68,6 +68,7 @@
     stalonetray
     synergy
     #    taffybar
+    teams-for-linux
     # transcode
     unrar
     v4l-utils
