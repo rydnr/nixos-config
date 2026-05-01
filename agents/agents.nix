@@ -1,6 +1,7 @@
 { config, pkgs, lib, ... }:
 let
   agentWorkspaceBase = config.agents.workspaceBase;
+  sharedWorkspace = "${agentWorkspaceBase}/shared";
   allowedDomains = config.agents.firewall.llmDomains
     ++ config.agents.firewall.privateDomains;
   agentGroup = config.agents.commonGroup;
@@ -441,39 +442,24 @@ let
     "L+ ${agent.home}/.local/bin/git - - - - ${restrictedGit}/bin/git"
   ];
 
+  mkFilesystems = { agent }: {
+    fileSystems."${agent.home}/.m2/repository" = {
+      device = "${sharedWorkspace}/.m2/repository";
+      fsType = "none";
+      options = [ "bind" "rw" ];
+    };
+  };
+
 in {
 
   users.groups = {
     ${agentGroup} = { };
-  } // lib.optionalAttrs claudeCode.enable { ${claudeCode.name} = { }; }
-    // lib.optionalAttrs codex.enable { ${codex.name} = { }; }
-    // lib.optionalAttrs gemini.enable { ${gemini.name} = { }; }
-    // lib.optionalAttrs pi.enable { ${pi.name} = { }; }
-    // lib.optionalAttrs hermesPc.enable { ${hermesPc.name} = { }; }
-    // lib.optionalAttrs hermesWork.enable { ${hermesWork.name} = { }; }
-    // lib.optionalAttrs hermesPersonal.enable {
-      ${hermesPersonal.name} = { };
-    };
+  } // lib.listToAttrs
+    (map (agent: lib.nameValuePair agent.name { }) enabledAgents);
 
-  users.users = lib.mkMerge [
-    (lib.mkIf claudeCode.enable {
-      ${claudeCode.name} = mkAgentUser { agent = claudeCode; };
-    })
-    (lib.mkIf codex.enable { ${codex.name} = mkAgentUser { agent = codex; }; })
-    (lib.mkIf gemini.enable {
-      ${gemini.name} = mkAgentUser { agent = gemini; };
-    })
-    (lib.mkIf pi.enable { ${pi.name} = mkAgentUser { agent = pi; }; })
-    (lib.mkIf hermesPc.enable {
-      ${hermesPc.name} = mkAgentUser { agent = hermesPc; };
-    })
-    (lib.mkIf hermesWork.enable {
-      ${hermesWork.name} = mkAgentUser { agent = hermesWork; };
-    })
-    (lib.mkIf hermesPersonal.enable {
-      ${hermesPersonal.name} = mkAgentUser { agent = hermesPersonal; };
-    })
-  ];
+  users.users = lib.listToAttrs
+    (map (agent: lib.nameValuePair agent.name (mkAgentUser { agent = agent; }))
+      enabledAgents);
 
   # ════════════════════════════════════════════════
   # INSTALL THE PROXY COMMANDS
@@ -522,17 +508,16 @@ in {
   # ════════════════════════════════════════════════
 
   systemd.tmpfiles.rules =
-    [ "d /srv/agent-workspaces/shared  0775 root   ${agentGroup} - -" ]
-    ++ lib.optionals claudeCode.enable
-    (agentSystemdFiles { agent = claudeCode; })
-    ++ lib.optionals codex.enable (agentSystemdFiles { agent = codex; })
-    ++ lib.optionals gemini.enable (agentSystemdFiles { agent = gemini; })
-    ++ lib.optionals pi.enable (agentSystemdFiles { agent = pi; })
-    ++ lib.optionals hermesPc.enable (agentSystemdFiles { agent = hermesPc; })
-    ++ lib.optionals hermesWork.enable
-    (agentSystemdFiles { agent = hermesWork; })
-    ++ lib.optionals hermesPersonal.enable
-    (agentSystemdFiles { agent = hermesPersonal; });
+    [ "d ${sharedWorkspace} 2750 root ${agentGroup} - -" ]
+    ++ lib.concatMap (agent: agentSystemdFiles { inherit agent; })
+    enabledAgents;
+
+  fileSystems = lib.listToAttrs (map (agent:
+    lib.nameValuePair "${agent.home}/.m2/repository" {
+      device = "${sharedWorkspace}/.m2/repository";
+      fsType = "none";
+      options = [ "bind" "rw" ];
+    }) enabledAgents);
 
   # ── Decrypt secrets into agent homes ──
   sops = rec {
@@ -626,4 +611,5 @@ in {
     ${lib.concatMapStringsSep "\n" mkAgentRules enabledAgents}
     ${lib.concatMapStringsSep "\n" mkAgentAllowRules enabledAgents}
   '';
+
 }
