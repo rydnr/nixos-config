@@ -91,7 +91,7 @@ let
           ${agent.command} "$@"
       '';
       wrapper = pkgs.writeShellScriptBin "${agent.name}" ''
-        DIR="${agent.home}/worktrees"
+        DIR="${agent.home}"
         if [[ -d "''${1:-}" ]]; then
           DIR="$DIR/$1"
           shift
@@ -480,8 +480,32 @@ in {
   # ════════════════════════════════════════════════
 
   environment.systemPackages = with pkgs;
-    [ agentBrowserProxy agentVisualBrowser pandoc ]
-    ++ lib.concatMap (a: a.packages) enabledAgentsCmd;
+    [
+      agentBrowserProxy
+      agentVisualBrowser
+      (writeShellScriptBin "antigravity-agents" ''
+        # 1. Set umask so new files are group-writable (rw-rw-r--)
+        umask 002
+        # 2. Use 'sg' to run the IDE with '${agentGroup}' as the primary effective group
+        exec sg ${agentGroup} -c " NIXPKGS_ALLOW_UNFREE=1 nix-shell -p antigravity --run antigravity \"$@\""
+      '')
+      (writeShellScriptBin "code-agents" ''
+        # 1. Set umask so new files are group-writable (rw-rw-r--)
+        umask 002
+        # 2. Use 'sg' to run the IDE with '${agentGroup}' as the primary effective group
+        exec sg ${agentGroup} -c "${vscode}/bin/code \"$@\""
+      '')
+      graalvmPackages.graalvm-ce
+      (writeShellScriptBin "idea-ultimate-agents" ''
+        # 1. Set umask so new files are group-writable (rw-rw-r--)
+        umask 002
+        # 2. Use 'sg' to run the IDE with '${agentGroup}' as the primary effective group
+        exec sg ${agentGroup} -c "${jetbrains.idea-ultimate}/bin/idea-ultimate \"$@\""
+      '')
+      jdk
+      maven
+      pandoc
+    ] ++ lib.concatMap (a: a.packages) enabledAgentsCmd;
 
   security.sudo.extraRules = [{
     users = [ "chous" ];
