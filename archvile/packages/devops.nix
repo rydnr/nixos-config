@@ -55,8 +55,10 @@
       iperf
       isync
       # junkie
+      k9s
       keychain
       kind
+      kubectx
       libguestfs
       lshw
       lsof

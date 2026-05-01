@@ -2,25 +2,18 @@
 let
   agentWorkspaceBase = config.agents.workspaceBase;
   allowedDomains = config.agents.firewall.llmDomains
-                   ++ config.agents.firewall.privateDomains;
+    ++ config.agents.firewall.privateDomains;
   agentGroup = config.agents.commonGroup;
   # Build a regex for matching
   domainRegex = builtins.concatStringsSep "|"
     (map (d: builtins.replaceStrings [ "." ] [ "\\." ] d) allowedDomains);
   proxyUrl = "http://127.0.0.1:${toString config.agents.proxy.port}";
-  freeClaudeCode = config.agents.freeClaudeCode;
-  freeClaudeCodeUrl = "http://${config.agents.freeClaudeCode.host}:${
-    toString config.agents.freeClaudeCode.port
-  }";
-  anthropicAuthToken = config.agents.freeClaudeCode.anthropicAuthToken;
   claudeCode = config.agents.claudeCode;
   codex = config.agents.codex;
   gemini = config.agents.gemini;
-  piWork = config.agents.piWork;
-  piDryWit = config.agents.piDryWit;
-  piPythonEda = config.agents.piPythonEda;
-  piJavaEda = config.agents.piJavaEda;
+  pi = config.agents.pi;
   hermesPc = config.agents.hermesPc;
+  hermesWork = config.agents.hermesWork;
   hermesPersonal = config.agents.hermesPersonal;
   mkAgentUser = { agent }: {
     name = agent.name;
@@ -33,6 +26,16 @@ let
     createHome = true;
     extraGroups = [ agentGroup ];
   };
+  freeClaudeCodePath = (lib.mkIf claudeCode.enable
+    (lib.mkIf claudeCode.freeClaudeCode.enabled
+      claudeCode.freeClaudeCode.path));
+  systemdFreeClaudeCode = lib.optionalString
+    (claudeCode.enable && claudeCode.freeClaudeCode.enable) ''
+      --setenv=ANTHROPIC_BASE_URL="http://${claudeCode.freeClaudeCode.host}:${
+        toString claudeCode.freeClaudeCode.port
+      }" \
+      --setenv=ANTHROPIC_AUTH_TOKEN="${claudeCode.freeClaudeCode.anthropicAuthToken}"
+    '';
 
   # ──────────────────────────────────────────────
   # Wrapper to launch each agent in a sandboxed systemd-run
@@ -58,37 +61,42 @@ let
           --setenv=https_proxy="${proxyUrl}" \
           --setenv=NO_PROXY="localhost,127.0.0.1" \
           --setenv=BROWSER="${agentBrowserProxy}/bin/agent-browser" \
-          --setenv=ANTHROPIC_BASE_URL="${freeClaudeCodeUrl}" \
-          --setenv=ANTHROPIC_AUTH_TOKEN="${anthropicAuthToken}" \
+          ${systemdFreeClaudeCode} \
           ${
             lib.concatMapStringsSep " " (f: "--property=EnvironmentFile=${f}")
-              agent.environmentFiles
+            agent.environmentFiles
           } \
           --property=ProtectHome=${if agent.protectHome then "yes" else "no"} \
           --property=ProtectSystem=${agent.protectSystem} \
           ${
             lib.concatMapStringsSep " " (p: "--property=ReadWritePaths=${p}")
-              agent.readWritePaths
+            agent.readWritePaths
           } \
           ${
             lib.concatMapStringsSep " " (p: "--property=ReadOnlyPaths=${p}")
-              agent.readOnlyPaths
+            agent.readOnlyPaths
           } \
           --property=PrivateTmp=${if agent.privateTmp then "yes" else "no"} \
           --property=NoNewPrivileges=${
-                                  if agent.noNewPrivileges then "yes" else "no"
-                                } \
+            if agent.noNewPrivileges then "yes" else "no"
+          } \
           --property=CapabilityBoundingSet=${agent.capabilityBoundingSet} \
           --property=MemoryMax=${agent.memoryMax} \
           --property=CPUQuota=${agent.cpuQuota} \
           --property=TasksMax=${toString agent.tasksMax} \
           --property=RestrictAddressFamilies="${
-                                lib.concatStringsSep " " agent.restrictAddressFamilies
-                              }" \
+            lib.concatStringsSep " " agent.restrictAddressFamilies
+          }" \
           -- \
           ${agent.command} "$@"
       '';
       wrapper = pkgs.writeShellScriptBin "${agent.name}" ''
+        DIR="${agent.home}/worktrees"
+        if [[ -d "''${1:-}" ]]; then
+          DIR="$DIR/$1"
+          shift
+        fi
+        cd "$DIR" 2>/dev/null || true
         exec sudo ${executor}/bin/_${agent.name}-run "$@"
       '';
     in {
@@ -97,19 +105,20 @@ let
     };
 
   enabledAgents = lib.optional claudeCode.enable claudeCode
-                  ++ lib.optional codex.enable codex ++ lib.optional gemini.enable gemini
-                  ++ lib.optional piWork.enable piWork ++ lib.optional piDryWit.enable piDryWit ++ lib.optional piJavaEda.enable piJavaEda
-                  ++ lib.optional hermesPc.enable hermesPc ++ lib.optional hermesPersonal.enable hermesPersonal;
+    ++ lib.optional codex.enable codex ++ lib.optional gemini.enable gemini
+    ++ lib.optional pi.enable pi ++ lib.optional hermesPc.enable hermesPc
+    ++ lib.optional hermesWork.enable hermesWork
+    ++ lib.optional hermesPersonal.enable hermesPersonal;
 
   enabledAgentsCmd =
     lib.optional claudeCode.enable (mkAgentCommand { agent = claudeCode; })
     ++ lib.optional codex.enable (mkAgentCommand { agent = codex; })
     ++ lib.optional gemini.enable (mkAgentCommand { agent = gemini; })
-    ++ lib.optional piWork.enable (mkAgentCommand { agent = piWork; })
-    ++ lib.optional piDryWit.enable (mkAgentCommand { agent = piDryWit; })
-    ++ lib.optional piJavaEda.enable (mkAgentCommand { agent = piJavaEda; })
+    ++ lib.optional pi.enable (mkAgentCommand { agent = pi; })
     ++ lib.optional hermesPc.enable (mkAgentCommand { agent = hermesPc; })
-    ++ lib.optional hermesPersonal.enable (mkAgentCommand { agent = hermesPersonal; });
+    ++ lib.optional hermesWork.enable (mkAgentCommand { agent = hermesWork; })
+    ++ lib.optional hermesPersonal.enable
+    (mkAgentCommand { agent = hermesPersonal; });
 
   mkAgentRules = agent: ''
     iptables -t nat -A OUTPUT -m owner --uid-owner ${agent.name} -j AGENT_PROXY
@@ -148,7 +157,7 @@ let
       echo "Allowed domains:" >&2
       ${
         builtins.concatStringsSep "\n"
-          (map (d: ''echo "  - ${d}" >&2'') allowedDomains)
+        (map (d: ''echo "  - ${d}" >&2'') allowedDomains)
       }
       exit 1
     fi
@@ -211,8 +220,8 @@ let
       --no-first-run \
       --user-data-dir="$(mktemp -d)" \
       --host-resolver-rules="MAP * ~NOTFOUND, EXCLUDE ${
-                        builtins.concatStringsSep ", EXCLUDE " allowedDomains
-                      }" \
+        builtins.concatStringsSep ", EXCLUDE " allowedDomains
+      }" \
       --dump-dom \
       "$URL" 2>/dev/null \
     | ${pkgs.pandoc}/bin/pandoc -f html -t plain --wrap=auto
@@ -421,6 +430,7 @@ let
 
   agentSystemdFiles = { agent }: [
     # Per-agent bin directory with our override
+    "d ${agent.home} 0775 ${agent.name} ${agentGroup} - -"
     "d ${agent.home}/.local/bin 0700 ${agent.name} ${agentGroup} - -"
     "L+ ${agent.home}/.local/bin/xdg-open - - - - ${agentBrowserProxy}/bin/agent-browser"
     "L+ ${agent.home}/.local/bin/open      - - - - ${agentBrowserProxy}/bin/agent-browser"
@@ -430,26 +440,36 @@ let
 
 in {
 
-  users.groups =
-    { ${agentGroup} = { }; }
-    // lib.optionalAttrs claudeCode.enable { ${claudeCode.name} = { }; }
-      // lib.optionalAttrs codex.enable { ${codex.name} = { }; }
-      // lib.optionalAttrs gemini.enable { ${gemini.name} = { }; }
-      // lib.optionalAttrs piWork.enable { ${piWork.name} = { }; }
-      // lib.optionalAttrs piDryWit.enable { ${piDryWit.name} = { }; }
-      // lib.optionalAttrs piJavaEda.enable { ${piJavaEda.name} = { }; }
-      // lib.optionalAttrs hermesPc.enable { ${hermesPc.name} = { }; }
-      // lib.optionalAttrs hermesPersonal.enable { ${hermesPersonal.name} = { }; };
+  users.groups = {
+    ${agentGroup} = { };
+  } // lib.optionalAttrs claudeCode.enable { ${claudeCode.name} = { }; }
+    // lib.optionalAttrs codex.enable { ${codex.name} = { }; }
+    // lib.optionalAttrs gemini.enable { ${gemini.name} = { }; }
+    // lib.optionalAttrs pi.enable { ${pi.name} = { }; }
+    // lib.optionalAttrs hermesPc.enable { ${hermesPc.name} = { }; }
+    // lib.optionalAttrs hermesWork.enable { ${hermesWork.name} = { }; }
+    // lib.optionalAttrs hermesPersonal.enable {
+      ${hermesPersonal.name} = { };
+    };
 
   users.users = lib.mkMerge [
-    (lib.mkIf claudeCode.enable { ${claudeCode.name} = mkAgentUser { agent = claudeCode; }; })
+    (lib.mkIf claudeCode.enable {
+      ${claudeCode.name} = mkAgentUser { agent = claudeCode; };
+    })
     (lib.mkIf codex.enable { ${codex.name} = mkAgentUser { agent = codex; }; })
-    (lib.mkIf gemini.enable { ${gemini.name} = mkAgentUser { agent = gemini; }; })
-    (lib.mkIf piWork.enable { ${piWork.name} = mkAgentUser { agent = piWork; }; })
-    (lib.mkIf piDryWit.enable { ${piDryWit.name} = mkAgentUser { agent = piDryWit; }; })
-    (lib.mkIf piJavaEda.enable { ${piJavaEda.name} = mkAgentUser { agent = piJavaEda; }; })
-    (lib.mkIf hermesPc.enable { ${hermesPc.name} = mkAgentUser { agent = hermesPc; }; })
-    (lib.mkIf hermesPersonal.enable { ${hermesPersonal.name} = mkAgentUser { agent = hermesPersonal; }; })
+    (lib.mkIf gemini.enable {
+      ${gemini.name} = mkAgentUser { agent = gemini; };
+    })
+    (lib.mkIf pi.enable { ${pi.name} = mkAgentUser { agent = pi; }; })
+    (lib.mkIf hermesPc.enable {
+      ${hermesPc.name} = mkAgentUser { agent = hermesPc; };
+    })
+    (lib.mkIf hermesWork.enable {
+      ${hermesWork.name} = mkAgentUser { agent = hermesWork; };
+    })
+    (lib.mkIf hermesPersonal.enable {
+      ${hermesPersonal.name} = mkAgentUser { agent = hermesPersonal; };
+    })
   ];
 
   # ════════════════════════════════════════════════
@@ -475,29 +495,32 @@ in {
   # ════════════════════════════════════════════════
 
   systemd.tmpfiles.rules =
-    [ "d /srv/agent-workspaces/shared  0750 root   ${agentGroup} - -" ]
-    ++ lib.optionals claudeCode.enable (agentSystemdFiles { agent = claudeCode; })
+    [ "d /srv/agent-workspaces/shared  0775 root   ${agentGroup} - -" ]
+    ++ lib.optionals claudeCode.enable
+    (agentSystemdFiles { agent = claudeCode; })
     ++ lib.optionals codex.enable (agentSystemdFiles { agent = codex; })
     ++ lib.optionals gemini.enable (agentSystemdFiles { agent = gemini; })
-    ++ lib.optionals piWork.enable (agentSystemdFiles { agent = piWork; })
-    ++ lib.optionals piDryWit.enable (agentSystemdFiles { agent = piDryWit; })
-    ++ lib.optionals piJavaEda.enable (agentSystemdFiles { agent = piJavaEda; })
+    ++ lib.optionals pi.enable (agentSystemdFiles { agent = pi; })
     ++ lib.optionals hermesPc.enable (agentSystemdFiles { agent = hermesPc; })
-    ++ lib.optionals hermesPersonal.enable (agentSystemdFiles { agent = hermesPersonal; });
+    ++ lib.optionals hermesWork.enable
+    (agentSystemdFiles { agent = hermesWork; })
+    ++ lib.optionals hermesPersonal.enable
+    (agentSystemdFiles { agent = hermesPersonal; });
 
   # ── Decrypt secrets into agent homes ──
   sops = rec {
     age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
 
     secrets = {
-      "free-claude-code-env" = lib.mkIf claudeCode.enable {
-        path = "${freeClaudeCode.path}/.env.new";
-        sopsFile = ../private/secrets/free-claude-code.env;
-        format = "dotenv";
-        mode = "0400";
-        owner = claudeCode.name;
-        group = agentGroup;
-      };
+      "free-claude-code-env" = (lib.mkIf claudeCode.enable
+        (lib.mkIf claudeCode.freeClaudeCode.enable {
+          path = "${freeClaudeCodePath}/.env.new";
+          sopsFile = ../private/secrets/free-claude-code.env;
+          format = "dotenv";
+          mode = "0400";
+          owner = claudeCode.name;
+          group = agentGroup;
+        }));
     };
   };
 

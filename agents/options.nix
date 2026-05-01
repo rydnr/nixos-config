@@ -1,14 +1,11 @@
 # agents/options.nix
 { pkgs, lib, config, ... }:
-let cfg = config.agents;
-    mkClaudeCodeOptions = {
-      instanceName,
-        defaultUserName ? instanceName,
-        defaultDescription ? "Claude Code agent (${instanceName})",
-        defaultHome ? "${cfg.workspaceBase}/${instanceName}",
-        defaultUid,
-        defaultEnvironmentFiles ? [  ],
-    }: {
+let
+  cfg = config.agents;
+  mkClaudeCodeOptions = { instanceName, defaultUserName ? instanceName
+    , defaultDescription ? "Claude Code agent (${instanceName})"
+    , defaultHome ? "${cfg.workspaceBase}/${instanceName}", defaultUid
+    , defaultEnvironmentFiles ? [ ], }: {
       enable = lib.mkOption {
         type = lib.types.bool;
         default = false;
@@ -53,7 +50,7 @@ let cfg = config.agents;
           instanceCfg = cfg.${instanceName};
           ref = lib.optionalString (instanceCfg.version != null)
             "/${instanceCfg.version}";
-        in "${pkgs.nix}/bin/nix --extra-experimental-features 'nix-command flakes' run --refresh github:sadjow/claude-code-nix${ref} --";
+        in "${pkgs.nix}/bin/nix --extra-experimental-features 'nix-command flakes' run github:sadjow/claude-code-nix${ref} --";
       };
       environmentFiles = lib.mkOption {
         type = lib.types.listOf lib.types.path;
@@ -72,12 +69,9 @@ let cfg = config.agents;
       };
       readWritePaths = lib.mkOption {
         type = lib.types.listOf lib.types.str;
-        description = "Paths with read and write permissions for ${instanceName}";
-        default = [
-          defaultHome
-          "/nix/var/nix"
-          "${cfg.workspaceBase}/shared"
-        ];
+        description =
+          "Paths with read and write permissions for ${instanceName}";
+        default = [ defaultHome "/nix/var/nix" "${cfg.workspaceBase}/shared" ];
       };
       readOnlyPaths = lib.mkOption {
         type = lib.types.listOf lib.types.str;
@@ -124,16 +118,51 @@ let cfg = config.agents;
         description = "Additional packages for ${instanceName}";
         default = with pkgs; [ nix ];
       };
+
+      freeClaudeCode = {
+        enable = lib.mkOption {
+          type = lib.types.bool;
+          default = false;
+          description = "Enable the Free Claude Code";
+        };
+        port = lib.mkOption {
+          type = lib.types.port;
+          default = 7070;
+          description = "Port for free-claude-code proxy";
+        };
+
+        host = lib.mkOption {
+          type = lib.types.str;
+          default = "127.0.0.1";
+          description = "Host for free-claude-code proxy";
+        };
+
+        path = lib.mkOption {
+          type = lib.types.path;
+          default = "${defaultHome}/free-claude-code";
+          description = "free-claude-code path";
+        };
+
+        uvCachePath = lib.mkOption {
+          type = lib.types.path;
+          default = "${defaultHome}/.cache/uv";
+          description = "UV cache dir";
+        };
+
+        anthropicAuthToken = lib.mkOption {
+          type = lib.types.str;
+          default =
+            "8SU/Y90FgCJ/uKqZv3yG01mCr8e0WsSqWRPwBsDN/k3b/525YdM/yvhc8BtP";
+          description =
+            "Custom auth token for Anthropic (to make free-claude-code private)";
+        };
+      };
     };
 
-    mkCodexOptions = {
-      instanceName,
-        defaultUserName ? instanceName,
-        defaultDescription ? "Codex agent (${instanceName})",
-        defaultHome ? "${cfg.workspaceBase}/${instanceName}",
-        defaultUid,
-        defaultEnvironmentFiles ? [  ],
-    }: {
+  mkCodexOptions = { instanceName, defaultUserName ? instanceName
+    , defaultDescription ? "Codex agent (${instanceName})"
+    , defaultHome ? "${cfg.workspaceBase}/${instanceName}", defaultUid
+    , defaultEnvironmentFiles ? [ ], }: {
       enable = lib.mkOption {
         type = lib.types.bool;
         default = false;
@@ -177,7 +206,7 @@ let cfg = config.agents;
           instanceCfg = cfg.${instanceName};
           ref = lib.optionalString (instanceCfg.version != null)
             "/${instanceCfg.version}";
-        in "${pkgs.nix}/bin/nix --extra-experimental-features 'nix-command flakes' run --refresh github:sadjow/codex-cli-nix${ref} --";
+        in "${pkgs.nix}/bin/nix --extra-experimental-features 'nix-command flakes' run github:sadjow/codex-cli-nix${ref} --";
       };
       environmentFiles = lib.mkOption {
         type = lib.types.listOf lib.types.path;
@@ -196,12 +225,9 @@ let cfg = config.agents;
       };
       readWritePaths = lib.mkOption {
         type = lib.types.listOf lib.types.str;
-        description = "Paths with read and write permissions for ${instanceName}";
-        default = [
-          defaultHome
-          "/nix/var/nix"
-          "${cfg.workspaceBase}/shared"
-        ];
+        description =
+          "Paths with read and write permissions for ${instanceName}";
+        default = [ defaultHome "/nix/var/nix" "${cfg.workspaceBase}/shared" ];
       };
       readOnlyPaths = lib.mkOption {
         type = lib.types.listOf lib.types.str;
@@ -250,14 +276,10 @@ let cfg = config.agents;
       };
     };
 
-    mkGeminiOptions = {
-      instanceName,
-        defaultUserName ? instanceName,
-        defaultDescription ? "Gemini agent (${instanceName})",
-        defaultHome ? "${cfg.workspaceBase}/${instanceName}",
-        defaultUid,
-        defaultEnvironmentFiles ? [  ],
-    }: {
+  mkGeminiOptions = { instanceName, defaultUserName ? instanceName
+    , defaultDescription ? "Gemini agent (${instanceName})"
+    , defaultHome ? "${cfg.workspaceBase}/${instanceName}", defaultUid
+    , defaultEnvironmentFiles ? [ ], }: {
       enable = lib.mkOption {
         type = lib.types.bool;
         default = false;
@@ -310,12 +332,9 @@ let cfg = config.agents;
       };
       readWritePaths = lib.mkOption {
         type = lib.types.listOf lib.types.str;
-        description = "Paths with read and write permissions for ${instanceName} ";
-        default = [
-          defaultHome
-          "/nix/var/nix"
-          "${cfg.workspaceBase}/shared"
-        ];
+        description =
+          "Paths with read and write permissions for ${instanceName} ";
+        default = [ defaultHome "/nix/var/nix" "${cfg.workspaceBase}/shared" ];
       };
       readOnlyPaths = lib.mkOption {
         type = lib.types.listOf lib.types.str;
@@ -364,14 +383,10 @@ let cfg = config.agents;
       };
     };
 
-    mkPiOptions = {
-      instanceName,
-        defaultUserName ? instanceName,
-        defaultDescription ? "Pi agent (${instanceName})",
-        defaultHome ? "${cfg.workspaceBase}/${instanceName}",
-        defaultUid,
-        defaultEnvironmentFiles ? [  ],
-    }: {
+  mkPiOptions = { instanceName, defaultUserName ? instanceName
+    , defaultDescription ? "Pi agent (${instanceName})"
+    , defaultHome ? "${cfg.workspaceBase}/${instanceName}", defaultUid
+    , defaultEnvironmentFiles ? [ ], }: {
       enable = lib.mkOption {
         type = lib.types.bool;
         default = false;
@@ -415,7 +430,7 @@ let cfg = config.agents;
           instanceCfg = cfg.${instanceName};
           ref = lib.optionalString (instanceCfg.version != null)
             "/${instanceCfg.version}";
-        in "${pkgs.nix}/bin/nix --extra-experimental-features 'nix-command flakes' run --refresh github:lukasl-dev/pi-mono.nix${ref} --";
+        in "${pkgs.nix}/bin/nix --extra-experimental-features 'nix-command flakes' run github:lukasl-dev/pi-mono.nix${ref} --";
       };
       environmentFiles = lib.mkOption {
         type = lib.types.listOf lib.types.path;
@@ -434,12 +449,9 @@ let cfg = config.agents;
       };
       readWritePaths = lib.mkOption {
         type = lib.types.listOf lib.types.str;
-        description = "Paths with read and write permissions of ${instanceName}";
-        default = [
-          defaultHome
-          "/nix/var/nix"
-          "${cfg.workspaceBase}/shared"
-        ];
+        description =
+          "Paths with read and write permissions of ${instanceName}";
+        default = [ defaultHome "/nix/var/nix" "${cfg.workspaceBase}/shared" ];
       };
       readOnlyPaths = lib.mkOption {
         type = lib.types.listOf lib.types.str;
@@ -488,14 +500,11 @@ let cfg = config.agents;
       };
     };
 
-    mkHermesOptions = {
-      instanceName,       # e.g. "hermes-pc", "hermes-personal"
-        defaultUserName ? instanceName,
-        defaultDescription ? "Hermes agent (${instanceName})",
-        defaultHome ? "${cfg.workspaceBase}/${instanceName}",
-        defaultUid,
-        defaultEnvironmentFiles ? [  ],
-    }: {
+  mkHermesOptions = { instanceName, # e.g. "hermes-pc", "hermes-personal"
+    defaultUserName ? instanceName
+    , defaultDescription ? "Hermes agent (${instanceName})"
+    , defaultHome ? "${cfg.workspaceBase}/${instanceName}", defaultUid
+    , defaultEnvironmentFiles ? [ ], }: {
       enable = lib.mkOption {
         type = lib.types.bool;
         default = false;
@@ -540,7 +549,7 @@ let cfg = config.agents;
           instanceCfg = cfg.${instanceName};
           ref = lib.optionalString (instanceCfg.version != null)
             "/${instanceCfg.version}";
-        in "${pkgs.nix}/bin/nix --extra-experimental-features 'nix-command flakes' run --refresh github:NousResearch/hermes-agent${ref} --";
+        in "${pkgs.nix}/bin/nix --extra-experimental-features 'nix-command flakes' run github:NousResearch/hermes-agent${ref} --";
       };
       environmentFiles = lib.mkOption {
         type = lib.types.listOf lib.types.path;
@@ -559,12 +568,9 @@ let cfg = config.agents;
       };
       readWritePaths = lib.mkOption {
         type = lib.types.listOf lib.types.str;
-        description = "Paths with read and write permissions for ${instanceName}";
-        default = [
-          defaultHome
-          "/nix/var/nix"
-          "${cfg.workspaceBase}/shared"
-        ];
+        description =
+          "Paths with read and write permissions for ${instanceName}";
+        default = [ defaultHome "/nix/var/nix" "${cfg.workspaceBase}/shared" ];
       };
       readOnlyPaths = lib.mkOption {
         type = lib.types.listOf lib.types.str;
@@ -629,7 +635,8 @@ in rec {
 
     claudeCode = mkClaudeCodeOptions {
       instanceName = "claudeCode";
-      defaultUserName = "claudeCode";
+      defaultUserName = "claude-code";
+      defaultHome = "${cfg.workspaceBase}/claude-code";
       defaultUid = 5001;
     };
 
@@ -645,28 +652,10 @@ in rec {
       defaultUid = 5003;
     };
 
-    piWork = mkPiOptions {
-      instanceName = "piWork";
-      defaultUserName = "piWork";
+    pi = mkPiOptions {
+      instanceName = "pi";
+      defaultUserName = "pi";
       defaultUid = 5004;
-    };
-
-    piDryWit = mkPiOptions {
-      instanceName = "piDryWit";
-      defaultUserName = "piDryWit";
-      defaultUid = 5006;
-    };
-
-    piPythonEda = mkPiOptions {
-      instanceName = "piPythonEda";
-      defaultUserName = "piPythonEda";
-      defaultUid = 5009;
-    };
-
-    piJavaEda = mkPiOptions {
-      instanceName = "piJavaEda";
-      defaultUserName = "piJavaEda";
-      defaultUid = 5007;
     };
 
     hermesPc = mkHermesOptions {
@@ -676,50 +665,18 @@ in rec {
       defaultUid = 5005;
     };
 
+    hermesWork = mkHermesOptions {
+      instanceName = "hermesWork";
+      defaultUserName = "hermes-work";
+      defaultHome = "${cfg.workspaceBase}/hermes-work";
+      defaultUid = 5006;
+    };
+
     hermesPersonal = mkHermesOptions {
       instanceName = "hermesPersonal";
       defaultUserName = "hermes-personal";
       defaultHome = "${cfg.workspaceBase}/hermes-personal";
-      defaultUid = 5008;
-    };
-
-    freeClaudeCode = {
-      enable = lib.mkOption {
-        type = lib.types.bool;
-        default = false;
-        description = "Enable the Free Claude Code";
-      };
-      port = lib.mkOption {
-        type = lib.types.port;
-        default = 7070;
-        description = "Port for free-claude-code proxy";
-      };
-
-      host = lib.mkOption {
-        type = lib.types.str;
-        default = "127.0.0.1";
-        description = "Host for free-claude-code proxy";
-      };
-
-      path = lib.mkOption {
-        type = lib.types.path;
-        default = "${cfg.workspaceBase}/claude/free-claude-code";
-        description = "free-claude-code path";
-      };
-
-      uvCachePath = lib.mkOption {
-        type = lib.types.path;
-        default = "${cfg.workspaceBase}/claude/.cache/uv";
-        description = "UV cache dir";
-      };
-
-      anthropicAuthToken = lib.mkOption {
-        type = lib.types.str;
-        default =
-          "8SU/Y90FgCJ/uKqZv3yG01mCr8e0WsSqWRPwBsDN/k3b/525YdM/yvhc8BtP";
-        description =
-          "Custom auth token for Anthropic (to make free-claude-code private)";
-      };
+      defaultUid = 5007;
     };
 
     proxy = {
