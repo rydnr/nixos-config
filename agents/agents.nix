@@ -97,6 +97,9 @@ let
           shift
         fi
         cd "$DIR" 2>/dev/null || true
+        sudo chgrp -R ${agentGroup} $DIR
+        sudo setfacl -R -m g::rwx $DIR
+        sudo setfacl -R -m d:g::rwx $DIR
         exec sudo ${executor}/bin/_${agent.name}-run "$@"
       '';
     in {
