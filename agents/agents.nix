@@ -27,9 +27,9 @@ let
     createHome = true;
     extraGroups = [ agentGroup ];
   };
-  freeClaudeCodePath = (lib.mkIf claudeCode.enable
-    (lib.mkIf claudeCode.freeClaudeCode.enabled
-      claudeCode.freeClaudeCode.path));
+  freeClaudeCodePath =
+    lib.optionalString (claudeCode.enable && claudeCode.freeClaudeCode.enable)
+    claudeCode.freeClaudeCode.path;
   systemdFreeClaudeCode = lib.optionalString
     (claudeCode.enable && claudeCode.freeClaudeCode.enable) ''
       --setenv=ANTHROPIC_BASE_URL="http://${claudeCode.freeClaudeCode.host}:${

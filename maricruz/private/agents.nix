@@ -1,6 +1,7 @@
 { config, ... }: {
   agents = {
     claudeCode.enable = true;
+    claudeCode.freeClaudeCode.enable = true;
     codex.enable = true;
     gemini.enable = true;
     pi.enable = true;
