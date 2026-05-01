@@ -35,7 +35,7 @@ let
       --setenv=ANTHROPIC_BASE_URL="http://${claudeCode.freeClaudeCode.host}:${
         toString claudeCode.freeClaudeCode.port
       }" \
-      --setenv=ANTHROPIC_AUTH_TOKEN="${claudeCode.freeClaudeCode.anthropicAuthToken}"
+        --setenv=ANTHROPIC_AUTH_TOKEN="${claudeCode.freeClaudeCode.anthropicAuthToken}" \
     '';
 
   # ──────────────────────────────────────────────
