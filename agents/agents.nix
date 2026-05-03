@@ -35,7 +35,7 @@ let
       --setenv=ANTHROPIC_BASE_URL="http://${claudeCode.freeClaudeCode.host}:${
         toString claudeCode.freeClaudeCode.port
       }" \
-        --setenv=ANTHROPIC_AUTH_TOKEN="${claudeCode.freeClaudeCode.anthropicAuthToken}" \
+      --setenv=ANTHROPIC_AUTH_TOKEN="${claudeCode.freeClaudeCode.anthropicAuthToken}"
     '';
 
   # ──────────────────────────────────────────────
@@ -52,9 +52,9 @@ let
           --unit="${agent.name}-$(date +%s)" \
           --working-directory="${agent.home}" \
           --setenv=HOME="${agent.home}" \
+          --setenv=PATH="${agent.home}/.local/bin:${sharedWorkspace}/.npm-packages/bin:${pkgs.coreutils}/bin:${pkgs.nix}/bin:${pkgs.git}/bin:/run/current-system/sw/bin" \
           --setenv=XDG_CONFIG_HOME="${agent.home}/.config" \
           --setenv=XDG_CACHE_HOME="${agent.home}/.cache" \
-          --setenv=PATH="${agent.home}/.local/bin:${pkgs.coreutils}/bin:${pkgs.nix}/bin:${pkgs.git}/bin:/run/current-system/sw/bin" \
           --setenv=NIX_CONF_DIR="/etc/nix" \
           --setenv=HTTP_PROXY="${proxyUrl}" \
           --setenv=HTTPS_PROXY="${proxyUrl}" \
@@ -101,7 +101,9 @@ let
         sudo chgrp -R ${agentGroup} $DIR
         sudo setfacl -R -m g::rwx $DIR
         sudo setfacl -R -m d:g::rwx $DIR
-        exec sudo ${executor}/bin/_${agent.name}-run "$@"
+        exec sudo ${executor}/bin/_${agent.name}-run ${
+          if agent.skipApprovals then agent.skipApprovalsFlag else ""
+        } "$@"
       '';
     in {
       packages = [ executor wrapper ] ++ agent.packages;
@@ -435,20 +437,13 @@ let
   agentSystemdFiles = { agent }: [
     # Per-agent bin directory with our override
     "d ${agent.home} 0775 ${agent.name} ${agentGroup} - -"
-    "d ${agent.home}/.local/bin 0700 ${agent.name} ${agentGroup} - -"
-    "L+ ${agent.home}/.local/bin/xdg-open - - - - ${agentBrowserProxy}/bin/agent-browser"
-    "L+ ${agent.home}/.local/bin/open      - - - - ${agentBrowserProxy}/bin/agent-browser"
-    "L+ ${agent.home}/.local/bin/sensible-browser - - - - ${agentBrowserProxy}/bin/agent-browser"
-    "L+ ${agent.home}/.local/bin/git - - - - ${restrictedGit}/bin/git"
+    "f ${agent.home}/.npmrc 0664 ${agent.name} ${agentGroup} - prefix=${sharedWorkspace}/.npm-packages"
+    "d ${agent.home}/.local/bin 0770 ${agent.name} ${agentGroup} - -"
+    "L+ ${agent.home}/.local/bin/xdg-open - ${agent.name} ${agentGroup} - ${agentBrowserProxy}/bin/agent-browser"
+    "L+ ${agent.home}/.local/bin/open      - ${agent.name} ${agentGroup} - ${agentBrowserProxy}/bin/agent-browser"
+    "L+ ${agent.home}/.local/bin/sensible-browser - ${agent.name} ${agentGroup} - ${agentBrowserProxy}/bin/agent-browser"
+    "L+ ${agent.home}/.local/bin/git - ${agent.name} ${agentGroup} - ${restrictedGit}/bin/git"
   ];
-
-  mkFilesystems = { agent }: {
-    fileSystems."${agent.home}/.m2/repository" = {
-      device = "${sharedWorkspace}/.m2/repository";
-      fsType = "none";
-      options = [ "bind" "rw" ];
-    };
-  };
 
 in {
 

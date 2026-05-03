@@ -28,6 +28,12 @@ let
           "Version/commit of Claude Code (e.g. '2.1.120' or '002de6e')";
         example = "2.1.120";
       };
+      skipApprovals = lib.mkOption {
+        type = lib.types.bool;
+        default = true;
+        description = "Whether to skip approvals";
+      };
+      skipApprovalsFlag = "--dangerously-skip-permissions";
       home = lib.mkOption {
         type = lib.types.path;
         description = "The home folder of the ${instanceName} user";
@@ -184,6 +190,12 @@ let
         description = "Version/commit of Codex (e.g. '0.125.0' or 'fc382be')";
         example = "0.125.0";
       };
+      skipApprovals = lib.mkOption {
+        type = lib.types.bool;
+        default = true;
+        description = "Whether to skip approvals";
+      };
+      skipApprovalsFlag = "--allow-dangerously-skip-permissions";
       home = lib.mkOption {
         type = lib.types.path;
         description = "The home folder of the Codex ${instanceName} user";
@@ -295,6 +307,12 @@ let
         description = "The description of the Gemini ${instanceName} agent";
         default = defaultDescription;
       };
+      skipApprovals = lib.mkOption {
+        type = lib.types.bool;
+        default = true;
+        description = "Whether to skip approvals";
+      };
+      skipApprovalsFlag = "--yolo";
       home = lib.mkOption {
         type = lib.types.path;
         description = "The home folder of the Gemini ${instanceName} user";
@@ -408,6 +426,12 @@ let
         description = "Version/commit of PI (e.g. '0.70.2' or '422d139')";
         example = "0.70.2";
       };
+      skipApprovals = lib.mkOption {
+        type = lib.types.bool;
+        default = true;
+        description = "Whether to skip approvals";
+      };
+      skipApprovalsFlag = "";
       home = lib.mkOption {
         type = lib.types.path;
         description = "The home folder of the Pi ${instanceName} user";
@@ -527,6 +551,12 @@ let
           "Version/commit of hermes-agent to use for ${instanceName} (e.g. 'hermes/hermes-46839e2f' or 'v2026.4.23')";
         example = "v2026.4.23";
       };
+      skipApprovals = lib.mkOption {
+        type = lib.types.bool;
+        default = true;
+        description = "Whether to skip approvals";
+      };
+      skipApprovalsFlag = "--yolo";
       home = lib.mkOption {
         type = lib.types.path;
         description = "The home folder of the ${instanceName} user";
