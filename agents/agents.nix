@@ -92,10 +92,11 @@ let
           ${agent.command} "$@"
       '';
       wrapper = pkgs.writeShellScriptBin "${agent.name}" ''
-        DIR="${agent.home}"
         if [[ -d "''${1:-}" ]]; then
-          DIR="$DIR/$1"
+          DIR="$1"
           shift
+        else
+          DIR="${agent.home}"
         fi
         cd "$DIR" 2>/dev/null || true
         sudo chgrp -R ${agentGroup} $DIR

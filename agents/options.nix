@@ -33,7 +33,11 @@ let
         default = true;
         description = "Whether to skip approvals";
       };
-      skipApprovalsFlag = "--dangerously-skip-permissions";
+      skipApprovalsFlag = lib.mkOption {
+        type = lib.types.str;
+        default = "--dangerously-skip-permissions";
+        description = "CLI Flag to skip approvals";
+      };
       home = lib.mkOption {
         type = lib.types.path;
         description = "The home folder of the ${instanceName} user";
@@ -195,7 +199,11 @@ let
         default = true;
         description = "Whether to skip approvals";
       };
-      skipApprovalsFlag = "--allow-dangerously-skip-permissions";
+      skipApprovalsFlag = lib.mkOption {
+        type = lib.types.str;
+        default = "--allow-dangerously-skip-permissions";
+        description = "CLI Flag to skip approvals";
+      };
       home = lib.mkOption {
         type = lib.types.path;
         description = "The home folder of the Codex ${instanceName} user";
@@ -312,7 +320,11 @@ let
         default = true;
         description = "Whether to skip approvals";
       };
-      skipApprovalsFlag = "--yolo";
+      skipApprovalsFlag = lib.mkOption {
+        type = lib.types.str;
+        default = "--yolo";
+        description = "CLI Flag to skip approvals";
+      };
       home = lib.mkOption {
         type = lib.types.path;
         description = "The home folder of the Gemini ${instanceName} user";
@@ -431,7 +443,11 @@ let
         default = true;
         description = "Whether to skip approvals";
       };
-      skipApprovalsFlag = "";
+      skipApprovalsFlag = lib.mkOption {
+        type = lib.types.str;
+        default = "";
+        description = "CLI Flag to skip approvals (non-existing)";
+      };
       home = lib.mkOption {
         type = lib.types.path;
         description = "The home folder of the Pi ${instanceName} user";
@@ -556,7 +572,11 @@ let
         default = true;
         description = "Whether to skip approvals";
       };
-      skipApprovalsFlag = "--yolo";
+      skipApprovalsFlag = lib.mkOption {
+        type = lib.types.str;
+        default = "--yolo";
+        description = "CLI Flag to skip approvals";
+      };
       home = lib.mkOption {
         type = lib.types.path;
         description = "The home folder of the ${instanceName} user";
