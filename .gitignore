@@ -16,3 +16,5 @@ private/packages/machinelearning.nix
 private/networking.nix
 private/boot-common.nix
 private/boot.nix
+**/*.unencrypted.*
+**/*-unencrypted.*

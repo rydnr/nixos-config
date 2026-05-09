@@ -1,7 +1,6 @@
 { config, ... }: {
-  agents = {
+  agents = rec {
     claudeCode.enable = true;
-    claudeCode.freeClaudeCode.enable = true;
     codex.enable = true;
     gemini.enable = true;
     pi.enable = true;
@@ -11,5 +10,9 @@
     };
     hermesWork = { enable = false; };
     hermesPersonal = { enable = true; };
+    freeClaudeCode = {
+      enable = true;
+      owner = claudeCode.user;
+    };
   };
 }

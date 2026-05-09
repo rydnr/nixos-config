@@ -27,16 +27,7 @@ let
     createHome = true;
     extraGroups = [ agentGroup ];
   };
-  freeClaudeCodePath =
-    lib.optionalString (claudeCode.enable && claudeCode.freeClaudeCode.enable)
-    claudeCode.freeClaudeCode.path;
-  systemdFreeClaudeCode = lib.optionalString
-    (claudeCode.enable && claudeCode.freeClaudeCode.enable) ''
-      --setenv=ANTHROPIC_BASE_URL="http://${claudeCode.freeClaudeCode.host}:${
-        toString claudeCode.freeClaudeCode.port
-      }" \
-      --setenv=ANTHROPIC_AUTH_TOKEN="${claudeCode.freeClaudeCode.anthropicAuthToken}"
-    '';
+  freeClaudeCode = config.agents.freeClaudeCode;
 
   # ──────────────────────────────────────────────
   # Wrapper to launch each agent in a sandboxed systemd-run
@@ -44,13 +35,16 @@ let
   mkAgentCommand = { agent }:
     let
       executor = pkgs.writeShellScriptBin "_${agent.name}-run" ''
+        DIR=$1
+        shift
+        cd "$DIR" 2>/dev/null || echo "Cannot use folder $DIR"
         exec ${pkgs.systemd}/bin/systemd-run \
           --pty \
           --collect \
           --uid=${agent.name} \
           --gid=${agentGroup} \
           --unit="${agent.name}-$(date +%s)" \
-          --working-directory="${agent.home}" \
+          --working-directory="$DIR" \
           --setenv=HOME="${agent.home}" \
           --setenv=PATH="${agent.home}/.local/bin:${sharedWorkspace}/.npm-packages/bin:${pkgs.coreutils}/bin:${pkgs.nix}/bin:${pkgs.git}/bin:/run/current-system/sw/bin" \
           --setenv=XDG_CONFIG_HOME="${agent.home}/.config" \
@@ -61,12 +55,19 @@ let
           --setenv=http_proxy="${proxyUrl}" \
           --setenv=https_proxy="${proxyUrl}" \
           --setenv=NO_PROXY="localhost,127.0.0.1" \
-          --setenv=BROWSER="${agentBrowserProxy}/bin/agent-browser" \
-          ${systemdFreeClaudeCode} \
+          ${
+            if agent.useFreeClaudeCode then ''
+              --setenv=ANTHROPIC_BASE_URL="http://${freeClaudeCode.host}:${
+                toString freeClaudeCode.port
+              }" \
+                --setenv=ANTHROPIC_AUTH_TOKEN="${freeClaudeCode.anthropicAuthToken}" \
+            '' else
+              ""
+          }   --setenv=BROWSER="${agentBrowserProxy}/bin/agent-browser" \
           ${
             lib.concatMapStringsSep " " (f: "--property=EnvironmentFile=${f}")
             agent.environmentFiles
-          } \
+          } --property=WorkingDirectory=$DIR \
           --property=ProtectHome=${if agent.protectHome then "yes" else "no"} \
           --property=ProtectSystem=${agent.protectSystem} \
           ${
@@ -88,23 +89,31 @@ let
           --property=RestrictAddressFamilies="${
             lib.concatStringsSep " " agent.restrictAddressFamilies
           }" \
+          ${agent.command} \
           -- \
-          ${agent.command} "$@"
+          ${if agent.skipApprovals then agent.skipApprovalsFlag else ""} \
+          ${
+            if agent.customChangeDirFlag != "" then
+              "${agent.customChangeDirFlag} $DIR"
+            else
+              ""
+          } \
+          "$@"
       '';
       wrapper = pkgs.writeShellScriptBin "${agent.name}" ''
+        echo "$1"
         if [[ -d "''${1:-}" ]]; then
           DIR="$1"
           shift
+          echo "DIR set to $DIR"
         else
           DIR="${agent.home}"
+          echo "DIR set to agent home"
         fi
-        cd "$DIR" 2>/dev/null || true
         sudo chgrp -R ${agentGroup} $DIR
         sudo setfacl -R -m g::rwx $DIR
         sudo setfacl -R -m d:g::rwx $DIR
-        exec sudo ${executor}/bin/_${agent.name}-run ${
-          if agent.skipApprovals then agent.skipApprovalsFlag else ""
-        } "$@"
+        exec sudo ${executor}/bin/_${agent.name}-run $DIR "$@"
       '';
     in {
       packages = [ executor wrapper ] ++ agent.packages;
@@ -482,6 +491,7 @@ in {
         # 1. Set umask so new files are group-writable (rw-rw-r--)
         umask 002
         # 2. Use 'sg' to run the IDE with '${agentGroup}' as the primary effective group
+        cd ${sharedWorkspace}
         exec sg ${agentGroup} -c "${jetbrains.idea-ultimate}/bin/idea-ultimate \"$@\""
       '')
       jdk
@@ -520,15 +530,14 @@ in {
     age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
 
     secrets = {
-      "free-claude-code-env" = (lib.mkIf claudeCode.enable
-        (lib.mkIf claudeCode.freeClaudeCode.enable {
-          path = "${freeClaudeCodePath}/.env.new";
-          sopsFile = ../private/secrets/free-claude-code.env;
-          format = "dotenv";
-          mode = "0400";
-          owner = claudeCode.name;
-          group = agentGroup;
-        }));
+      "free-claude-code-env" = (lib.mkIf freeClaudeCode.enable {
+        path = "${freeClaudeCode.path}/.env";
+        sopsFile = ../private/secrets/free-claude-code.env;
+        format = "dotenv";
+        mode = "0440";
+        owner = freeClaudeCode.owner;
+        group = agentGroup;
+      });
     };
   };
 
