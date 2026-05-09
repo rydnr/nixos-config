@@ -101,7 +101,6 @@ let
           "$@"
       '';
       wrapper = pkgs.writeShellScriptBin "${agent.name}" ''
-        echo "$1"
         if [[ -d "''${1:-}" ]]; then
           DIR="$1"
           shift
@@ -462,9 +461,12 @@ in {
   } // lib.listToAttrs
     (map (agent: lib.nameValuePair agent.name { }) enabledAgents);
 
-  users.users = lib.listToAttrs
-    (map (agent: lib.nameValuePair agent.name (mkAgentUser { agent = agent; }))
-      enabledAgents);
+  users.users = lib.listToAttrs (map (agent:
+    lib.nameValuePair agent.name (
+      # Merge the result of mkAgentUser with the mandatory groups
+      lib.recursiveUpdate (mkAgentUser { inherit agent; }) {
+        extraGroups = [ "docker" agentGroup ];
+      })) enabledAgents);
 
   # ════════════════════════════════════════════════
   # INSTALL THE PROXY COMMANDS
