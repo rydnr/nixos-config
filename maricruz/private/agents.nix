@@ -12,7 +12,7 @@
     hermesPersonal = { enable = true; };
     freeClaudeCode = {
       enable = true;
-      owner = claudeCode.user;
+      owner = "claude-code";
     };
   };
 }
