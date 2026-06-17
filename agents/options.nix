@@ -116,7 +116,7 @@ let
       memoryMax = lib.mkOption {
         type = lib.types.str;
         description = "The max memory for ${instanceName}";
-        default = "1G";
+        default = "4G";
       };
       cpuQuota = lib.mkOption {
         type = lib.types.str;
@@ -126,7 +126,7 @@ let
       tasksMax = lib.mkOption {
         type = lib.types.int;
         description = "The maximum number of tasks for ${instanceName}";
-        default = 100;
+        default = 1000;
       };
       restrictAddressFamilies = lib.mkOption {
         type = lib.types.listOf lib.types.str;
@@ -253,7 +253,7 @@ let
       memoryMax = lib.mkOption {
         type = lib.types.str;
         description = "The max memory for ${instanceName}";
-        default = "1G";
+        default = "4G";
       };
       cpuQuota = lib.mkOption {
         type = lib.types.str;
@@ -263,7 +263,7 @@ let
       tasksMax = lib.mkOption {
         type = lib.types.int;
         description = "The maximum number of tasks for ${instanceName}";
-        default = 100;
+        default = 1000;
       };
       restrictAddressFamilies = lib.mkOption {
         type = lib.types.listOf lib.types.str;
@@ -380,7 +380,7 @@ let
       memoryMax = lib.mkOption {
         type = lib.types.str;
         description = "The max memory for ${instanceName}";
-        default = "1G";
+        default = "4G";
       };
       cpuQuota = lib.mkOption {
         type = lib.types.str;
@@ -390,7 +390,7 @@ let
       tasksMax = lib.mkOption {
         type = lib.types.int;
         description = "The maximum number of tasks for ${instanceName}";
-        default = 100;
+        default = 1000;
       };
       restrictAddressFamilies = lib.mkOption {
         type = lib.types.listOf lib.types.str;
@@ -517,7 +517,7 @@ let
       memoryMax = lib.mkOption {
         type = lib.types.str;
         description = "The max memory for ${instanceName}";
-        default = "1G";
+        default = "4G";
       };
       cpuQuota = lib.mkOption {
         type = lib.types.str;
@@ -527,7 +527,7 @@ let
       tasksMax = lib.mkOption {
         type = lib.types.int;
         description = "The maximum number of tasks for ${instanceName}";
-        default = 100;
+        default = 1000;
       };
       restrictAddressFamilies = lib.mkOption {
         type = lib.types.listOf lib.types.str;
@@ -655,7 +655,7 @@ let
       memoryMax = lib.mkOption {
         type = lib.types.str;
         description = "The max memory for ${instanceName}";
-        default = "1G";
+        default = "4G";
       };
       cpuQuota = lib.mkOption {
         type = lib.types.str;
@@ -665,7 +665,7 @@ let
       tasksMax = lib.mkOption {
         type = lib.types.int;
         description = "The maximum number of tasks for ${instanceName}";
-        default = 100;
+        default = 1000;
       };
       restrictAddressFamilies = lib.mkOption {
         type = lib.types.listOf lib.types.str;
@@ -806,10 +806,22 @@ in rec {
           "api.anthropic.com"
           "statsig.anthropic.com"
           "sentry.io"
+          "claude.ai"
+          "platform.claude.com"
+          "downloads.claude.ai"
+          "storage.googleapis.com"
+          "bridge.claudeusercontent.com"
+          "raw.githubusercontent.com"
 
           # ── OpenRouter ──
           "openrouter.ai"
           "api.openrouter.ai"
+
+          # ── deepseek ──
+          "api.deepseek.com"
+
+          # ── nvidia rim ──
+          "rim.attestation.nvidia.com"
 
           # ── OpenAI / ChatGPT / Codex ──
           "api.openai.com"
@@ -847,6 +859,7 @@ in rec {
           "nixos.org" # nix run needs this
           "cache.nixos.org" # nix binary cache
           "channels.nixos.org"
+          "fastdl.mongodb.org"
 
           # -- TTS --
           "speech.platform.bing.com"
@@ -862,12 +875,17 @@ in rec {
           "artifacts.colordigital.cloud"
           "nexus-docker.colordigital.cloud"
           "gitlab.colordigital.cloud"
+          "kibana.dmix.io"
+          "grafana.dmix.io"
+          "ran01.dmix.io"
           "dev.dmix.cloud"
           "auth-dev.dmix.cloud"
           "dev2.dmix.cloud"
           "auth2-dev.dmix.cloud"
           "int.dmix.cloud"
           "auth-int.dmix.cloud"
+          "dmix.cloud"
+          "auth.dmix.cloud"
           "docs.rs"
           "doc.rust-lang.org"
           "developer.mozilla.org"

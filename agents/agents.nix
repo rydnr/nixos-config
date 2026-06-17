@@ -46,14 +46,26 @@ let
           --unit="${agent.name}-$(date +%s)" \
           --working-directory="$DIR" \
           --setenv=HOME="${agent.home}" \
-          --setenv=PATH="${agent.home}/.local/bin:${sharedWorkspace}/.npm-packages/bin:${pkgs.coreutils}/bin:${pkgs.nix}/bin:${pkgs.git}/bin:/run/current-system/sw/bin" \
+          --setenv=PATH="${pkgs.openjdk11}/bin:${agent.home}/.local/bin:${sharedWorkspace}/.npm-packages/bin:${pkgs.coreutils}/bin:${pkgs.nix}/bin:${pkgs.git}/bin:${agentVisualBrowser}/bin:/run/current-system/sw/bin" \
           --setenv=XDG_CONFIG_HOME="${agent.home}/.config" \
           --setenv=XDG_CACHE_HOME="${agent.home}/.cache" \
           --setenv=NIX_CONF_DIR="/etc/nix" \
+          --setenv=DBUS_SESSION_BUS_ADDRESS="/dev/null" \
+          --setenv=DISPLAY="" \
+          --setenv=WAYLAND_DISPLAY="" \
+          --setenv=GIT_CONFIG_GLOBAL="${agentGitConfig}" \
+          --setenv=PUPPETEER_EXECUTABLE_PATH="${agentVisualBrowser}/bin/chromium" \
+          --setenv=PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH="${agentVisualBrowser}/bin/chromium" \
           --setenv=HTTP_PROXY="${proxyUrl}" \
           --setenv=HTTPS_PROXY="${proxyUrl}" \
           --setenv=http_proxy="${proxyUrl}" \
           --setenv=https_proxy="${proxyUrl}" \
+          --setenv=JAVA_HOME="${pkgs.openjdk11}/lib/openjdk" \
+          --setenv=JAVA_TOOL_OPTIONS="-Dhttp.proxyHost=127.0.0.1 -Dhttp.proxyPort=${
+            toString config.agents.proxy.port
+          } -Dhttps.proxyHost=127.0.0.1 -Dhttps.proxyPort=${
+            toString config.agents.proxy.port
+          }" \
           --setenv=NO_PROXY="localhost,127.0.0.1" \
           ${
             if agent.useFreeClaudeCode then ''
@@ -115,7 +127,7 @@ let
         exec sudo ${executor}/bin/_${agent.name}-run $DIR "$@"
       '';
     in {
-      packages = [ executor wrapper ] ++ agent.packages;
+      packages = [ executor wrapper agentVisualBrowser ] ++ agent.packages;
       sudoCommand = "${executor}/bin/_${agent.name}-run";
     };
 
@@ -135,18 +147,24 @@ let
     ++ lib.optional hermesPersonal.enable
     (mkAgentCommand { agent = hermesPersonal; });
 
-  mkAgentRules = agent: ''
-    iptables -t nat -A OUTPUT -m owner --uid-owner ${agent.name} -j AGENT_PROXY
+  mkAgentAllowRules = agent: ''
+    # Allow loopback to communicate with the Squid proxy
+    iptables -A OUTPUT -m owner --uid-owner ${agent.name} -o lo -j ACCEPT
+
+    # Allow external DNS lookups
+    iptables -A OUTPUT -m owner --uid-owner ${agent.name} -p udp --dport 53 -j ACCEPT
+    iptables -A OUTPUT -m owner --uid-owner ${agent.name} -p tcp --dport 53 -j ACCEPT
+
+    # Allow established connections to persist
+    iptables -A OUTPUT -m owner --uid-owner ${agent.name} -m state --state ESTABLISHED,RELATED -j ACCEPT
+
+    # Drop everything else. Direct outbound connections on 80/443 are strictly prohibited.
+    iptables -A OUTPUT -m owner --uid-owner ${agent.name} -j REJECT
   '';
 
-  mkAgentAllowRules = agent: ''
-    iptables -A OUTPUT -m owner --uid-owner ${agent.name} -o lo -j ACCEPT
-    iptables -A OUTPUT -m owner --uid-owner ${agent.name} -p udp --dport 53 -j ACCEPT
-    iptables -A OUTPUT -m owner --uid-owner ${agent.name} -m state --state ESTABLISHED,RELATED -j ACCEPT
-    iptables -A OUTPUT -m owner --uid-owner ${agent.name} -p tcp --dport 443 -j ACCEPT
-    iptables -A OUTPUT -m owner --uid-owner ${agent.name} -p tcp --dport 80 -j ACCEPT
-    iptables -A OUTPUT -m owner --uid-owner ${agent.name} -p tcp --dport 22 -j ACCEPT
-    iptables -A OUTPUT -m owner --uid-owner ${agent.name} -j REJECT
+  agentGitConfig = pkgs.writeText "agent-gitconfig" ''
+    [safe]
+    directory = *
   '';
 
   # ──────────────────────────────────────────────
@@ -159,7 +177,7 @@ let
 
     # ── 1. Parse and validate the domain ──
     # Strip protocol, path, query, fragment
-    domain=$(echo "$URL" | ${pkgs.coreutils}/bin/sed -E '
+    domain=$(echo "$URL" | ${pkgs.gnused}/bin/sed -E '
       s|^https?://||
       s|/.*||
       s|:.*||
@@ -179,7 +197,7 @@ let
 
     # ── 2. Enforce HTTPS ──
     if echo "$URL" | ${pkgs.gnugrep}/bin/grep -qE "^http://"; then
-      URL=$(echo "$URL" | ${pkgs.coreutils}/bin/sed 's|^http://|https://|')
+      URL=$(echo "$URL" | ${pkgs.gnused}/bin/sed 's|^http://|https://|')
       echo "Upgraded to HTTPS: $URL" >&2
     fi
 
@@ -204,13 +222,13 @@ let
   # Visual browser mode (opens in isolated Chromium)
   # Only when the agent truly needs to render JS
   # ──────────────────────────────────────────────
-  agentVisualBrowser = pkgs.writeShellScriptBin "agent-browser-visual" ''
+  agentVisualBrowser = pkgs.writeShellScriptBin "chromium" ''
     set -euo pipefail
 
-    URL="''${1:?Usage: agent-browser-visual <url>}"
+    URL="''${1:?Usage: chromium <url>}"
 
     # Same domain check
-    domain=$(echo "$URL" | ${pkgs.coreutils}/bin/sed -E '
+    domain=$(echo "$URL" | ${pkgs.gnused}/bin/sed -E '
       s|^https?://||
       s|/.*||
       s|:.*||
@@ -221,10 +239,17 @@ let
       exit 1
     fi
 
+    export DBUS_SESSION_BUS_ADDRESS="/dev/null"
+    export DISPLAY=""
+    export WAYLAND_DISPLAY=""
+
     # Launch headless Chromium, screenshot or dump DOM
     exec ${pkgs.chromium}/bin/chromium \
       --headless=new \
+      --ozone-platform=headless \
       --disable-gpu \
+      --disable-software-rasterizer \
+      --disable-dev-shm-usage \
       --no-sandbox \
       --disable-extensions \
       --disable-plugins \
@@ -488,6 +513,7 @@ in {
         # 2. Use 'sg' to run the IDE with '${agentGroup}' as the primary effective group
         exec sg ${agentGroup} -c "${vscode}/bin/code \"$@\""
       '')
+      openjdk11
       graalvmPackages.graalvm-ce
       (writeShellScriptBin "idea-ultimate-agents" ''
         # 1. Set umask so new files are group-writable (rw-rw-r--)
@@ -496,7 +522,6 @@ in {
         cd ${sharedWorkspace}
         exec sg ${agentGroup} -c "${jetbrains.idea-ultimate}/bin/idea-ultimate \"$@\""
       '')
-      jdk
       maven
       pandoc
     ] ++ lib.concatMap (a: a.packages) enabledAgentsCmd;
@@ -520,12 +545,54 @@ in {
     ++ lib.concatMap (agent: agentSystemdFiles { inherit agent; })
     enabledAgents;
 
-  fileSystems = lib.listToAttrs (map (agent:
-    lib.nameValuePair "${agent.home}/.m2/repository" {
-      device = "${sharedWorkspace}/.m2/repository";
+  fileSystems = lib.listToAttrs (lib.flatten (map (agent: [
+    # 1. The Maven repository mount
+    (lib.nameValuePair "${agent.home}/.m2" {
+      device = "${sharedWorkspace}/.m2";
       fsType = "none";
       options = [ "bind" "rw" ];
-    }) enabledAgents);
+    })
+
+    # 2. The .bashrc file mount
+    (lib.nameValuePair "${agent.home}/.node-modules" {
+      device = "${sharedWorkspace}/.node-modules";
+      fsType = "none";
+      options = [ "bind" "rw" ];
+    })
+  ]) enabledAgents));
+
+  system.activationScripts = {
+    # Crucial for file bind-mounts: the target file must physically exist first
+    ensureAgentMountTargets = {
+      text = lib.concatMapStringsSep "\n" (agent: ''
+        mkdir -p "${agent.home}/.m2"
+        touch "${agent.home}/.bashrc"
+        # Ensure ownership matches the agent user if necessary
+        chown -R ${agent.name} "${agent.home}" 2>/dev/null || true
+      '') enabledAgents;
+      deps = [ "users" ];
+    };
+
+    linkAgentBashrc = {
+      text = lib.concatMapStringsSep "\n" (agent: ''
+        mkdir -p "${agent.home}"
+
+        cat << 'EOF' > "${agent.home}/.bashrc"
+        # 1. Force Java 11 into the front of the PATH for this agent
+        export JAVA_HOME="${pkgs.openjdk11}/lib/openjdk"
+        export PATH="$JAVA_HOME/bin:$PATH"
+
+        # 2. Source the shared base configuration
+        if [ -f "${sharedWorkspace}/.bashrc" ]; then
+            source "${sharedWorkspace}/.bashrc"
+        fi
+        EOF
+
+        chown ${agent.name} "${agent.home}/.bashrc"
+      '') enabledAgents;
+      deps = [ "users" ];
+    };
+  };
 
   # ── Decrypt secrets into agent homes ──
   sops = rec {
@@ -608,15 +675,6 @@ in {
   # ════════════════════════════════════════════════
 
   networking.firewall.extraCommands = ''
-    iptables -t nat -F AGENT_PROXY 2>/dev/null || true
-    iptables -t nat -X AGENT_PROXY 2>/dev/null || true
-    iptables -t nat -N AGENT_PROXY
-
-    iptables -t nat -A AGENT_PROXY -p tcp --dport 80 -j REDIRECT --to-port 3128
-    iptables -t nat -A AGENT_PROXY -p tcp --dport 443 -j REDIRECT --to-port 3128
-
-    ${lib.concatMapStringsSep "\n" mkAgentRules enabledAgents}
     ${lib.concatMapStringsSep "\n" mkAgentAllowRules enabledAgents}
   '';
-
 }
