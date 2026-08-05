@@ -10,7 +10,7 @@
       dina-font
       dosemu_fonts
       emacs-all-the-icons-fonts
-      etBook
+      et-book
       fira-code
       fira-code-symbols
       font-awesome
@@ -58,7 +58,6 @@
       source-sans-pro
       source-serif-pro
       terminus_font
-      tewi-font
       # 404
       #           textfonts
       ttmkfdir
@@ -69,48 +68,47 @@
       # broken    vistafonts
       xfontsel
       xlsfonts
-      xorg.fontadobe100dpi
-      xorg.fontadobe75dpi
-      xorg.fontadobeutopia100dpi
-      xorg.fontadobeutopia75dpi
-      xorg.fontadobeutopiatype1
-      xorg.fontalias
-      xorg.fontarabicmisc
-      xorg.fontbh100dpi
-      xorg.fontbh75dpi
-      xorg.fontbhlucidatypewriter100dpi
-      xorg.fontbhlucidatypewriter75dpi
-      xorg.fontbhttf
-      xorg.fontbhtype1
-      xorg.fontbitstream100dpi
-      xorg.fontbitstream100dpi
-      xorg.fontbitstream75dpi
-      xorg.fontbitstreamtype1
-      xorg.fontcronyxcyrillic
-      xorg.fontcursormisc
-      xorg.fontdaewoomisc
-      xorg.fontdecmisc
-      xorg.fontibmtype1
-      xorg.fontisasmisc
-      xorg.fontjismisc
-      xorg.fontmicromisc
-      xorg.fontmisccyrillic
-      xorg.fontmiscethiopic
-      xorg.fontmiscmeltho
-      xorg.fontmiscmisc
-      xorg.fontmuttmisc
-      xorg.fontschumachermisc
-      xorg.fontscreencyrillic
-      xorg.fontsonymisc
-      xorg.fontsunmisc
-      xorg.fontutil
-      xorg.fontwinitzkicyrillic
-      xorg.fontxfree86type1
-      xorg.libfontenc
-      xorg.libXfont
-      xorg.libXfont2
-      xorg.mkfontdir
-      xorg.mkfontscale
+      font-adobe-100dpi
+      font-adobe-75dpi
+      font-adobe-utopia-100dpi
+      font-adobe-utopia-75dpi
+      font-adobe-utopia-type1
+      font-alias
+      font-arabic-misc
+      font-bh-100dpi
+      font-bh-75dpi
+      font-bh-lucidatypewriter-100dpi
+      font-bh-lucidatypewriter-75dpi
+      font-bh-ttf
+      font-bh-type1
+      font-bitstream-100dpi
+      font-bitstream-100dpi
+      font-bitstream-75dpi
+      font-bitstream-type1
+      font-cronyx-cyrillic
+      font-cursor-misc
+      font-daewoo-misc
+      font-dec-misc
+      font-ibm-type1
+      font-isas-misc
+      font-jis-misc
+      font-micro-misc
+      font-misc-cyrillic
+      font-misc-ethiopic
+      font-misc-meltho
+      font-misc-misc
+      font-mutt-misc
+      font-schumacher-misc
+      font-screen-cyrillic
+      font-sony-misc
+      font-sun-misc
+      font-util
+      font-winitzki-cyrillic
+      font-xfree86-type1
+      libfontenc
+      libxfont_1
+      libxfont_2
+      mkfontscale
     ];
   };
   # bigger tty fonts

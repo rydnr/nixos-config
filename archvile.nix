@@ -107,6 +107,7 @@
     ./services/autocutsel.nix
     ./services/clamav.nix
     ./services/cups.nix
+    ./services/earlyoom.nix
     ./services/emacs.nix
     ./services/hydra.nix
     ./services/locate.nix

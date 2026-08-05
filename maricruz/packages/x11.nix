@@ -33,14 +33,20 @@
       #     xfce.xfce4icontheme  # for thunar
       #     xfce.xfce4settings
       #     xfce.xfconf
-      xorg.xbacklight
-      xorg.xev
-      xorg.xeyes
-      xorg.xhost
-      xorg.xinit
-      xorg.xkill
-      xorg.xmessage
-      xorg.xmodmap
+      xauth
+      xbacklight
+      xcalib
+      xclip
+      xdpyinfo
+      xev
+      xeyes
+      xhost
+      xinit
+      xkbcomp
+      xsel
+      xkill
+      xmessage
+      xmodmap
     ];
 
     # /var/run/current-system/sw/etc/profile

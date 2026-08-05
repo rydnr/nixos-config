@@ -65,7 +65,7 @@
       nmap
       nox
       openconnect
-      opendkim
+      # opendkim insecure
       openfortivpn
       openshift
       openvpn

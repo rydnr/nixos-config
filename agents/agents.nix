@@ -149,14 +149,14 @@ let
 
   mkAgentAllowRules = agent: ''
     # Allow loopback to communicate with the Squid proxy
-    iptables -A OUTPUT -m owner --uid-owner ${agent.name} -o lo -j ACCEPT
+    iptables -I OUTPUT -m owner --uid-owner ${agent.name} -o lo -j ACCEPT
 
     # Allow external DNS lookups
-    iptables -A OUTPUT -m owner --uid-owner ${agent.name} -p udp --dport 53 -j ACCEPT
-    iptables -A OUTPUT -m owner --uid-owner ${agent.name} -p tcp --dport 53 -j ACCEPT
+    iptables -I OUTPUT -m owner --uid-owner ${agent.name} -p udp --dport 53 -j ACCEPT
+    iptables -I OUTPUT -m owner --uid-owner ${agent.name} -p tcp --dport 53 -j ACCEPT
 
     # Allow established connections to persist
-    iptables -A OUTPUT -m owner --uid-owner ${agent.name} -m state --state ESTABLISHED,RELATED -j ACCEPT
+    iptables -I OUTPUT -m owner --uid-owner ${agent.name} -m state --state ESTABLISHED,RELATED -j ACCEPT
 
     # Drop everything else. Direct outbound connections on 80/443 are strictly prohibited.
     iptables -A OUTPUT -m owner --uid-owner ${agent.name} -j REJECT
@@ -515,7 +515,7 @@ in {
       '')
       openjdk11
       graalvmPackages.graalvm-ce
-      (writeShellScriptBin "idea-ultimate-agents" ''
+      (writeShellScriptBin "idea-agents" ''
         # 1. Set umask so new files are group-writable (rw-rw-r--)
         umask 002
         # 2. Use 'sg' to run the IDE with '${agentGroup}' as the primary effective group

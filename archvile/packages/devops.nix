@@ -42,11 +42,13 @@
       fish
       gh
       ghostunnel
+      glab
       gnupg
       google-cloud-sdk
       google-cloud-sdk-gce
       google-compute-engine
       grpcurl
+      hcloud
       hdparm
       hwdata
       inetutils
@@ -72,7 +74,7 @@
       nmap
       nox
       openconnect
-      opendkim
+      # opendkim insecure
       openfortivpn
       openshift
       openvpn
@@ -95,6 +97,7 @@
       sops
       ssh-to-age
       sshfs
+      sshpass
       starship
       stern
       sysstat
@@ -129,9 +132,12 @@
       ethtool
       kompose
       kubectl
+      # kubectl-rabbitmq
+      # kubectl-node-shell
       kubernetes
       kubernetes-helm
       socat
+      krew
     ] ++ lib.optionals config.myCustomFlags.virtualBoxEnabled [
       virtualbox
       linuxPackages.virtualbox

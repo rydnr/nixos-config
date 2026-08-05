@@ -131,7 +131,7 @@ let
       restrictAddressFamilies = lib.mkOption {
         type = lib.types.listOf lib.types.str;
         description = "The address families to restrict for ${instanceName}";
-        default = [ "AF_INET" "AF_INET6" "AF_UNIX" ];
+        default = [ "AF_INET" "AF_INET6" "AF_UNIX" "AF_NETLINK" ];
       };
       packages = lib.mkOption {
         type = lib.types.listOf lib.types.package;

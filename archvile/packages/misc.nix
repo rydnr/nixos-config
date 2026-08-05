@@ -73,14 +73,8 @@
     unrar
     v4l-utils
     vlc
-    vokoscreen
+    vokoscreen-ng
     vsftpd
     wpa_supplicant
-    xcalib
-    xclip
-    xorg.xdpyinfo
-    xorg.xkbcomp
-    xsel
-    zlib
   ];
 }

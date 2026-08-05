@@ -1,6 +1,4 @@
 { config, lib, pkgs, ... }: {
-  programs.adb.enable = true;
-
   # List packages installed in system profile. To search by name, run:
   # $ nix-env -qaP | grep wget
   #  android_sdk.accept_license = true;

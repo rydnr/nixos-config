@@ -14,8 +14,6 @@
       ]))
     discount
     jetbrains.goland
-    #    jetbrains.idea-ultimate-2020_3
-    # jetbrains.idea-ultimate
     # jetbrains.pycharm-professional
     leo-editor
     vim

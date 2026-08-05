@@ -5,16 +5,14 @@
         melpaStablePackages.pdf-tools
         proof-general
         vterm
-#        exwm
+        #        exwm
         emacsql
-#        emacsql-sqlite
+        #        emacsql-sqlite
         pkgs.libvterm
         pkgs.clang-tools
       ]))
     discount
     jetbrains.goland
-    #    jetbrains.idea-ultimate-2020_3
-    # jetbrains.idea-ultimate
     # jetbrains.pycharm-professional
     jetbrains.mps
     leo-editor
