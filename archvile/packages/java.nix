@@ -7,7 +7,7 @@
     jdt-language-server
     # ecj
     jdk
-    jetbrains.idea-ultimate
+    jetbrains.idea
     graalvmPackages.graalvm-ce
     gradle
     grails

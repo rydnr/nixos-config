@@ -140,6 +140,6 @@
       krew
     ] ++ lib.optionals config.myCustomFlags.virtualBoxEnabled [
       virtualbox
-      linuxPackages.virtualbox
+      config.boot.kernelPackages.virtualbox
     ] ++ lib.optionals config.myCustomFlags.libvirtdEnabled [ libvirt ];
 }

@@ -1,6 +1,5 @@
 { config, lib, pkgs, ... }: {
   environment.systemPackages = with pkgs; [
-    code-cursor
     ((emacsPackagesFor emacs).emacsWithPackages (epkgs:
       with epkgs; [
         melpaStablePackages.pdf-tools
