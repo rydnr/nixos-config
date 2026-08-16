@@ -1,4 +1,15 @@
 { config, lib, pkgs, ... }: {
+  services.udev.extraRules = ''
+    # eth0
+    SUBSYSTEM=="net", ACTION=="add", ATTR{address}=="80:FA:5B:99:81:9F", NAME="eth0"
+
+    # Wifi
+    SUBSYSTEM=="net", ACTION=="add", ATTR{address}=="C0:3C:59:CE:40:41", NAME="wlan0"
+
+    # Atheros
+    SUBSYSTEM=="net", ACTION=="add", ATTR{address}=="00:c0:ca:98:0b:1d", NAME="ath0"
+  '';
+
   networking = {
     hostName = "maricruz";
 
@@ -123,24 +134,55 @@
 
     nat = {
       enable = true;
-      internalInterfaces = [ "enp5s0" ];
+      internalInterfaces = [ "eth0" "wlan0" "ath0" ];
       internalIPs = [ "192.168.1.0/24" ];
       externalInterface = "tun0";
     };
 
     wireless = {
       enable = true;
-      interfaces = [ "wlp2s0" ];
+      interfaces = [ "wlan0" "ath0" ];
       #      userControlled = true;
+      networks = {
+        #network={
+        #        ssid="POCO X7 Pro"
+        #        #psk="javisanleandro"
+        #        psk=f4022145519db452edb8f13b5cdf09684701f99965fdf76d1b5397a3fd5942b1
+        #}
+        # network={
+        #        ssid="Redmi Note 12 Pro+ 5G"
+        #        #psk="rguj1305"
+        #        psk=82388773c023200795a0df359a9a81a696f3aa854fcd22cdf83692867e875aa7
+        #}
+        #network={
+        #	ssid="MIWIFI_ScSy_EXT"
+        #	#psk="UAe3yP4K"
+        #	psk=7a7af9d2c7a8434a6e56ea917621c36321530dba2439b782d8d1d6b4dad4cfa4
+        #}
+        #network={
+        #	ssid="MIWIFI_ScSy"
+        #	#psk="UAe3yP4K"
+        #	psk=7a7af9d2c7a8434a6e56ea917621c36321530dba2439b782d8d1d6b4dad4cfa4
+        #}
+        #network={
+        #	ssid="MIWIFI_ScSy_5G_EXT"
+        #	#psk="UAe3yP4K"
+        #	psk=7a7af9d2c7a8434a6e56ea917621c36321530dba2439b782d8d1d6b4dad4cfa4
+        #}
+        "bradyon" = {
+          psk = "Bxd/eDNFWRYG+cmfz50kqr21u8C14xj4iUh8RKnRqsqZAhABeOKatpnjZW24";
+          # psk = "363b5447d7dbb0170a3701705cb29220afe808e3c23c7f5417f2c43170d1055a";
+        };
+      };
     };
 
     useDHCP = false;
 
-    defaultGateway  = "192.168.1.1";
+    defaultGateway = "192.168.1.1";
     defaultGateway6 = "fd06:f14a:8df8::01";
 
     interfaces = {
-      enp5s0 = {
+      eth0 = {
         useDHCP = false;
         ipv4 = {
           addresses = [{
@@ -155,7 +197,7 @@
           }];
         };
       };
-      wlp2s0 = {
+      wlan0 = {
         useDHCP = false;
         ipv4 = {
           addresses = [{
@@ -170,6 +212,7 @@
           }];
         };
       };
+      ath0 = { useDHCP = true; };
     };
     nameservers = [
       "192.168.1.9"

@@ -7,6 +7,7 @@
 {
   boot = {
 
+    kernelPackages = pkgs.linuxPackages_latest;
     loader = {
       efi = {
         canTouchEfiVariables = false;
@@ -24,12 +25,18 @@
         theme = pkgs.nixos-grub2-theme;
       };
     };
- 
+
     initrd = {
 
       luks.devices = {
-        "crypt-nvme0n1p7" = { device = "/dev/disk/by-uuid/7af12b29-1ee0-47dc-a206-d5084071c5d5"; preLVM = true; };
-        "crypt-nvme1n1p1" = { device = "/dev/disk/by-uuid/2de46aa7-cebe-4561-be89-378967f4df99"; preLVM = true; };
+        "crypt-nvme0n1p7" = {
+          device = "/dev/disk/by-uuid/7af12b29-1ee0-47dc-a206-d5084071c5d5";
+          preLVM = true;
+        };
+        "crypt-nvme1n1p1" = {
+          device = "/dev/disk/by-uuid/2de46aa7-cebe-4561-be89-378967f4df99";
+          preLVM = true;
+        };
       };
     };
   };

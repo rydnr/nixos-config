@@ -58,6 +58,7 @@
       source-sans-pro
       source-serif-pro
       terminus_font
+      # tewi-font
       # 404
       #           textfonts
       ttmkfdir
