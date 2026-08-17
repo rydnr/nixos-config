@@ -28,13 +28,18 @@
 
     initrd = {
 
+      availableKernelModules =
+        [ "nvme" "xhci_pci" "ahci" "usbhid" "usb_storage" "sd_mod" ];
+
       luks.devices = {
         "crypt-nvme0n1p7" = {
-          device = "/dev/disk/by-uuid/7af12b29-1ee0-47dc-a206-d5084071c5d5";
+          # device = "/dev/disk/by-uuid/7af12b29-1ee0-47dc-a206-d5084071c5d5";
+          device = "/dev/nvme0n1p7";
           preLVM = true;
         };
         "crypt-nvme1n1p1" = {
-          device = "/dev/disk/by-uuid/2de46aa7-cebe-4561-be89-378967f4df99";
+          # device = "/dev/disk/by-uuid/2de46aa7-cebe-4561-be89-378967f4df99";
+          device = "/dev/nvme1n1p1";
           preLVM = true;
         };
       };

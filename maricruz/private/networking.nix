@@ -10,6 +10,16 @@
     SUBSYSTEM=="net", ACTION=="add", ATTR{address}=="00:c0:ca:98:0b:1d", NAME="ath0"
   '';
 
+  systemd.network.links."10-ath0" = {
+    matchConfig = { MACAddress = "00:c0:ca:98:0b:1d"; };
+    linkConfig = {
+      # Don't wait for this interface during boot
+      Unmanaged = "yes";
+      # Or set a very short timeout
+      ActivationPolicy = "manual";
+    };
+  };
+
   networking = {
     hostName = "maricruz";
 
@@ -182,7 +192,7 @@
     defaultGateway6 = "fd06:f14a:8df8::01";
 
     interfaces = {
-      eth0 = {
+      enp5s0 = {
         useDHCP = false;
         ipv4 = {
           addresses = [{
@@ -193,6 +203,21 @@
         ipv6 = {
           addresses = [{
             address = "fd06:f14a:8df8::15";
+            prefixLength = 64;
+          }];
+        };
+      };
+      wlp2s0 = {
+        useDHCP = false;
+        ipv4 = {
+          addresses = [{
+            address = "192.168.1.41";
+            prefixLength = 24;
+          }];
+        };
+        ipv6 = {
+          addresses = [{
+            address = "fd06:f14a:8df8::29";
             prefixLength = 64;
           }];
         };
