@@ -16,6 +16,7 @@ let
   hermesPc = config.agents.hermesPc;
   hermesWork = config.agents.hermesWork;
   hermesPersonal = config.agents.hermesPersonal;
+  deepseek = config.agents.deepseek;
   mkAgentUser = { agent }: {
     name = agent.name;
     uid = agent.uid;
@@ -135,7 +136,8 @@ let
     ++ lib.optional codex.enable codex ++ lib.optional gemini.enable gemini
     ++ lib.optional pi.enable pi ++ lib.optional hermesPc.enable hermesPc
     ++ lib.optional hermesWork.enable hermesWork
-    ++ lib.optional hermesPersonal.enable hermesPersonal;
+    ++ lib.optional hermesPersonal.enable hermesPersonal
+    ++ lib.optional deepseek.enable deepseek;
 
   enabledAgentsCmd =
     lib.optional claudeCode.enable (mkAgentCommand { agent = claudeCode; })
@@ -145,7 +147,8 @@ let
     ++ lib.optional hermesPc.enable (mkAgentCommand { agent = hermesPc; })
     ++ lib.optional hermesWork.enable (mkAgentCommand { agent = hermesWork; })
     ++ lib.optional hermesPersonal.enable
-    (mkAgentCommand { agent = hermesPersonal; });
+    (mkAgentCommand { agent = hermesPersonal; })
+    ++ lib.optional deepseek.enable (mkAgentCommand { agent = deepseek; });
 
   mkAgentAllowRules = agent: ''
     # Allow loopback to communicate with the Squid proxy

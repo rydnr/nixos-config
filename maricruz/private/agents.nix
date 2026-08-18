@@ -10,6 +10,7 @@
     };
     hermesWork = { enable = false; };
     hermesPersonal = { enable = true; };
+    deepseek = { enable = true; };
     freeClaudeCode = {
       enable = true;
       owner = "claude-code";

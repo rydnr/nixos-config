@@ -1,4 +1,24 @@
 { config, lib, pkgs, ... }: {
+
+  # Create a service that configures ath0 only when it appears
+  systemd.services."configure-ath0" = {
+    description = "Configure ath0 WiFi when plugged in";
+    script = ''
+      # Wait for the interface to appear
+      while [ ! -e /sys/class/net/ath0 ]; do
+        sleep 1
+      done
+
+      # Bring up the interface with DHCP
+      ${pkgs.dhcpcd}/bin/dhcpcd ath0
+    '';
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = "no";
+    };
+    wantedBy = [ "multi-user.target" ];
+  };
+
   services.udev.extraRules = ''
     # eth0
     SUBSYSTEM=="net", ACTION=="add", ATTR{address}=="80:FA:5B:99:81:9F", NAME="eth0"
@@ -8,17 +28,8 @@
 
     # Atheros
     SUBSYSTEM=="net", ACTION=="add", ATTR{address}=="00:c0:ca:98:0b:1d", NAME="ath0"
+      RUN+="${pkgs.systemd}/bin/systemctl start configure-ath0.service"
   '';
-
-  systemd.network.links."10-ath0" = {
-    matchConfig = { MACAddress = "00:c0:ca:98:0b:1d"; };
-    linkConfig = {
-      # Don't wait for this interface during boot
-      Unmanaged = "yes";
-      # Or set a very short timeout
-      ActivationPolicy = "manual";
-    };
-  };
 
   networking = {
     hostName = "maricruz";
@@ -144,14 +155,14 @@
 
     nat = {
       enable = true;
-      internalInterfaces = [ "eth0" "wlan0" "ath0" ];
+      internalInterfaces = [ "eth0" "wlan0" ];
       internalIPs = [ "192.168.1.0/24" ];
       externalInterface = "tun0";
     };
 
     wireless = {
       enable = true;
-      interfaces = [ "wlan0" "ath0" ];
+      interfaces = [ "wlan0" ];
       #      userControlled = true;
       networks = {
         #network={
