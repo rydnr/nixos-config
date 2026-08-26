@@ -523,7 +523,7 @@ in {
         umask 002
         # 2. Use 'sg' to run the IDE with '${agentGroup}' as the primary effective group
         cd ${sharedWorkspace}
-        exec sg ${agentGroup} -c "${jetbrains.idea}/bin/idea-ultimate \"$@\""
+        exec sg ${agentGroup} -c "${jetbrains.idea}/bin/idea \"$@\""
       '')
       maven
       pandoc
