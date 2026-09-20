@@ -1,36 +1,5 @@
 { config, lib, pkgs, ... }: {
 
-  # Create a service that configures ath0 only when it appears
-  systemd.services."configure-ath0" = {
-    description = "Configure ath0 WiFi when plugged in";
-    script = ''
-      # Wait for the interface to appear
-      while [ ! -e /sys/class/net/ath0 ]; do
-        sleep 1
-      done
-
-      # Bring up the interface with DHCP
-      ${pkgs.dhcpcd}/bin/dhcpcd ath0
-    '';
-    serviceConfig = {
-      Type = "oneshot";
-      RemainAfterExit = "no";
-    };
-    wantedBy = [ "multi-user.target" ];
-  };
-
-  services.udev.extraRules = ''
-    # eth0
-    SUBSYSTEM=="net", ACTION=="add", ATTR{address}=="80:FA:5B:99:81:9F", NAME="eth0"
-
-    # Wifi
-    SUBSYSTEM=="net", ACTION=="add", ATTR{address}=="C0:3C:59:CE:40:41", NAME="wlan0"
-
-    # Atheros
-    SUBSYSTEM=="net", ACTION=="add", ATTR{address}=="00:c0:ca:98:0b:1d", NAME="ath0"
-      RUN+="${pkgs.systemd}/bin/systemctl start configure-ath0.service"
-  '';
-
   networking = {
     hostName = "maricruz";
 
@@ -155,14 +124,14 @@
 
     nat = {
       enable = true;
-      internalInterfaces = [ "eth0" "wlan0" ];
+      internalInterfaces = [ "enp5s0" "wlp2s0" ];
       internalIPs = [ "192.168.1.0/24" ];
       externalInterface = "tun0";
     };
 
     wireless = {
-      enable = true;
-      interfaces = [ "wlan0" ];
+      enable = false;
+      interfaces = [ "wlp2s0" ];
       #      userControlled = true;
       networks = {
         #network={
@@ -218,37 +187,7 @@
           }];
         };
       };
-      wlp2s0 = {
-        useDHCP = false;
-        ipv4 = {
-          addresses = [{
-            address = "192.168.1.41";
-            prefixLength = 24;
-          }];
-        };
-        ipv6 = {
-          addresses = [{
-            address = "fd06:f14a:8df8::29";
-            prefixLength = 64;
-          }];
-        };
-      };
-      wlan0 = {
-        useDHCP = false;
-        ipv4 = {
-          addresses = [{
-            address = "192.168.1.41";
-            prefixLength = 24;
-          }];
-        };
-        ipv6 = {
-          addresses = [{
-            address = "fd06:f14a:8df8::29";
-            prefixLength = 64;
-          }];
-        };
-      };
-      ath0 = { useDHCP = true; };
+      # wlp2s0 = { useDHCP = true; };
     };
     nameservers = [
       "192.168.1.9"

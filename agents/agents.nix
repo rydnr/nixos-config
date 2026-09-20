@@ -597,22 +597,6 @@ in {
     };
   };
 
-  # ── Decrypt secrets into agent homes ──
-  sops = rec {
-    age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
-
-    secrets = {
-      "free-claude-code-env" = (lib.mkIf freeClaudeCode.enable {
-        path = "${freeClaudeCode.path}/.env";
-        sopsFile = ../private/secrets/free-claude-code.env;
-        format = "dotenv";
-        mode = "0440";
-        owner = freeClaudeCode.owner;
-        group = agentGroup;
-      });
-    };
-  };
-
   # ════════════════════════════════════════════════
   # NETWORK-LEVEL ENFORCEMENT WITH SQUID
   #    Even if they bypass the script, they can't

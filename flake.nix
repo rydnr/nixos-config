@@ -24,19 +24,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
       url = "github:rydnr/nixos-kubernetes/test-291";
     };
-    sops-nix = {
-      inputs.nixpkgs.follows = "nixpkgs";
-      url = "github:Mic92/sops-nix";
-    };
-    hermes-agent = {
-      inputs.nixpkgs.follows = "nixpkgs";
-      url = "github:NousResearch/hermes-agent";
-    };
   };
 
   outputs = { nixpkgs,
     #      nix-ld,
-    home-manager, nixos-kubernetes, sops-nix, ... }:
+    home-manager, nixos-kubernetes, ... }:
     let
       hostSettings = {
         archvile = {
@@ -107,7 +99,6 @@
           system = hostSettings.archvile.system or "x86_64-linux";
           modules = [
             ./archvile.nix
-            sops-nix.nixosModules.sops
             # nix-ld.nixosModules.nix-ld
             {
               nixpkgs.config = {
@@ -122,7 +113,6 @@
           system = hostSettings.maricruz.system or "x86_64-linux";
           modules = [
             ./maricruz.nix
-            sops-nix.nixosModules.sops
             #            nix-ld.nixosModules.nix-ld
             nixos-kubernetes.nixosModules.${system}.raw-kubernetes-ca
             nixos-kubernetes.nixosModules.${system}.raw-kube-apiserver
@@ -145,7 +135,6 @@
           system = hostSettings.reno.system or "x86_64-linux";
           modules = [
             ./reno.nix
-            sops-nix.nixosModules.sops
             #            nix-ld.nixosModules.nix-ld
             {
               nixpkgs.config = {
@@ -159,7 +148,6 @@
           system = hostSettings.euler.system or "i686-linux";
           modules = [
             ./euler.nix
-            sops-nix.nixosModules.sops
             {
               nixpkgs.config = {
                 allowUnfree = hostSettings.euler.allowUnfree or false;
@@ -172,7 +160,6 @@
           system = hostSettings.tray.system or "x86_64-linux";
           modules = [
             ./tray.nix
-            sops-nix.nixosModules.sops
             #            nix-ld.nixosModules.nix-ld
             {
               nixpkgs.config = {
@@ -186,7 +173,6 @@
         #   system = hostSettings.thales.system or "x86_64-linux";
         #   modules = [
         #     ./thales.nix
-        #    sops-nix.nixosModules.sops
         #            nix-ld.nixosModules.nix-ld
         #      {
         #        nixpkgs.config = {
