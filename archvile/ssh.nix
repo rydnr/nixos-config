@@ -3,7 +3,7 @@
 
   programs.ssh = {
     forwardX11 = true;
-    # startAgent = true; # fails with gnome
+    startAgent = true; # fails with gnome
     setXAuthLocation = true;
   };
 }

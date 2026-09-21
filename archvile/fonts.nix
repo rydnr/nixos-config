@@ -57,6 +57,7 @@
       source-code-pro
       source-sans-pro
       source-serif-pro
+      symbola
       terminus_font
       # tewi-font
       # 404

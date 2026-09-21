@@ -2,6 +2,7 @@
 
   programs = {
     adb.enable = lib.mkDefault true;
+    dconf.enable = true; # mongodb-compass
     nix-ld.enable = true;
     zsh = {
       autosuggestions.enable = true;

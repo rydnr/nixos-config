@@ -12,7 +12,7 @@
       argocd
       arping
       arpoison
-      awscli
+      awscli2
       #    aws_shell
       #    aws-sam-cli
       azure-cli
@@ -48,6 +48,8 @@
       google-cloud-sdk-gce
       google-compute-engine
       grpcurl
+      gsettings-desktop-schemas # required by mongodb-compass
+      gtk3 # required by mongodb-compass
       hcloud
       hdparm
       hwdata

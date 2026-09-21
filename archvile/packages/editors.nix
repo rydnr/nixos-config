@@ -17,6 +17,8 @@
     leo-editor
     vim
     vscode
+    libxml2 # for xmllint
+    python3Packages.nose2
   ];
 
   # nixpkgs.overlays = [

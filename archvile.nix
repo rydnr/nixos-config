@@ -7,7 +7,7 @@
     ./bluetooth.nix
     ./cachix/nix-community.nix
     ./archvile/custom-flags.nix
-    ./archvile/development.nix
+    ./archvile/environment.nix
     ./archvile/fonts.nix
     ./archvile/packages/1password.nix
     ./archvile/packages/3d-printing.nix
@@ -63,6 +63,7 @@
     # ./archvile/single-screen.nix
     ./archvile/multi-screens.nix
     ./archvile/services/dunst.nix
+    # ./archvile/services/gnome.nix
     ./archvile/services/k3s.nix
     ./archvile/services/libvirtd.nix
     ./archvile/services/libinput.nix
@@ -70,6 +71,7 @@
     ./archvile/services/redshift.nix
     ./archvile/services/swayidle.nix
     ./archvile/services/udiskie.nix
+    ./archvile/ssh.nix
     ./packages/android.nix
     ./packages/audio.nix
     ./packages/bash.nix
@@ -165,7 +167,7 @@
       # Populated by https://hercules-ci.com/github/SomeoneSerge/nixpkgs-cuda-ci.
       # This lets one skip building e.g. the CUDA-enabled openmpi.
       # TODO: Replace once nix-community obtains an official one.
-      "https://cuda-maintainers.cachix.org"
+#      "https://cuda-maintainers.cachix.org"
     ];
 
     trusted-public-keys = [
