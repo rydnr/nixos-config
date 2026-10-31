@@ -9,6 +9,19 @@ let
   domainRegex = builtins.concatStringsSep "|"
     (map (d: builtins.replaceStrings [ "." ] [ "\\." ] d) allowedDomains);
   proxyUrl = "http://127.0.0.1:${toString config.agents.proxy.port}";
+
+  # Direct TCP destinations agents may reach WITHOUT the Squid proxy.
+  # Squid only carries HTTP/HTTPS; MongoDB, SSH, etc. speak their own wire
+  # protocol and would otherwise hit the per-uid iptables REJECT below.
+  # Keep this list narrow: one host + one port per entry.
+  directTcpAllow = [{
+    host = "172.30.1.102";
+    port = 27019;
+    comment = "MatchBox MongoDB (dmixcloud_db), reached over wg0";
+  }];
+  noProxyHosts = lib.concatStringsSep ","
+    ([ "localhost" "127.0.0.1" ] ++ map (r: r.host) directTcpAllow);
+
   claudeCode = config.agents.claudeCode;
   codex = config.agents.codex;
   gemini = config.agents.gemini;
@@ -47,7 +60,8 @@ let
           --unit="${agent.name}-$(date +%s)" \
           --working-directory="$DIR" \
           --setenv=HOME="${agent.home}" \
-          --setenv=PATH="${pkgs.openjdk11}/bin:${agent.home}/.local/bin:${sharedWorkspace}/.npm-packages/bin:${pkgs.coreutils}/bin:${pkgs.nix}/bin:${pkgs.git}/bin:${agentVisualBrowser}/bin:/run/current-system/sw/bin" \
+          --setenv=PATH="${pkgs.openjdk11}/bin:${agent.home}/.local/bin:${sharedWorkspace}/.npm-packages/bin:${sharedWorkspace}/.pnpm:${pkgs.coreutils}/bin:${pkgs.nix}/bin:${pkgs.git}/bin:${agentVisualBrowser}/bin:/run/current-system/sw/bin" \
+          --setenv=PNPM_HOME="${sharedWorkspace}/.pnpm" \
           --setenv=XDG_CONFIG_HOME="${agent.home}/.config" \
           --setenv=XDG_CACHE_HOME="${agent.home}/.cache" \
           --setenv=NIX_CONF_DIR="/etc/nix" \
@@ -67,7 +81,8 @@ let
           } -Dhttps.proxyHost=127.0.0.1 -Dhttps.proxyPort=${
             toString config.agents.proxy.port
           }" \
-          --setenv=NO_PROXY="localhost,127.0.0.1" \
+          --setenv=NO_PROXY="${noProxyHosts}" \
+          --setenv=no_proxy="${noProxyHosts}" \
           ${
             if agent.useFreeClaudeCode then ''
               --setenv=ANTHROPIC_BASE_URL="http://${freeClaudeCode.host}:${
@@ -80,7 +95,9 @@ let
           ${
             lib.concatMapStringsSep " " (f: "--property=EnvironmentFile=${f}")
             agent.environmentFiles
-          } --property=WorkingDirectory=$DIR \
+          } \
+          --property=EnvironmentFile=-${agent.home}/.mcp-env \
+          --property=WorkingDirectory=$DIR \
           --property=ProtectHome=${if agent.protectHome then "yes" else "no"} \
           --property=ProtectSystem=${agent.protectSystem} \
           ${
@@ -161,8 +178,24 @@ let
     # Allow established connections to persist
     iptables -I OUTPUT -m owner --uid-owner ${agent.name} -m state --state ESTABLISHED,RELATED -j ACCEPT
 
+    # Explicit non-HTTP destinations (see directTcpAllow)
+    ${lib.concatMapStringsSep "\n" (r: ''
+      # ${r.comment}
+      iptables -I OUTPUT -m owner --uid-owner ${agent.name} -d ${r.host} -p tcp --dport ${
+        toString r.port
+      } -j ACCEPT
+    '') directTcpAllow}
+
     # Drop everything else. Direct outbound connections on 80/443 are strictly prohibited.
     iptables -A OUTPUT -m owner --uid-owner ${agent.name} -j REJECT
+
+    # Same policy for IPv6. Without this, any global IPv6 address on the host
+    # lets the agent bypass the proxy entirely.
+    ip6tables -I OUTPUT -m owner --uid-owner ${agent.name} -o lo -j ACCEPT
+    ip6tables -I OUTPUT -m owner --uid-owner ${agent.name} -p udp --dport 53 -j ACCEPT
+    ip6tables -I OUTPUT -m owner --uid-owner ${agent.name} -p tcp --dport 53 -j ACCEPT
+    ip6tables -I OUTPUT -m owner --uid-owner ${agent.name} -m state --state ESTABLISHED,RELATED -j ACCEPT
+    ip6tables -A OUTPUT -m owner --uid-owner ${agent.name} -j REJECT
   '';
 
   agentGitConfig = pkgs.writeText "agent-gitconfig" ''
@@ -374,9 +407,8 @@ let
         # Block --no-index which compares arbitrary files
         for arg in "''${ARGS[@]}"; do
           case "$arg" in
-            --no-index|--cached|--staged)
-              # --cached/--staged could diff against index for files not checked out
-              # Actually --cached is useful, let's allow it
+            --cached|--staged)
+              # --cached/--staged diff against the index; useful, allowed
               ;;
             --no-index)
               echo "BLOCKED: 'git diff --no-index' is not allowed" >&2
@@ -493,7 +525,7 @@ in {
     lib.nameValuePair agent.name (
       # Merge the result of mkAgentUser with the mandatory groups
       lib.recursiveUpdate (mkAgentUser { inherit agent; }) {
-        extraGroups = [ "docker" agentGroup ];
+        extraGroups = [ agentGroup ];
       })) enabledAgents);
 
   # ════════════════════════════════════════════════
@@ -527,6 +559,7 @@ in {
       '')
       maven
       pandoc
+      pnpm
     ] ++ lib.concatMap (a: a.packages) enabledAgentsCmd;
 
   security.sudo.extraRules = [{
@@ -543,9 +576,11 @@ in {
   #    our proxy instead of the real browser
   # ════════════════════════════════════════════════
 
-  systemd.tmpfiles.rules =
-    [ "d ${sharedWorkspace} 2750 root ${agentGroup} - -" ]
-    ++ lib.concatMap (agent: agentSystemdFiles { inherit agent; })
+  systemd.tmpfiles.rules = [
+    "d ${sharedWorkspace} 2750 root ${agentGroup} - -"
+    # pnpm global bin dir (PNPM_HOME), shared like .npm-packages
+    "d ${sharedWorkspace}/.pnpm 2775 root ${agentGroup} - -"
+  ] ++ lib.concatMap (agent: agentSystemdFiles { inherit agent; })
     enabledAgents;
 
   fileSystems = lib.listToAttrs (lib.flatten (map (agent: [
@@ -556,7 +591,7 @@ in {
       options = [ "bind" "rw" ];
     })
 
-    # 2. The .bashrc file mount
+    # 2. The shared node_modules mount
     (lib.nameValuePair "${agent.home}/.node-modules" {
       device = "${sharedWorkspace}/.node-modules";
       fsType = "none";
@@ -588,6 +623,13 @@ in {
         # 2. Source the shared base configuration
         if [ -f "${sharedWorkspace}/.bashrc" ]; then
             source "${sharedWorkspace}/.bashrc"
+        fi
+
+        # 3. Per-agent secrets for MCP servers (KEY="value" lines, no 'export').
+        #    systemd-run also loads this file via EnvironmentFile, so the agent
+        #    process and its MCP children see the same variables.
+        if [ -f "$HOME/.mcp-env" ]; then
+            set -a; . "$HOME/.mcp-env"; set +a
         fi
         EOF
 
@@ -633,8 +675,9 @@ in {
       # Allow HTTP to whitelisted domains
       http_access allow allowed_domains
 
-      # Allow localhost
-      http_access allow localhost
+      # NOTE: do NOT add "http_access allow localhost" here. Every agent
+      # request arrives from 127.0.0.1, so that line would match them all
+      # and silently disable the whitelist above.
 
       # Block everything else
       http_access deny all
