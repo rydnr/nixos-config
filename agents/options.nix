@@ -1008,6 +1008,9 @@ in rec {
 
           # -- TTS --
           "speech.platform.bing.com"
+
+          # -- MCPs --
+          "espectro.dev"
         ];
         description = "API backends (always allowed, needed for LLM calls)";
       };
