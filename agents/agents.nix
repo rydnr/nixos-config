@@ -30,6 +30,15 @@ let
   hermesWork = config.agents.hermesWork;
   hermesPersonal = config.agents.hermesPersonal;
   deepseek = config.agents.deepseek;
+  jules = config.agents.jules;
+  grok = config.agents.grok;
+  gitclaw = config.agents.gitclaw;
+  kimiCode = config.agents.kimiCode;
+  minimaxCode = config.agents.minimaxCode;
+  opencode2 = config.agents.opencode2;
+  qwenCode = config.agents.qwenCode;
+  museCode = config.agents.museCode;
+  zcode = config.agents.zcode;
   mkAgentUser = { agent }: {
     name = agent.name;
     uid = agent.uid;
@@ -154,7 +163,13 @@ let
     ++ lib.optional pi.enable pi ++ lib.optional hermesPc.enable hermesPc
     ++ lib.optional hermesWork.enable hermesWork
     ++ lib.optional hermesPersonal.enable hermesPersonal
-    ++ lib.optional deepseek.enable deepseek;
+    ++ lib.optional deepseek.enable deepseek ++ lib.optional jules.enable jules
+    ++ lib.optional grok.enable grok ++ lib.optional gitclaw.enable gitclaw
+    ++ lib.optional kimiCode.enable kimiCode
+    ++ lib.optional minimaxCode.enable minimaxCode
+    ++ lib.optional opencode2.enable opencode2
+    ++ lib.optional qwenCode.enable qwenCode
+    ++ lib.optional museCode.enable museCode ++ lib.optional zcode.enable zcode;
 
   enabledAgentsCmd =
     lib.optional claudeCode.enable (mkAgentCommand { agent = claudeCode; })
@@ -165,7 +180,16 @@ let
     ++ lib.optional hermesWork.enable (mkAgentCommand { agent = hermesWork; })
     ++ lib.optional hermesPersonal.enable
     (mkAgentCommand { agent = hermesPersonal; })
-    ++ lib.optional deepseek.enable (mkAgentCommand { agent = deepseek; });
+    ++ lib.optional deepseek.enable (mkAgentCommand { agent = deepseek; })
+    ++ lib.optional jules.enable (mkAgentCommand { agent = jules; })
+    ++ lib.optional grok.enable (mkAgentCommand { agent = grok; })
+    ++ lib.optional gitclaw.enable (mkAgentCommand { agent = gitclaw; })
+    ++ lib.optional kimiCode.enable (mkAgentCommand { agent = kimiCode; })
+    ++ lib.optional minimaxCode.enable (mkAgentCommand { agent = minimaxCode; })
+    ++ lib.optional opencode2.enable (mkAgentCommand { agent = opencode2; })
+    ++ lib.optional museCode.enable (mkAgentCommand { agent = museCode; })
+    ++ lib.optional qwenCode.enable (mkAgentCommand { agent = qwenCode; })
+    ++ lib.optional zcode.enable (mkAgentCommand { agent = zcode; });
 
   mkAgentAllowRules = agent: ''
     # Allow loopback to communicate with the Squid proxy

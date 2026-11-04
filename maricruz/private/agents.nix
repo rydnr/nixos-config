@@ -11,8 +11,9 @@
     hermesWork = { enable = false; };
     hermesPersonal = { enable = true; };
     deepseek = { enable = true; };
+    jules = { enable = true; };
     freeClaudeCode = {
-      enable = true;
+      enable = false;
       owner = "claude-code";
     };
   };
