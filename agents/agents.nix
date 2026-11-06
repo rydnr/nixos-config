@@ -15,16 +15,16 @@ let
   # protocol and would otherwise hit the per-uid iptables REJECT below.
   # Keep this list narrow: one host + one port per entry.
   directTcpAllow = [{
-    host = "172.30.1.102";
-    port = 27019;
-    comment = "MatchBox MongoDB (dmixcloud_db), reached over wg0";
+    host = "85.10.206.214";
+    port = 23;
+    comment = "Gitlab SSH";
   }];
-  noProxyHosts = lib.concatStringsSep ","
-    ([ "localhost" "127.0.0.1" ] ++ map (r: r.host) directTcpAllow);
+  noProxyHosts = lib.concatStringsSep "," ([ "localhost" "127.0.0.1" ]
+    ++ map (r: r.host)
+    (lib.filter (r: builtins.elem r.port [ 80 443 ]) directTcpAllow));
 
   claudeCode = config.agents.claudeCode;
   codex = config.agents.codex;
-  gemini = config.agents.gemini;
   pi = config.agents.pi;
   hermesPc = config.agents.hermesPc;
   hermesWork = config.agents.hermesWork;
@@ -159,8 +159,8 @@ let
     };
 
   enabledAgents = lib.optional claudeCode.enable claudeCode
-    ++ lib.optional codex.enable codex ++ lib.optional gemini.enable gemini
-    ++ lib.optional pi.enable pi ++ lib.optional hermesPc.enable hermesPc
+    ++ lib.optional codex.enable codex ++ lib.optional pi.enable pi
+    ++ lib.optional hermesPc.enable hermesPc
     ++ lib.optional hermesWork.enable hermesWork
     ++ lib.optional hermesPersonal.enable hermesPersonal
     ++ lib.optional deepseek.enable deepseek ++ lib.optional jules.enable jules
@@ -174,7 +174,6 @@ let
   enabledAgentsCmd =
     lib.optional claudeCode.enable (mkAgentCommand { agent = claudeCode; })
     ++ lib.optional codex.enable (mkAgentCommand { agent = codex; })
-    ++ lib.optional gemini.enable (mkAgentCommand { agent = gemini; })
     ++ lib.optional pi.enable (mkAgentCommand { agent = pi; })
     ++ lib.optional hermesPc.enable (mkAgentCommand { agent = hermesPc; })
     ++ lib.optional hermesWork.enable (mkAgentCommand { agent = hermesWork; })
@@ -225,6 +224,12 @@ let
   agentGitConfig = pkgs.writeText "agent-gitconfig" ''
     [safe]
     directory = *
+
+    [alias]
+    git = !git
+    wta = "!f() { ROOT=$(git rev-parse --show-toplevel); REPO=$(basename \"$ROOT\"); BASE=$(dirname $(dirname \"$ROOT\")); DEST=\"$BASE/$1/$REPO\"; if git show-ref --verify --quiet \"refs/heads/$1\"; then git worktree add \"$DEST\" \"$1\"; else git worktree add -b \"$1\" \"$DEST\"; fi; cd \"$DEST\"; }; f"
+    wtr = "!f() { ROOT=$(git rev-parse --show-toplevel); REPO=$(basename \"$ROOT\"); BASE=$(dirname $(dirname \"$ROOT\")); git worktree remove \"$BASE/$1/$REPO\"; }; f"
+    wtl = worktree list
   '';
 
   # ──────────────────────────────────────────────
@@ -337,195 +342,172 @@ let
   # Restricted git wrapper for agents
   restrictedGit = pkgs.writeShellScriptBin "git" ''
     set -euo pipefail
-
     REAL_GIT="${pkgs.git}/bin/git"
+    WORKSPACE="${sharedWorkspace}"
 
-    # Get the subcommand (first non-flag argument)
-    CMD=""
-    ARGS=()
-    for arg in "$@"; do
-      if [[ -z "$CMD" && ! "$arg" =~ ^- ]]; then
-        CMD="$arg"
-      else
-        ARGS+=("$arg")
-      fi
-    done
+    blocked() { echo "BLOCKED: $1" >&2; exit 1; }
 
-    blocked() {
-      echo "BLOCKED: 'git $CMD' is not allowed in agent sandbox" >&2
-      echo "This command could access files outside your sparse checkout." >&2
-      exit 1
+    # Config keys that run programs, redefine commands, or widen what git may touch.
+    # Refused on -c, --config-env and 'git config'. Section and key names are lowercased by git.
+    deny_key() {
+      case "''${1,,}" in
+        alias.*|include.*|includeif.*|safe.*|core.sparsecheckout*|core.bare|core.hookspath|\
+        core.sshcommand|core.gitproxy|core.pager|core.editor|core.askpass|core.fsmonitor|\
+        core.alternaterefscommand|credential.*|diff.external|diff.*.command|diff.*.textconv|\
+        difftool.*|mergetool.*|merge.*.driver|filter.*|gpg.*|sequence.editor|uploadpack.*|\
+        receive.*|url.*|http.*|remote.*.proxy|remote.*.uploadpack|remote.*.receivepack|protocol.*)
+          return 0 ;;
+      esac
+      return 1
     }
 
-    # ── Completely blocked commands ──
+    # A worktree path must resolve inside the workspace and outside the canonical clones.
+    check_path() {
+      local p="$1" abs
+      case "$p" in /*) abs="$(realpath -m -- "$p")" ;; *) abs="$(realpath -m -- "''${CDIR:-.}/$p")" ;; esac
+      case "$abs" in
+        "$WORKSPACE"/.canonical/*) blocked "worktrees may not be created inside .canonical ($abs)" ;;
+        "$WORKSPACE"/*) ;;
+        *) blocked "worktree path outside the workspace: $abs" ;;
+      esac
+    }
+
+    # Environment that would bypass the rules below; the ssh config in ~/.ssh covers GIT_SSH_COMMAND.
+    unset GIT_DIR GIT_WORK_TREE GIT_EXEC_PATH GIT_SSH GIT_SSH_COMMAND GIT_EDITOR GIT_SEQUENCE_EDITOR \
+          GIT_PAGER GIT_ASKPASS GIT_CONFIG_SYSTEM GIT_CONFIG_NOSYSTEM GIT_ALTERNATE_OBJECT_DIRECTORIES \
+          GIT_OBJECT_DIRECTORY GIT_NAMESPACE GIT_PROXY_COMMAND GIT_EXTERNAL_DIFF GIT_CONFIG_COUNT
+    for v in "''${!GIT_CONFIG_@}"; do unset "$v"; done
+    export GIT_CONFIG_GLOBAL="${agentGitConfig}"
+
+    # ── Global options, parsed as git parses them ──
+    CDIR=""; CMD=""; GLOBAL=(); ARGS=()
+    while [ $# -gt 0 ]; do
+      case "$1" in
+        -C)
+          [ $# -ge 2 ] || blocked "'-C' needs a path"
+          CDIR="$2"; GLOBAL+=("$1" "$2"); shift 2 ;;
+        -c|--config-env)
+          [ $# -ge 2 ] || blocked "'$1' needs an argument"
+          key="''${2%%=*}"
+          deny_key "$key" && blocked "'$1 $key' is not allowed"
+          GLOBAL+=("$1" "$2"); shift 2 ;;
+        --config-env=*)
+          key="''${1#--config-env=}"; key="''${key%%=*}"
+          deny_key "$key" && blocked "'--config-env=$key' is not allowed"
+          GLOBAL+=("$1"); shift ;;
+        --exec-path|--exec-path=*|--git-dir|--git-dir=*|--work-tree|--work-tree=*|--bare|\
+        --namespace|--namespace=*|--super-prefix=*|--attr-source=*)
+          blocked "'$1' is not allowed in the agent sandbox" ;;
+        --version|--help|-h|--html-path|--man-path|--info-path|--list-cmds=*)
+          exec "$REAL_GIT" "$@" ;;
+        -p|--paginate|-P|--no-pager|--no-replace-objects|--no-lazy-fetch|--no-optional-locks|\
+        --no-advice|--literal-pathspecs|--glob-pathspecs|--noglob-pathspecs|--icase-pathspecs)
+          GLOBAL+=("$1"); shift ;;
+        -*) blocked "unknown global option '$1'" ;;
+        *)  CMD="$1"; shift; ARGS=("$@"); break ;;
+      esac
+    done
+    [ -n "$CMD" ] || exec "$REAL_GIT" "''${GLOBAL[@]}"
+
+    # ── Subcommands ──
     case "$CMD" in
-      # Direct object access - can read any file
-      cat-file|show|ls-tree|archive|bundle)
-        blocked
-        ;;
+      cat-file|show|ls-tree|archive|bundle|restore|checkout-index|read-tree|write-tree|\
+      unpack-objects|unpack-file|update-ref|symbolic-ref|update-index|submodule|hook|replace|\
+      filter-branch|fast-import)
+        blocked "'git $CMD' is not allowed in the agent sandbox" ;;
 
-      # Can extract/checkout arbitrary files
-      restore|checkout-index)
-        blocked
-        ;;
-
-      # Low-level commands that bypass checkout
-      read-tree|write-tree|unpack-objects|unpack-file)
-        blocked
-        ;;
-
-      # Dangerous plumbing
-      update-ref|symbolic-ref|update-index)
-        blocked
-        ;;
-
-      # Submodule operations could pull in more code
-      submodule)
-        blocked
-        ;;
-
-      # Worktree manipulation
       worktree)
-        blocked
-        ;;
+        SUB="''${ARGS[0]:-}"
+        POS=()
+        i=1
+        while [ $i -lt "''${#ARGS[@]}" ]; do
+          a="''${ARGS[$i]}"
+          case "$a" in
+            -b|-B|--reason) i=$((i + 2)); continue ;;
+            --) i=$((i + 1)); POS+=("''${ARGS[@]:$i}"); break ;;
+            -*) i=$((i + 1)); continue ;;
+          esac
+          POS+=("$a"); i=$((i + 1))
+        done
+        case "$SUB" in
+          list|prune|lock|unlock) ;;
+          add)    [ "''${#POS[@]}" -ge 1 ] && check_path "''${POS[0]}" ;;
+          remove) [ "''${#POS[@]}" -ge 1 ] && case "''${POS[0]}" in */*) check_path "''${POS[0]}" ;; esac ;;
+          move)   [ "''${#POS[@]}" -ge 1 ] && case "''${POS[0]}" in */*) check_path "''${POS[0]}" ;; esac
+                  [ "''${#POS[@]}" -ge 2 ] && check_path "''${POS[1]}" ;;
+          *) blocked "'git worktree $SUB' is not allowed" ;;
+        esac ;;
 
-      # Hooks could be used to escape
-      hook)
-        blocked
-        ;;
-    esac
-
-    # ── Commands with restricted flags ──
-    case "$CMD" in
       sparse-checkout)
-        # Only allow 'list' - no init, set, disable, add, reapply
-        SUBCMD="''${ARGS[0]:-}"
-        case "$SUBCMD" in
-          list)
-            exec "$REAL_GIT" "$@"
-            ;;
-          *)
-            echo "BLOCKED: 'git sparse-checkout $SUBCMD' is not allowed" >&2
-            echo "Only 'git sparse-checkout list' is permitted." >&2
-            exit 1
-            ;;
-        esac
-        ;;
-
-      log)
-        # Block -p/--patch/--diff which show file contents
-        for arg in "''${ARGS[@]}"; do
-          case "$arg" in
-            -p|--patch|-u|--diff|--cc|--combined|--stat-diff)
-              echo "BLOCKED: 'git log' with diff output is not allowed" >&2
-              echo "Use 'git log --oneline' or 'git log --stat' instead." >&2
-              exit 1
-              ;;
-          esac
-        done
-        exec "$REAL_GIT" "$@"
-        ;;
-
-      diff)
-        # Allow diff but only for files in the worktree (sparse checkout enforces this)
-        # Block --no-index which compares arbitrary files
-        for arg in "''${ARGS[@]}"; do
-          case "$arg" in
-            --cached|--staged)
-              # --cached/--staged diff against the index; useful, allowed
-              ;;
-            --no-index)
-              echo "BLOCKED: 'git diff --no-index' is not allowed" >&2
-              exit 1
-              ;;
-          esac
-        done
-        exec "$REAL_GIT" "$@"
-        ;;
-
-      checkout)
-        # Allow branch switching, block file checkout
-        # 'git checkout <branch>' is ok
-        # 'git checkout -- <file>' or 'git checkout <ref> -- <file>' is blocked
-        for arg in "''${ARGS[@]}"; do
-          if [[ "$arg" == "--" ]]; then
-            echo "BLOCKED: 'git checkout -- <path>' is not allowed" >&2
-            echo "Use 'git restore' for your sparse-checkout files instead." >&2
-            exit 1
-          fi
-        done
-        exec "$REAL_GIT" "$@"
-        ;;
-
-      clean)
-        # Block -x/-X which could remove untracked files
-        for arg in "''${ARGS[@]}"; do
-          case "$arg" in
-            -x|-X|--force)
-              echo "BLOCKED: 'git clean -x/-X' is not allowed" >&2
-              exit 1
-              ;;
-          esac
-        done
-        exec "$REAL_GIT" "$@"
-        ;;
-
-      ls-files)
-        # Only allow listing tracked files in sparse checkout
-        # Block --deleted, --others which could reveal structure
-        for arg in "''${ARGS[@]}"; do
-          case "$arg" in
-            --deleted|--others|--ignored|--exclude-standard)
-              echo "BLOCKED: 'git ls-files' with that flag is not allowed" >&2
-              exit 1
-              ;;
-          esac
-        done
-        exec "$REAL_GIT" "$@"
-        ;;
+        [ "''${ARGS[0]:-}" = list ] || blocked "only 'git sparse-checkout list' is permitted" ;;
 
       config)
-        # Block config changes that could weaken security
-        for arg in "''${ARGS[@]}"; do
-          case "$arg" in
-            core.sparseCheckout*|core.bare|safe.*)
-              echo "BLOCKED: cannot modify '$arg'" >&2
-              exit 1
-              ;;
+        for a in "''${ARGS[@]}"; do
+          case "$a" in
+            --get|--get-all|--get-regexp|--list|-l|--show-origin|--show-scope) exec "$REAL_GIT" "''${GLOBAL[@]}" "$CMD" "''${ARGS[@]}" ;;
+            --file|-f|--file=*|--system|--blob|--blob=*|--edit|-e)
+              blocked "'git config $a' is not allowed" ;;
+            -*) continue ;;
           esac
-        done
-        exec "$REAL_GIT" "$@"
-        ;;
+          deny_key "$a" && blocked "cannot touch '$a'"
+        done ;;
+
+      log)
+        for a in "''${ARGS[@]}"; do
+          case "$a" in -p|--patch|-u|--diff|--cc|--combined)
+            blocked "'git log' with diff output is not allowed; use --oneline or --stat" ;;
+          esac
+        done ;;
+
+      diff)
+        for a in "''${ARGS[@]}"; do
+          [ "$a" = --no-index ] && blocked "'git diff --no-index' is not allowed"
+        done ;;
+
+      checkout)
+        for a in "''${ARGS[@]}"; do
+          [ "$a" = -- ] && blocked "'git checkout -- <path>' is not allowed; use 'git restore'"
+        done ;;
+
+      clean)
+        for a in "''${ARGS[@]}"; do
+          case "$a" in -x|-X|--force) blocked "'git clean $a' is not allowed" ;; esac
+        done ;;
+
+      ls-files)
+        for a in "''${ARGS[@]}"; do
+          case "$a" in --deleted|--others|--ignored|--exclude-standard)
+            blocked "'git ls-files $a' is not allowed" ;;
+          esac
+        done ;;
 
       remote)
-        # Block adding/modifying remotes
-        SUBCMD="''${ARGS[0]:-}"
-        case "$SUBCMD" in
-          show|-v|--verbose)
-            exec "$REAL_GIT" "$@"
-            ;;
-          *)
-            echo "BLOCKED: 'git remote $SUBCMD' is not allowed" >&2
-            echo "Only 'git remote show' and 'git remote -v' are permitted." >&2
-            exit 1
-            ;;
-        esac
-        ;;
-
-      push)
-        # Allow push but only to agent-namespaced branches
-        # Check if there's a refspec that doesn't start with agent/
-        # This is tricky, so for now just allow push
-        # The server-side hooks should enforce branch protection
-        exec "$REAL_GIT" "$@"
-        ;;
+        case "''${ARGS[0]:-}" in show|-v|--verbose|"") ;; *)
+          blocked "only 'git remote show' and 'git remote -v' are permitted" ;;
+        esac ;;
     esac
 
-    # ── Allow all other commands ──
-    # add, commit, status, branch, fetch, pull, merge, rebase, stash,
-    # tag (read-only), blame, grep (only searches sparse files), etc.
-    exec "$REAL_GIT" "$@"
+    exec "$REAL_GIT" "''${GLOBAL[@]}" "$CMD" "''${ARGS[@]}"
   '';
+
+  agentKnownHosts = agent:
+    pkgs.writeText "${agent.name}-known_hosts" ''
+      [gitlab.colordigital.cloud]:23 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILbVrmNfDCevnlVtvi1VDDc43w8rRjlr5rAUvz+KCjT6
+      [gitlab.colordigital.cloud]:23 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBFzol/JHRCYxyPoZ1WFTXJOwsovDFoLko6ODcYugJIjFiDlI3Egdc2VYOkuWZNWheMoNEU3UF2/x/TSrxTHmuL4=
+    '';
+
+  agentSshConfig = agent:
+    pkgs.writeText "${agent.name}-ssh_config" ''
+      UserKnownHostsFile ${agentKnownHosts agent}
+      StrictHostKeyChecking yes
+      ForwardX11 no
+
+      Host gitlab.colordigital.cloud
+        Port 23
+        User git
+        IdentityFile ${agent.home}/.ssh/id_ed25519
+        IdentitiesOnly yes
+    '';
 
   agentSystemdFiles = { agent }: [
     # Per-agent bin directory with our override
@@ -536,6 +518,10 @@ let
     "L+ ${agent.home}/.local/bin/open      - ${agent.name} ${agentGroup} - ${agentBrowserProxy}/bin/agent-browser"
     "L+ ${agent.home}/.local/bin/sensible-browser - ${agent.name} ${agentGroup} - ${agentBrowserProxy}/bin/agent-browser"
     "L+ ${agent.home}/.local/bin/git - ${agent.name} ${agentGroup} - ${restrictedGit}/bin/git"
+    "d  ${agent.home}/.ssh 0700 ${agent.name} ${agentGroup} - -"
+    "L+ ${agent.home}/.ssh/config - ${agent.name} ${agentGroup} - ${
+      agentSshConfig agent
+    }"
   ];
 
 in {
@@ -658,6 +644,18 @@ in {
         EOF
 
         chown ${agent.name} "${agent.home}/.bashrc"
+      '') enabledAgents;
+      deps = [ "users" ];
+    };
+    agentSshKeys = {
+      text = lib.concatMapStringsSep "\n" (agent: ''
+        install -d -m 0700 -o ${agent.name} -g ${agentGroup} "${agent.home}/.ssh"
+        if [ ! -f "${agent.home}/.ssh/id_ed25519" ]; then
+          ${pkgs.openssh}/bin/ssh-keygen -q -t ed25519 -N "" \
+            -C "${agent.name}@$(hostname)" -f "${agent.home}/.ssh/id_ed25519"
+          chown ${agent.name}:${agentGroup} "${agent.home}/.ssh/id_ed25519"*
+          chmod 0600 "${agent.home}/.ssh/id_ed25519"
+        fi
       '') enabledAgents;
       deps = [ "users" ];
     };

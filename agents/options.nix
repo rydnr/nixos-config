@@ -40,7 +40,7 @@ let
       };
       useFreeClaudeCode = lib.mkOption {
         type = lib.types.bool;
-        default = true;
+        default = false;
         description = "Whether to use the free-claude-code proxy";
       };
       customChangeDirFlag = lib.mkOption {
@@ -274,133 +274,6 @@ let
         type = lib.types.listOf lib.types.package;
         description = "Additional packages for ${instanceName}";
         default = with pkgs; [ nix ];
-      };
-    };
-
-  mkGeminiOptions = { instanceName, userName ? instanceName
-    , description ? "Gemini agent (${instanceName})"
-    , home ? "${cfg.workspaceBase}/${instanceName}", uid, environmentFiles ? [ ]
-    , }: {
-      enable = lib.mkOption {
-        type = lib.types.bool;
-        default = false;
-        description = "Enable the Gemini ${instanceName} agent";
-      };
-      name = lib.mkOption {
-        type = lib.types.str;
-        description = "The name of the Gemini ${instanceName} user";
-        default = userName;
-      };
-      description = lib.mkOption {
-        type = lib.types.str;
-        description = "The description of the Gemini ${instanceName} agent";
-        default = description;
-      };
-      skipApprovals = lib.mkOption {
-        type = lib.types.bool;
-        default = true;
-        description = "Whether to skip approvals";
-      };
-      skipApprovalsFlag = lib.mkOption {
-        type = lib.types.str;
-        default = "--yolo";
-        description = "CLI Flag to skip approvals";
-      };
-      useFreeClaudeCode = lib.mkOption {
-        type = lib.types.bool;
-        default = false;
-        description = "Whether to use the free-claude-code proxy";
-      };
-      customChangeDirFlag = lib.mkOption {
-        type = lib.types.str;
-        default = "";
-        description = "CLI flag to start in a different directory";
-      };
-      home = lib.mkOption {
-        type = lib.types.path;
-        description = "The home folder of the Gemini ${instanceName} user";
-        default = home;
-      };
-      uid = lib.mkOption {
-        type = lib.types.int;
-        description = "The UID  of the Gemini ${instanceName} user";
-        default = uid;
-      };
-      shell = lib.mkOption {
-        type = lib.types.attrs;
-        description = "The shell of the Gemini ${instanceName} user";
-        default = pkgs.bash;
-      };
-      command = lib.mkOption {
-        type = lib.types.str;
-        description = "The command to run Gemini ${instanceName}";
-        default = "${pkgs.gemini-cli}/bin/gemini";
-      };
-      environmentFiles = lib.mkOption {
-        type = lib.types.listOf lib.types.path;
-        description = "Environment files for ${instanceName}";
-        default = environmentFiles;
-      };
-      protectHome = lib.mkOption {
-        type = lib.types.bool;
-        description = "Whether to protect the home folder of ${instanceName}";
-        default = true;
-      };
-      protectSystem = lib.mkOption {
-        type = lib.types.str;
-        description = "System protection strategy for ${instanceName}";
-        default = "strict";
-      };
-      readWritePaths = lib.mkOption {
-        type = lib.types.listOf lib.types.str;
-        description =
-          "Paths with read and write permissions for ${instanceName} ";
-        default = [ home "/nix/var/nix" "${cfg.workspaceBase}/shared" ];
-      };
-      readOnlyPaths = lib.mkOption {
-        type = lib.types.listOf lib.types.str;
-        description = "Paths with read-only permissions for ${instanceName}";
-        default = [ "/nix/store" ];
-      };
-      privateTmp = lib.mkOption {
-        type = lib.types.bool;
-        description = "Whether TMP is private for ${instanceName}";
-        default = true;
-      };
-      noNewPrivileges = lib.mkOption {
-        type = lib.types.bool;
-        description = "Prevent new privileges for ${instanceName}";
-        default = false;
-      };
-      capabilityBoundingSet = lib.mkOption {
-        type = lib.types.str;
-        description = "The capability bounding set for ${instanceName}";
-        default = "";
-      };
-      memoryMax = lib.mkOption {
-        type = lib.types.str;
-        description = "The max memory for ${instanceName}";
-        default = "4G";
-      };
-      cpuQuota = lib.mkOption {
-        type = lib.types.str;
-        description = "The CPU quota for ${instanceName}";
-        default = "200%";
-      };
-      tasksMax = lib.mkOption {
-        type = lib.types.int;
-        description = "The maximum number of tasks for ${instanceName}";
-        default = 1000;
-      };
-      restrictAddressFamilies = lib.mkOption {
-        type = lib.types.listOf lib.types.str;
-        description = "The address families to restrict for ${instanceName}";
-        default = [ "AF_INET" "AF_INET6" "AF_UNIX" ];
-      };
-      packages = lib.mkOption {
-        type = lib.types.listOf lib.types.package;
-        description = "Additional packages for ${instanceName}";
-        default = with pkgs; [ gemini-cli nix ];
       };
     };
 
@@ -2132,12 +2005,6 @@ in rec {
       uid = 5002;
     };
 
-    gemini = mkGeminiOptions {
-      instanceName = "gemini";
-      userName = "gemini";
-      uid = 5003;
-    };
-
     pi = mkPiOptions {
       instanceName = "pi";
       userName = "pi";
@@ -2252,6 +2119,13 @@ in rec {
       llmDomains = lib.mkOption {
         type = lib.types.listOf lib.types.str;
         default = [
+          "gitlab.colordigital.cloud"
+          "nexus.colordigital.cloud"
+          "jenkins.colordigital.cloud"
+          "ran01.dmix.io"
+          "grafana.dmix.io"
+          "colordigital.atlassian.net"
+
           # ── Claude Code (Anthropic) ──
           "api.anthropic.com"
           "statsig.anthropic.com"
@@ -2295,7 +2169,7 @@ in rec {
           "objects.githubusercontent.com"
           "codeload.github.com"
 
-          # ── Gemini / Google AI ──
+          # ── Google AI ──
           "generativelanguage.googleapis.com" # Gemini API
           "aiplatform.googleapis.com" # Vertex AI
           "oauth2.googleapis.com" # auth
@@ -2303,6 +2177,7 @@ in rec {
           "www.googleapis.com" # general Google API
           "storage.googleapis.com" # model artifacts
           "aistudio.google.com" # AI Studio web
+          "cloudcode-pa.googleapis.com"
 
           # ── Common dependencies ──
           "github.com" # git operations
@@ -2313,6 +2188,14 @@ in rec {
           "cache.nixos.org" # nix binary cache
           "channels.nixos.org"
           "fastdl.mongodb.org"
+          "repo.maven.apache.org"
+          "docs.rs"
+          "doc.rust-lang.org"
+          "developer.mozilla.org"
+          "stackoverflow.com"
+          "wiki.nixos.org"
+          "man7.org"
+          "gitlab.com"
 
           # -- TTS --
           "speech.platform.bing.com"
@@ -2342,14 +2225,6 @@ in rec {
           "auth-int.dmix.cloud"
           "dmix.cloud"
           "auth.dmix.cloud"
-          "docs.rs"
-          "doc.rust-lang.org"
-          "developer.mozilla.org"
-          "github.com"
-          "stackoverflow.com"
-          "nixos.org"
-          "wiki.nixos.org"
-          "man7.org"
         ];
         description = "Private domains";
       };
