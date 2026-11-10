@@ -723,7 +723,7 @@ let
       };
       skipApprovalsFlag = lib.mkOption {
         type = lib.types.str;
-        default = "--yolo";
+        default = "";
         description = "CLI Flag to skip approvals";
       };
       useFreeClaudeCode = lib.mkOption {
@@ -1932,6 +1932,144 @@ let
       };
     };
 
+  mkJustEveryCodeOptions = { instanceName, userName ? instanceName
+    , description ? "Just-Every Code (${instanceName})"
+    , home ? "${cfg.workspaceBase}/${instanceName}", uid, environmentFiles ? [ ]
+    , }: {
+      enable = lib.mkOption {
+        type = lib.types.bool;
+        default = false;
+        description = "Enable the ${instanceName} agent";
+      };
+      name = lib.mkOption {
+        type = lib.types.str;
+        description = "The name of the ${instanceName} user";
+        default = userName;
+      };
+      description = lib.mkOption {
+        type = lib.types.str;
+        description = "The description of the ${instanceName} agent";
+        default = description;
+      };
+      version = lib.mkOption {
+        type = lib.types.nullOr lib.types.str;
+        default = null;
+        description =
+          "Version/commit of Just-Every Code harness to use for ${instanceName}";
+        example = "0.1.0-rc.7";
+      };
+      skipApprovals = lib.mkOption {
+        type = lib.types.bool;
+        default = true;
+        description = "Whether to skip approvals";
+      };
+      skipApprovalsFlag = lib.mkOption {
+        type = lib.types.str;
+        default = "--yolo";
+        description = "CLI Flag to skip approvals";
+      };
+      useFreeClaudeCode = lib.mkOption {
+        type = lib.types.bool;
+        default = false;
+        description = "Whether to use the free-claude-code proxy";
+      };
+      customChangeDirFlag = lib.mkOption {
+        type = lib.types.str;
+        default = "";
+        description = "CLI flag to start in a different directory";
+      };
+      home = lib.mkOption {
+        type = lib.types.path;
+        description = "The home folder of the ${instanceName} user";
+        default = home;
+      };
+      uid = lib.mkOption {
+        type = lib.types.int;
+        description = "The UID of the ${instanceName} user";
+        default = uid;
+      };
+      shell = lib.mkOption {
+        type = lib.types.attrs;
+        description = "The shell of the ${instanceName} user";
+        default = pkgs.bash;
+      };
+      command = lib.mkOption {
+        type = lib.types.str;
+        description = "The command to run ${instanceName}";
+        default = let
+          instanceCfg = cfg.${instanceName};
+          ref = lib.optionalString (instanceCfg.version != null)
+            "/${instanceCfg.version}";
+        in "${pkgs.nix}/bin/nix --extra-experimental-features 'nix-command flakes' run github:numtide/llm-agents.nix#code${ref}";
+      };
+      environmentFiles = lib.mkOption {
+        type = lib.types.listOf lib.types.path;
+        description = "Environment files for ${instanceName}";
+        default = environmentFiles;
+      };
+      protectHome = lib.mkOption {
+        type = lib.types.bool;
+        description = "Whether to protect the home folder for ${instanceName}";
+        default = true;
+      };
+      protectSystem = lib.mkOption {
+        type = lib.types.str;
+        description = "System protection strategy for ${instanceName}";
+        default = "strict";
+      };
+      readWritePaths = lib.mkOption {
+        type = lib.types.listOf lib.types.str;
+        description =
+          "Paths with read and write permissions for ${instanceName}";
+        default = [ home "/nix/var/nix" "${cfg.workspaceBase}/shared" ];
+      };
+      readOnlyPaths = lib.mkOption {
+        type = lib.types.listOf lib.types.str;
+        description = "Paths with read-only permissions for ${instanceName}";
+        default = [ "/nix/store" ];
+      };
+      privateTmp = lib.mkOption {
+        type = lib.types.bool;
+        description = "Whether TMP is private for ${instanceName}";
+        default = true;
+      };
+      noNewPrivileges = lib.mkOption {
+        type = lib.types.bool;
+        description = "Prevent new privileges for ${instanceName}";
+        default = false;
+      };
+      capabilityBoundingSet = lib.mkOption {
+        type = lib.types.str;
+        description = "The capability bounding set for ${instanceName}";
+        default = "";
+      };
+      memoryMax = lib.mkOption {
+        type = lib.types.str;
+        description = "The max memory for ${instanceName}";
+        default = "4G";
+      };
+      cpuQuota = lib.mkOption {
+        type = lib.types.str;
+        description = "The CPU quota for ${instanceName}";
+        default = "200%";
+      };
+      tasksMax = lib.mkOption {
+        type = lib.types.int;
+        description = "The maximum number of tasks for ${instanceName}";
+        default = 1000;
+      };
+      restrictAddressFamilies = lib.mkOption {
+        type = lib.types.listOf lib.types.str;
+        description = "The address families to restrict for ${instanceName}";
+        default = [ "AF_INET" "AF_INET6" "AF_UNIX" ];
+      };
+      packages = lib.mkOption {
+        type = lib.types.listOf lib.types.package;
+        description = "Additional packages for ${instanceName}";
+        default = with pkgs; [ himalaya nix ];
+      };
+    };
+
   mkFreeClaudeCode = { home, owner
     , authToken ? "8SU/Y90FgCJ/uKqZv3yG01mCr8e0WsSqWRPwBsDN/k3b/525YdM/yvhc8BtP"
     }: {
@@ -2061,45 +2199,52 @@ in rec {
     };
 
     kimiCode = mkKimiCodeOptions {
-      instanceName = "kimicode";
+      instanceName = "kimiCode";
       userName = "kimicode";
       home = "${cfg.workspaceBase}/kimicode";
-      uid = 5011;
+      uid = 5012;
     };
 
     minimaxCode = mkMinimaxCodeOptions {
-      instanceName = "minimaxcode";
+      instanceName = "minimaxCode";
       userName = "minimaxcode";
       home = "${cfg.workspaceBase}/minimaxcode";
-      uid = 5012;
+      uid = 5013;
     };
 
     opencode2 = mkOpencode2Options {
       instanceName = "opencode2";
       userName = "opencode2";
       home = "${cfg.workspaceBase}/opencode2";
-      uid = 5013;
-    };
-
-    qwenCode = mkQwenCodeOptions {
-      instanceName = "qwencode";
-      userName = "qwencode";
-      home = "${cfg.workspaceBase}/qwencode";
       uid = 5014;
     };
 
+    qwenCode = mkQwenCodeOptions {
+      instanceName = "qwenCode";
+      userName = "qwencode";
+      home = "${cfg.workspaceBase}/qwencode";
+      uid = 5015;
+    };
+
     museCode = mkMuseCodeOptions {
-      instanceName = "musecode";
+      instanceName = "museCode";
       userName = "musecode";
       home = "${cfg.workspaceBase}/musecode";
-      uid = 5015;
+      uid = 5016;
     };
 
     zcode = mkZcodeOptions {
       instanceName = "zcode";
       userName = "zcode";
       home = "${cfg.workspaceBase}/zcode";
-      uid = 5016;
+      uid = 5017;
+    };
+
+    justEveryCode = mkJustEveryCodeOptions {
+      instanceName = "justEveryCode";
+      userName = "justeverycode";
+      home = "${cfg.workspaceBase}/justeverycode";
+      uid = 5018;
     };
 
     freeClaudeCode = mkFreeClaudeCode {

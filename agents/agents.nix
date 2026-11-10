@@ -39,6 +39,7 @@ let
   qwenCode = config.agents.qwenCode;
   museCode = config.agents.museCode;
   zcode = config.agents.zcode;
+  justEveryCode = config.agents.justEveryCode;
   mkAgentUser = { agent }: {
     name = agent.name;
     uid = agent.uid;
@@ -169,7 +170,8 @@ let
     ++ lib.optional minimaxCode.enable minimaxCode
     ++ lib.optional opencode2.enable opencode2
     ++ lib.optional qwenCode.enable qwenCode
-    ++ lib.optional museCode.enable museCode ++ lib.optional zcode.enable zcode;
+    ++ lib.optional museCode.enable museCode ++ lib.optional zcode.enable zcode
+    ++ lib.optional justEveryCode.enable justEveryCode;
 
   enabledAgentsCmd =
     lib.optional claudeCode.enable (mkAgentCommand { agent = claudeCode; })
@@ -188,7 +190,9 @@ let
     ++ lib.optional opencode2.enable (mkAgentCommand { agent = opencode2; })
     ++ lib.optional museCode.enable (mkAgentCommand { agent = museCode; })
     ++ lib.optional qwenCode.enable (mkAgentCommand { agent = qwenCode; })
-    ++ lib.optional zcode.enable (mkAgentCommand { agent = zcode; });
+    ++ lib.optional zcode.enable (mkAgentCommand { agent = zcode; })
+    ++ lib.optional justEveryCode.enable
+    (mkAgentCommand { agent = justEveryCode; });
 
   mkAgentAllowRules = agent: ''
     # Allow loopback to communicate with the Squid proxy
