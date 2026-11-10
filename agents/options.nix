@@ -2334,6 +2334,7 @@ in rec {
           "channels.nixos.org"
           "fastdl.mongodb.org"
           "repo.maven.apache.org"
+          "repo1.maven.org"
           "docs.rs"
           "doc.rust-lang.org"
           "developer.mozilla.org"
