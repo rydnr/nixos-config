@@ -24,11 +24,13 @@
       inputs.nixpkgs.follows = "nixpkgs";
       url = "github:rydnr/nixos-kubernetes/test-291";
     };
+
+    hermes-gateway = { url = "path:./agents/hermes-gateway"; };
   };
 
   outputs = { nixpkgs,
     #      nix-ld,
-    home-manager, nixos-kubernetes, ... }:
+    home-manager, nixos-kubernetes, hermes-gateway, ... }:
     let
       hostSettings = {
         archvile = {
@@ -99,6 +101,7 @@
           system = hostSettings.archvile.system or "x86_64-linux";
           modules = [
             ./archvile.nix
+            hermes-gateway.nixosModules.default
             # nix-ld.nixosModules.nix-ld
             {
               nixpkgs.config = {
@@ -113,6 +116,7 @@
           system = hostSettings.maricruz.system or "x86_64-linux";
           modules = [
             ./maricruz.nix
+            hermes-gateway.nixosModules.default
             #            nix-ld.nixosModules.nix-ld
             nixos-kubernetes.nixosModules.${system}.raw-kubernetes-ca
             nixos-kubernetes.nixosModules.${system}.raw-kube-apiserver

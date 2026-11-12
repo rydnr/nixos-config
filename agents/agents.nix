@@ -40,6 +40,7 @@ let
   museCode = config.agents.museCode;
   zcode = config.agents.zcode;
   justEveryCode = config.agents.justEveryCode;
+  agy = config.agents.agy;
   mkAgentUser = { agent }: {
     name = agent.name;
     uid = agent.uid;
@@ -131,7 +132,9 @@ let
           }" \
           ${agent.command} \
           -- \
-          ${if agent.skipApprovals then agent.skipApprovalsFlag else ""} \
+          ${
+            if agent.skipApprovals or false then agent.skipApprovalsFlag else ""
+          } \
           ${
             if agent.customChangeDirFlag != "" then
               "${agent.customChangeDirFlag} $DIR"
@@ -171,7 +174,8 @@ let
     ++ lib.optional opencode2.enable opencode2
     ++ lib.optional qwenCode.enable qwenCode
     ++ lib.optional museCode.enable museCode ++ lib.optional zcode.enable zcode
-    ++ lib.optional justEveryCode.enable justEveryCode;
+    ++ lib.optional justEveryCode.enable justEveryCode
+    ++ lib.optional agy.enable agy;
 
   enabledAgentsCmd =
     lib.optional claudeCode.enable (mkAgentCommand { agent = claudeCode; })
@@ -192,7 +196,8 @@ let
     ++ lib.optional qwenCode.enable (mkAgentCommand { agent = qwenCode; })
     ++ lib.optional zcode.enable (mkAgentCommand { agent = zcode; })
     ++ lib.optional justEveryCode.enable
-    (mkAgentCommand { agent = justEveryCode; });
+    (mkAgentCommand { agent = justEveryCode; })
+    ++ lib.optional agy.enable (mkAgentCommand { agent = agy; });
 
   mkAgentAllowRules = agent: ''
     # Allow loopback to communicate with the Squid proxy
@@ -415,11 +420,6 @@ let
 
     # ── Subcommands ──
     case "$CMD" in
-      cat-file|show|ls-tree|archive|bundle|restore|checkout-index|read-tree|write-tree|\
-      unpack-objects|unpack-file|update-ref|symbolic-ref|update-index|submodule|hook|replace|\
-      filter-branch|fast-import)
-        blocked "'git $CMD' is not allowed in the agent sandbox" ;;
-
       worktree)
         SUB="''${ARGS[0]:-}"
         POS=()

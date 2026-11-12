@@ -1,6 +1,6 @@
 { config, lib, pkgs, ... }: {
   services.earlyoom = {
-    enable = true;
+    enable = false;
     freeMemThreshold = 5; # Kill if free RAM falls below 5%
     freeSwapThreshold = 10; # Kill if free Swap falls below 10%
     extraArgs = [

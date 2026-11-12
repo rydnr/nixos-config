@@ -440,16 +440,6 @@ let
           "Version/commit of hermes-agent to use for ${instanceName} (e.g. 'hermes/hermes-46839e2f' or 'v2026.4.23')";
         example = "v2026.4.23";
       };
-      skipApprovals = lib.mkOption {
-        type = lib.types.bool;
-        default = true;
-        description = "Whether to skip approvals";
-      };
-      skipApprovalsFlag = lib.mkOption {
-        type = lib.types.str;
-        default = "--yolo";
-        description = "CLI Flag to skip approvals";
-      };
       useFreeClaudeCode = lib.mkOption {
         type = lib.types.bool;
         default = false;
@@ -577,16 +567,6 @@ let
         description =
           "Version/commit of deepseek harness to use for ${instanceName}";
         example = "0.1.0-rc.7";
-      };
-      skipApprovals = lib.mkOption {
-        type = lib.types.bool;
-        default = true;
-        description = "Whether to skip approvals";
-      };
-      skipApprovalsFlag = lib.mkOption {
-        type = lib.types.str;
-        default = "--yolo";
-        description = "CLI Flag to skip approvals";
       };
       useFreeClaudeCode = lib.mkOption {
         type = lib.types.bool;
@@ -854,16 +834,6 @@ let
           "Version/commit of gitclaw harness to use for ${instanceName}";
         example = "0.1.0-rc.7";
       };
-      skipApprovals = lib.mkOption {
-        type = lib.types.bool;
-        default = true;
-        description = "Whether to skip approvals";
-      };
-      skipApprovalsFlag = lib.mkOption {
-        type = lib.types.str;
-        default = "--yolo";
-        description = "CLI Flag to skip approvals";
-      };
       useFreeClaudeCode = lib.mkOption {
         type = lib.types.bool;
         default = false;
@@ -991,16 +961,6 @@ let
         description =
           "Version/commit of Grok harness to use for ${instanceName}";
         example = "0.1.0-rc.7";
-      };
-      skipApprovals = lib.mkOption {
-        type = lib.types.bool;
-        default = true;
-        description = "Whether to skip approvals";
-      };
-      skipApprovalsFlag = lib.mkOption {
-        type = lib.types.str;
-        default = "--yolo";
-        description = "CLI Flag to skip approvals";
       };
       useFreeClaudeCode = lib.mkOption {
         type = lib.types.bool;
@@ -1130,16 +1090,6 @@ let
           "Version/commit of KimiCode harness to use for ${instanceName}";
         example = "0.1.0-rc.7";
       };
-      skipApprovals = lib.mkOption {
-        type = lib.types.bool;
-        default = true;
-        description = "Whether to skip approvals";
-      };
-      skipApprovalsFlag = lib.mkOption {
-        type = lib.types.str;
-        default = "--yolo";
-        description = "CLI Flag to skip approvals";
-      };
       useFreeClaudeCode = lib.mkOption {
         type = lib.types.bool;
         default = false;
@@ -1266,17 +1216,7 @@ let
         default = null;
         description =
           "Version/commit of MinimaxCode harness to use for ${instanceName}";
-        example = "0.1.0-rc.7";
-      };
-      skipApprovals = lib.mkOption {
-        type = lib.types.bool;
-        default = true;
-        description = "Whether to skip approvals";
-      };
-      skipApprovalsFlag = lib.mkOption {
-        type = lib.types.str;
-        default = "--yolo";
-        description = "CLI Flag to skip approvals";
+        example = "0.7.6";
       };
       useFreeClaudeCode = lib.mkOption {
         type = lib.types.bool;
@@ -1406,16 +1346,6 @@ let
           "Version/commit of Opencode2 harness to use for ${instanceName}";
         example = "0.1.0-rc.7";
       };
-      skipApprovals = lib.mkOption {
-        type = lib.types.bool;
-        default = true;
-        description = "Whether to skip approvals";
-      };
-      skipApprovalsFlag = lib.mkOption {
-        type = lib.types.str;
-        default = "--yolo";
-        description = "CLI Flag to skip approvals";
-      };
       useFreeClaudeCode = lib.mkOption {
         type = lib.types.bool;
         default = false;
@@ -1543,16 +1473,6 @@ let
         description =
           "Version/commit of QwenCode harness to use for ${instanceName}";
         example = "0.1.0-rc.7";
-      };
-      skipApprovals = lib.mkOption {
-        type = lib.types.bool;
-        default = true;
-        description = "Whether to skip approvals";
-      };
-      skipApprovalsFlag = lib.mkOption {
-        type = lib.types.str;
-        default = "--yolo";
-        description = "CLI Flag to skip approvals";
       };
       useFreeClaudeCode = lib.mkOption {
         type = lib.types.bool;
@@ -1682,16 +1602,6 @@ let
           "Version/commit of MuseCode harness to use for ${instanceName}";
         example = "0.1.0-rc.7";
       };
-      skipApprovals = lib.mkOption {
-        type = lib.types.bool;
-        default = true;
-        description = "Whether to skip approvals";
-      };
-      skipApprovalsFlag = lib.mkOption {
-        type = lib.types.str;
-        default = "--yolo";
-        description = "CLI Flag to skip approvals";
-      };
       useFreeClaudeCode = lib.mkOption {
         type = lib.types.bool;
         default = false;
@@ -1819,16 +1729,6 @@ let
         description =
           "Version/commit of Zcode harness to use for ${instanceName}";
         example = "0.1.0-rc.7";
-      };
-      skipApprovals = lib.mkOption {
-        type = lib.types.bool;
-        default = true;
-        description = "Whether to skip approvals";
-      };
-      skipApprovalsFlag = lib.mkOption {
-        type = lib.types.str;
-        default = "--yolo";
-        description = "CLI Flag to skip approvals";
       };
       useFreeClaudeCode = lib.mkOption {
         type = lib.types.bool;
@@ -1958,16 +1858,6 @@ let
           "Version/commit of Just-Every Code harness to use for ${instanceName}";
         example = "0.1.0-rc.7";
       };
-      skipApprovals = lib.mkOption {
-        type = lib.types.bool;
-        default = true;
-        description = "Whether to skip approvals";
-      };
-      skipApprovalsFlag = lib.mkOption {
-        type = lib.types.str;
-        default = "--yolo";
-        description = "CLI Flag to skip approvals";
-      };
       useFreeClaudeCode = lib.mkOption {
         type = lib.types.bool;
         default = false;
@@ -2001,6 +1891,134 @@ let
           ref = lib.optionalString (instanceCfg.version != null)
             "/${instanceCfg.version}";
         in "${pkgs.nix}/bin/nix --extra-experimental-features 'nix-command flakes' run github:numtide/llm-agents.nix#code${ref}";
+      };
+      environmentFiles = lib.mkOption {
+        type = lib.types.listOf lib.types.path;
+        description = "Environment files for ${instanceName}";
+        default = environmentFiles;
+      };
+      protectHome = lib.mkOption {
+        type = lib.types.bool;
+        description = "Whether to protect the home folder for ${instanceName}";
+        default = true;
+      };
+      protectSystem = lib.mkOption {
+        type = lib.types.str;
+        description = "System protection strategy for ${instanceName}";
+        default = "strict";
+      };
+      readWritePaths = lib.mkOption {
+        type = lib.types.listOf lib.types.str;
+        description =
+          "Paths with read and write permissions for ${instanceName}";
+        default = [ home "/nix/var/nix" "${cfg.workspaceBase}/shared" ];
+      };
+      readOnlyPaths = lib.mkOption {
+        type = lib.types.listOf lib.types.str;
+        description = "Paths with read-only permissions for ${instanceName}";
+        default = [ "/nix/store" ];
+      };
+      privateTmp = lib.mkOption {
+        type = lib.types.bool;
+        description = "Whether TMP is private for ${instanceName}";
+        default = true;
+      };
+      noNewPrivileges = lib.mkOption {
+        type = lib.types.bool;
+        description = "Prevent new privileges for ${instanceName}";
+        default = false;
+      };
+      capabilityBoundingSet = lib.mkOption {
+        type = lib.types.str;
+        description = "The capability bounding set for ${instanceName}";
+        default = "";
+      };
+      memoryMax = lib.mkOption {
+        type = lib.types.str;
+        description = "The max memory for ${instanceName}";
+        default = "4G";
+      };
+      cpuQuota = lib.mkOption {
+        type = lib.types.str;
+        description = "The CPU quota for ${instanceName}";
+        default = "200%";
+      };
+      tasksMax = lib.mkOption {
+        type = lib.types.int;
+        description = "The maximum number of tasks for ${instanceName}";
+        default = 1000;
+      };
+      restrictAddressFamilies = lib.mkOption {
+        type = lib.types.listOf lib.types.str;
+        description = "The address families to restrict for ${instanceName}";
+        default = [ "AF_INET" "AF_INET6" "AF_UNIX" ];
+      };
+      packages = lib.mkOption {
+        type = lib.types.listOf lib.types.package;
+        description = "Additional packages for ${instanceName}";
+        default = with pkgs; [ himalaya nix ];
+      };
+    };
+
+  mkAgyOptions = { instanceName, userName ? instanceName
+    , description ? "Agy (${instanceName})"
+    , home ? "${cfg.workspaceBase}/${instanceName}", uid, environmentFiles ? [ ]
+    , }: {
+      enable = lib.mkOption {
+        type = lib.types.bool;
+        default = false;
+        description = "Enable the ${instanceName} agent";
+      };
+      name = lib.mkOption {
+        type = lib.types.str;
+        description = "The name of the ${instanceName} user";
+        default = userName;
+      };
+      description = lib.mkOption {
+        type = lib.types.str;
+        description = "The description of the ${instanceName} agent";
+        default = description;
+      };
+      version = lib.mkOption {
+        type = lib.types.nullOr lib.types.str;
+        default = null;
+        description =
+          "Version/commit of Just-Every Code harness to use for ${instanceName}";
+        example = "0.1.0-rc.7";
+      };
+      useFreeClaudeCode = lib.mkOption {
+        type = lib.types.bool;
+        default = false;
+        description = "Whether to use the free-claude-code proxy";
+      };
+      customChangeDirFlag = lib.mkOption {
+        type = lib.types.str;
+        default = "";
+        description = "CLI flag to start in a different directory";
+      };
+      home = lib.mkOption {
+        type = lib.types.path;
+        description = "The home folder of the ${instanceName} user";
+        default = home;
+      };
+      uid = lib.mkOption {
+        type = lib.types.int;
+        description = "The UID of the ${instanceName} user";
+        default = uid;
+      };
+      shell = lib.mkOption {
+        type = lib.types.attrs;
+        description = "The shell of the ${instanceName} user";
+        default = pkgs.bash;
+      };
+      command = lib.mkOption {
+        type = lib.types.str;
+        description = "The command to run ${instanceName}";
+        default = let
+          instanceCfg = cfg.${instanceName};
+          ref = lib.optionalString (instanceCfg.version != null)
+            "/${instanceCfg.version}";
+        in "${pkgs.nix}/bin/nix --extra-experimental-features 'nix-command flakes' run github:jacopone/antigravity-nix#google-antigravity-cli";
       };
       environmentFiles = lib.mkOption {
         type = lib.types.listOf lib.types.path;
@@ -2247,6 +2265,13 @@ in rec {
       uid = 5018;
     };
 
+    agy = mkAgyOptions {
+      instanceName = "agy";
+      userName = "agy";
+      home = "${cfg.workspaceBase}/agy";
+      uid = 5019;
+    };
+
     freeClaudeCode = mkFreeClaudeCode {
       home = "${cfg.workspaceBase}/shared";
       owner = "claude-code";
@@ -2281,10 +2306,12 @@ in rec {
           "storage.googleapis.com"
           "bridge.claudeusercontent.com"
           "raw.githubusercontent.com"
+          "mcp-proxy.anthropic.com"
 
           # ── OpenRouter ──
           "openrouter.ai"
           "api.openrouter.ai"
+          "models.dev"
 
           # ── deepseek ──
           "api.deepseek.com"
@@ -2304,14 +2331,16 @@ in rec {
           # -- minimax.io --
           "api.minimax.io"
 
+          # -- opencode2 --
+          "opencode.ai"
+
           # ── npm (needed for codex/node tools) ──
           "registry.npmjs.org"
 
           # ── GitHub (git + API + downloads) ──
           "github.com"
           "api.github.com"
-          "raw.githubusercontent.com"
-          "objects.githubusercontent.com"
+          "githubusercontent.com"
           "codeload.github.com"
 
           # ── Google AI ──
@@ -2323,6 +2352,8 @@ in rec {
           "storage.googleapis.com" # model artifacts
           "aistudio.google.com" # AI Studio web
           "cloudcode-pa.googleapis.com"
+          "aida.googleapis.com" # Jules
+          "daily-cloudcode-pa.googleapis.com" # agy
 
           # ── Common dependencies ──
           "github.com" # git operations
@@ -2343,11 +2374,23 @@ in rec {
           "man7.org"
           "gitlab.com"
 
+          # -- Telegram --
+          "api.telegram.org"
+
           # -- TTS --
           "speech.platform.bing.com"
 
           # -- MCPs --
           "espectro.dev"
+          "cdn.playwright.dev"
+
+          # -- webs I visit --
+          "meneame.net"
+          "news.ycombinator.com"
+          "slashdot.org"
+          "box.sanleandro.me"
+          "outlook.cloud.microsoft"
+
         ];
         description = "API backends (always allowed, needed for LLM calls)";
       };

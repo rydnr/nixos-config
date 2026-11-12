@@ -16,6 +16,17 @@
         "type": "github"
       }
     },
+    "hermes-gateway": {
+      "locked": {
+        "path": "./agents/hermes-gateway",
+        "type": "path"
+      },
+      "original": {
+        "path": "./agents/hermes-gateway",
+        "type": "path"
+      },
+      "parent": []
+    },
     "home-manager": {
       "inputs": {
         "nixpkgs": [
@@ -77,6 +88,7 @@
     },
     "root": {
       "inputs": {
+        "hermes-gateway": "hermes-gateway",
         "home-manager": "home-manager",
         "nixos-kubernetes": "nixos-kubernetes",
         "nixpkgs": "nixpkgs"

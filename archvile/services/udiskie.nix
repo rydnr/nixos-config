@@ -1,6 +1,6 @@
 { config, pkgs, ... }: {
   systemd.user.services."udiskie" = {
-    enable = true;
+    enable = false;
     description = "udiskie to automount removable media";
     wantedBy = [ "default.target" ];
     path = with pkgs; [ udiskie ];

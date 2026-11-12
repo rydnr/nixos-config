@@ -20,6 +20,7 @@
     museCode = { enable = true; };
     zcode = { enable = true; };
     justEveryCode = { enable = true; };
+    agy = { enable = true; };
     freeClaudeCode = {
       enable = false;
       owner = "claude-code";
